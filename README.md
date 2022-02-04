@@ -6,7 +6,7 @@ This is a project in progress started in September, 2021.
 The goal of this Website is to increase the visibility of a MMORPG French community. The users can create an account and a rank is given to them (Visitor, Community Member or Admin). Each rank grants or denies particular privileges:
 - Everyone can comment or (dis)like the content published by the Members or the Admins, even without being registered.
 - The Members and the Admins can publish albums/galleries. The Members can also modify their own account information.
-- The Admins have access to the list of the Members, Admins, albums, comments and replies. They can delete or moderate content, delete accounts, or modify the connection information or the rank of the registered users.
+- The Admins have access to the list of the Members, Admins, albums, comments and replies. They can delete or moderate content, delete accounts, or modify the account information or the rank of the registered users.
 
 The users receive notifications via email for their registration, changes in their account information, comments or replies concerning their own published content.
 
