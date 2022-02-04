@@ -1,4 +1,4 @@
-# UwU-Community
+# Chatapatakameow-Community
 WIP project for a community of MMORPG players
 
 This is a project in progress started in September, 2021.
