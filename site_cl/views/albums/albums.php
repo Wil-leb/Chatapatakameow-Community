@@ -116,28 +116,88 @@ $findComments = new Comments();
                     <p><?= htmlspecialchars(trim($comment["comment"])) ?></p>
 
                     <?php if($comment["user_ip"]) : ?>
-                        <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmDeletion(event)">
-                            <input type="text" name="commentId" value="<?= htmlspecialchars($comment["id"]) ?>" hidden>
-                            <input type="text" name="albumTitle" value="<?= htmlspecialchars(trim($comment["album_title"])) ?>" hidden>
-                            <button class="delete" name="deleteComment"><i class="fas fa-trash-alt"></i>Supprimer</button>
-                        </form>
+                        <div class="action-buttons">
+                            <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmDeletion(event)">
+                                <input type="text" name="commentId" value="<?= htmlspecialchars($comment["id"]) ?>" hidden>
+                                <input type="text" name="albumTitle" value="<?= htmlspecialchars(trim($comment["album_title"])) ?>" hidden>
+                                <button class="delete" name="deleteComment"><i class="fas fa-trash-alt"></i>Supprimer</button>
+                            </form>
 
-                        <button id="hide-form" value="ON"><i class="fas fa-pen"></i>Modifier</button>
+                            <button id="hide-form" value="ON"><i class="fas fa-pen"></i>Modifier</button>
+
+                            <form class="answer-form" action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
+                                <p class="mandatory">Ce champ est obligatoire.</p>
+
+                                <div>
+                                    <label for="comment">Commentaire&nbsp;:</label>
+                                    <textarea name="comment" class="comment" rows="8" cols="40"><?= htmlspecialchars(trim($comment["comment"])) ?></textarea>
+
+                                    <div></div>
+                                </div>
+
+                                <div class="rules">
+                                    <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
+                                    <input type="checkbox" value="true" name="acceptRules">
+                                </div>
+
+                                <div class="rules">
+                                    <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
+                                    <input type="checkbox" value="true" name="acceptPolicy">
+                                </div>
+
+                                <div>
+                                    <input type="text" name="commentId" value="<?= htmlspecialchars($comment["id"]) ?>" hidden>
+                                    <input type="submit" name="changeComment" value="Modifier le commentaire">
+                                </div>
+                            </form>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="action-buttons">
+                        <div class="vote-logos">
+                            <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                                <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
+                                <input type="text" name="voteValue" value="1" hidden>
+                                <button type="submit" name="likeComm" value="like" class="vote-thumb like"><i class="fas fa-thumbs-up"></i> <?= htmlspecialchars(trim($comment["likes"]))?></button>
+                            </form>
+                    
+                            <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                                <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
+                                <input type="text" name="voteValue" value="-1" hidden>
+                                <button type="submit" name="dislikeComm" value="dislike" class="vote-thumb dislike"><i class="fas fa-thumbs-down"></i> <?= htmlspecialchars(trim($comment["dislikes"]))?></button>
+                            </form>
+                        </div>
+
+                        <button id="hide-form" value="ON"><i class="fas fa-reply"></i>Répondre</button>
 
                         <form class="answer-form" action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
-                            <p class="mandatory">Ce champ est obligatoire.</p>
+                            <p class="mandatory">Tous les champs sont obligatoires.</p>
 
                             <div>
-                                <label for="comment">Commentaire&nbsp;:</label>
-                                <textarea name="comment" class="comment" rows="8" cols="40"><?= htmlspecialchars(trim($comment["comment"])) ?></textarea>
+                                <label for="email">Adresse électronique&nbsp;:</label>
+                                <input type="text" name="email" class="email" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["email"] ?>" <?php endif; ?>>
+
+                                <div></div>
+                            </div>
+
+                            <div>
+                                <label for="commentLogin">Pseudo&nbsp;:</label>
+                                <input type="text" name="commentLogin" class="comment-login" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["login"] ?>" <?php endif; ?>>
+
+                                <div></div>
+                            </div>
+
+                            <div>
+                                <label for="answer">Réponse&nbsp;:</label>
+                                <textarea name="answer" class="answer" rows="8" cols="40"></textarea>
 
                                 <div></div>
                             </div>
 
                             <div class="rules">
-                                <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
-                                <input type="checkbox" value="true" name="acceptRules">
-                            </div>
+                                    <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
+                                    <input type="checkbox" value="true" name="acceptRules">
+                                </div>
 
                             <div class="rules">
                                 <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
@@ -145,133 +205,81 @@ $findComments = new Comments();
                             </div>
 
                             <div>
-                                <input type="text" name="commentId" value="<?= htmlspecialchars($comment["id"]) ?>" hidden>
-                                <input type="submit" name="changeComment" value="Modifier le commentaire">
+                                <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
+                                <input type="text" name="albumTitle" value="<?= htmlspecialchars(trim($comment["album_title"])) ?>" hidden>
+                                <input type="submit" name="postAnswer" value="Publier la réponse">
                             </div>
                         </form>
-                    <?php endif; ?>
 
-                    <div class="vote-logos">
-                        <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
-                            <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
-                            <input type="text" name="voteValue" value="1" hidden>
-                            <button type="submit" name="likeComm" value="like" class="vote-thumb like"><i class="fas fa-thumbs-up"></i> <?= htmlspecialchars(trim($comment["likes"]))?></button>
-                        </form>
-                
-                        <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
-                            <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
-                            <input type="text" name="voteValue" value="-1" hidden>
-                            <button type="submit" name="dislikeComm" value="dislike" class="vote-thumb dislike"><i class="fas fa-thumbs-down"></i> <?= htmlspecialchars(trim($comment["dislikes"]))?></button>
-                        </form>
-                    </div>
-                </div>
-
-                <button id="hide-form" value="ON"><i class="fas fa-reply"></i>Répondre</button>
-
-                <form class="answer-form" action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
-                    <p class="mandatory">Tous les champs sont obligatoires.</p>
-
-                    <div>
-                        <label for="email">Adresse électronique&nbsp;:</label>
-                        <input type="text" name="email" class="email" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["email"] ?>" <?php endif; ?>>
-
-                        <div></div>
+                        <button id="hide-answers" value="ON"><i class="fas fa-caret-right"></i>Réponses</button>
                     </div>
 
-                    <div>
-                        <label for="commentLogin">Pseudo&nbsp;:</label>
-                        <input type="text" name="commentLogin" class="comment-login" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["login"] ?>" <?php endif; ?>>
+                    <!-- <button id="hide-answers" value="ON"><i class="fas fa-caret-right"></i>Réponses</button> -->
 
-                        <div></div>
-                    </div>
+                    <div class="answer-content">
+                        <?php if(empty($answers)) : ?>
+                            <p class="no-content">Aucune réponse n'a encore été publiée pour ce commentaire.</p>
+                        <?php else : ?>
+                            <?php foreach($answers as $answer) : ?>
+                                <p><?= htmlspecialchars($answer["user_login"]) ?></p>
+                                <p><?= htmlspecialchars(trim(strftime("%d/%m/%Y", strtotime($answer["post_date"])))) ?></p>
+                                <p><?= htmlspecialchars(trim($answer["answer"])) ?></p>
 
-                    <div>
-                        <label for="answer">Réponse&nbsp;:</label>
-                        <textarea name="answer" class="answer" rows="8" cols="40"></textarea>
+                                <?php if($answer["user_ip"]) : ?>
+                                    <div class="action-buttons">
+                                        <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmDeletion(event)">
+                                            <input type="text" name="commentId" value="<?= htmlspecialchars($answer["comment_id"]) ?>" hidden>
+                                            <input type="text" name="answerId" value="<?= htmlspecialchars($answer["id"]) ?>" hidden>
+                                            <input type="text" name="albumTitle" value="<?= htmlspecialchars($answer["album_title"]) ?>" hidden>
+                                            <button class="delete" name="deleteAnswer"><i class="fas fa-trash-alt"></i>Supprimer</button>
+                                        </form>
 
-                        <div></div>
-                    </div>
+                                        <button id="hide-form" value="ON"><i class="fas fa-pen"></i>Modifier</button>
 
-                    <div class="rules">
-                            <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
-                            <input type="checkbox" value="true" name="acceptRules">
-                        </div>
+                                        <form class="answer-form" action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
+                                            <p class="mandatory">Ce champ est obligatoire.</p>
 
-                    <div class="rules">
-                        <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
-                        <input type="checkbox" value="true" name="acceptPolicy">
-                    </div>
+                                            <div>
+                                                <label for="answer">Réponse&nbsp;:</label>
+                                                <textarea name="answer" class="answer" rows="8" cols="40"><?= htmlspecialchars(trim($answer["answer"])) ?></textarea>
 
-                    <div>
-                        <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
-                        <input type="text" name="albumTitle" value="<?= htmlspecialchars(trim($comment["album_title"])) ?>" hidden>
-                        <input type="submit" name="postAnswer" value="Publier la réponse">
-                    </div>
-                </form>
+                                                <div></div>
+                                            </div>
 
-                <button id="hide-answers" value="ON"><i class="fas fa-caret-right"></i>Réponses</button>
+                                            <div class="rules">
+                                                <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
+                                                <input type="checkbox" value="true" name="acceptRules">
+                                            </div>
 
-                <div class="answer-content">
-                    <?php if(empty($answers)) : ?>
-                        <p class="no-content">Aucune réponse n'a encore été publiée pour ce commentaire.</p>
-                    <?php else : ?>
-                        <?php foreach($answers as $answer) : ?>
-                            <p><?= htmlspecialchars($answer["user_login"]) ?></p>
-                            <p><?= htmlspecialchars(trim(strftime("%d/%m/%Y", strtotime($answer["post_date"])))) ?></p>
-                            <p><?= htmlspecialchars(trim($answer["answer"])) ?></p>
+                                            <div class="rules">
+                                                <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
+                                                <input type="checkbox" value="true" name="acceptPolicy">
+                                            </div>
 
-                            <?php if($answer["user_ip"]) : ?>
-                                <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmDeletion(event)">
-                                    <input type="text" name="commentId" value="<?= htmlspecialchars($answer["comment_id"]) ?>" hidden>
-                                    <input type="text" name="answerId" value="<?= htmlspecialchars($answer["id"]) ?>" hidden>
-                                    <input type="text" name="albumTitle" value="<?= htmlspecialchars($answer["album_title"]) ?>" hidden>
-                                    <button class="delete" name="deleteAnswer"><i class="fas fa-trash-alt"></i>Supprimer</button>
-                                </form>
-
-                                <button id="hide-form" value="ON"><i class="fas fa-pen"></i>Modifier</button>
-
-                                <form class="answer-form" action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
-                                    <p class="mandatory">Ce champ est obligatoire.</p>
-
-                                    <div>
-                                        <label for="answer">Réponse&nbsp;:</label>
-                                        <textarea name="answer" class="answer" rows="8" cols="40"><?= htmlspecialchars(trim($answer["answer"])) ?></textarea>
-
-                                        <div></div>
+                                            <div>
+                                                <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
+                                                <input type="submit" name="changeAnswer" value="Modifier la réponse">
+                                            </div>
+                                        </form>
                                     </div>
+                                <?php endif; ?>
 
-                                    <div class="rules">
-                                        <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
-                                        <input type="checkbox" value="true" name="acceptRules">
-                                    </div>
-
-                                    <div class="rules">
-                                        <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
-                                        <input type="checkbox" value="true" name="acceptPolicy">
-                                    </div>
-
-                                    <div>
+                                <div class="vote-logos">
+                                    <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
                                         <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
-                                        <input type="submit" name="changeAnswer" value="Modifier la réponse">
-                                    </div>
-                                </form>
-                            <?php endif; ?>
-
-                            <div class="vote-logos">
-                                <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
-                                    <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
-                                    <input type="text" name="voteValue" value="1" hidden>
-                                    <button type="submit" name="likeAnsw" value="like" class="vote-thumb like"><i class="fas fa-thumbs-up"></i> <?= htmlspecialchars(trim($answer["likes"]))?></button>
-                                </form>
-                        
-                                <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
-                                    <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
-                                    <input type="text" name="voteValue" value="-1" hidden>
-                                    <button type="submit" name="dislikeAnsw" value="dislike" class="vote-thumb dislike"><i class="fas fa-thumbs-down"></i> <?= htmlspecialchars(trim($answer["dislikes"]))?></button>
-                                </form>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                                        <input type="text" name="voteValue" value="1" hidden>
+                                        <button type="submit" name="likeAnsw" value="like" class="vote-thumb like"><i class="fas fa-thumbs-up"></i> <?= htmlspecialchars(trim($answer["likes"]))?></button>
+                                    </form>
+                            
+                                    <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                                        <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
+                                        <input type="text" name="voteValue" value="-1" hidden>
+                                        <button type="submit" name="dislikeAnsw" value="dislike" class="vote-thumb dislike"><i class="fas fa-thumbs-down"></i> <?= htmlspecialchars(trim($answer["dislikes"]))?></button>
+                                    </form>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
             <?php endforeach; ?>
         </div>
