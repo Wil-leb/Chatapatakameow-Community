@@ -1,0 +1,725 @@
+/*****MOBILE-FIRST*****/
+/**********************/
+
+/*****1. ALL SCREEN FORMATS*****/
+
+/*****A. ROOT AND MAIN*****/
+
+*{
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Epilogue", sans-serif;
+    font-size: 1.6rem;
+    line-height: 1.8;
+    text-align: center;
+}
+
+main {
+    background: rgba(255, 251, 34, 1);
+}
+
+/*****B. SECTIONS*****/
+
+section {
+    margin: 0 2.5rem;
+}
+
+section:first-of-type {
+    padding-top: 1rem;
+}
+
+section:last-of-type {
+    padding-bottom: 1rem;
+}
+
+/*****C. TITLES*****/
+
+h1, h2, h3, h4, .logo p {
+    font-family: "Carter One", sans-serif;
+}
+
+h1 {
+    font-size: 3rem;
+    color: rgba(50, 60, 255, 1);
+    text-transform: uppercase;
+    border-bottom: 0.2rem solid rgba(50, 60, 255, 1);
+    padding-bottom: 1rem;
+}
+
+h2 {
+    font-size: 2.5rem;
+    color: rgba(65, 5, 60, 1);
+    text-decoration: underline;
+}
+
+h3 {
+    font-size: 2rem;
+    color: rgba(255, 20, 20, 0.8);
+    font-style: italic;
+}
+
+h4 {
+    font-size: 1.8rem;
+}
+
+/*****D. BULLETED LISTS*****/
+
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+/*****E. LINKS*****/
+
+a {
+    color: rgba(65, 5, 60, 0.8);
+    text-decoration: none;
+    font-family: "Roboto", sans-serif;
+    word-wrap: break-word;
+}
+
+a:not(.forgot-account):hover, a:not(.forgot-account):focus, .logo:focus {
+    color: initial;
+}
+
+.redirect {
+    display: block;
+}
+
+.forgot-account {
+    color:rgba(50, 60, 255, 1);
+    display: block;
+    margin-bottom: 1.5rem;
+}
+
+.deletion a:hover, .deletion a:focus {
+    cursor: pointer;
+    color: rgba(50, 30, 255, 1);
+}
+
+/*****F. IMAGES AND FONT AWESOME*****/
+
+img {
+    max-width: 100%;
+    margin: 0;
+}
+
+/*****G. ALBUMS VIEW*****/
+
+.vote {
+    margin: 2rem 0;
+    text-align: right;
+}
+
+.vote-bar {
+    display: inline-block;
+    width: 15rem;
+    height: 0.4rem;
+    background: rgba(255, 0, 0, 1);
+}
+
+.vote-progress {
+    height: 0.4rem;
+    background: rgba(20, 140, 90, 1);
+}
+
+.vote-logos {
+    margin: 1rem;
+    text-align: right;   
+}
+
+.vote-thumb {
+    border: none;
+    padding: 0;
+    margin: 0 0 0 1rem;
+    background: transparent;
+    display: inline-block;
+    cursor: pointer;
+    transition: color .3s;
+}
+
+.like:hover, .like:focus, .is-liked .like {
+    color: rgba(20, 140, 90, 1);
+}
+
+.dislike:hover, .dislike:focus, .is-disliked .dislike {
+    color: rgba(255, 0, 0, 1);
+}
+
+.comment-content {
+    border-bottom: .1rem solid rgba(10, 10, 10, 1);
+    margin-bottom: 2rem;
+}
+
+.comment-content > p, .answer-content > p {
+    display: inline;
+    overflow-wrap: break-word;
+    margin-right: 1rem;
+}
+
+.comment-content > p:first-of-type, .answer-content > p:first-of-type {
+    font-weight: 700;
+}
+
+.comment-content > p:nth-child(2), .answer-content > p:nth-child(2) {
+    color: rgba(65, 65, 65, 1);
+}
+
+.action-buttons, .answer-content .vote-logos {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.delete {
+    color: rgba(255, 0, 0, 1);
+}
+
+.delete, #hide-form {
+    margin-right: 1rem;
+}
+
+.comment-content #hide-form, .answer-content #hide-form {
+    color: rgba(20, 140, 90, 1);
+}
+
+#hide-form {
+    color: rgba(65, 65, 65, 1);
+}
+
+.answer-content {
+    display: none;
+}
+
+/*****2. MOBILE (PORTRAIT)*****/
+
+/*****A. HEADER AND FOOTER*****/
+
+/*****i. Common properties*****/
+
+header, footer {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+header nav a, footer nav a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0;
+    text-transform: uppercase;
+}
+
+header nav ul li:hover, footer nav ul li:hover, header nav ul li a:focus, footer nav ul li a:focus {
+    background: rgba(55, 150, 195, 0.8);
+}
+
+.active {
+    background: rgba(255, 251, 34, 1);
+    color: rgba(255, 20, 20, 0.8);
+}
+
+/*****ii. Header specificities*****/
+
+/* header {
+    background: center / cover no-repeat url("../img/header-footer/Mount_Fuji.jpg");
+} */
+
+.fas, .far {
+    padding-right: 0.8rem;
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+}
+
+.logo img {
+    width: 60%;
+}
+
+.logo p {
+    color: rgba(250, 15, 240, 1);
+    font-size: 2rem;
+}
+
+/*****iii. Footer specificities*****/
+
+/* footer {
+    background: center / cover no-repeat url("../img/header-footer/Rising_sun.jpg");
+} */
+
+.fab {
+    font-size: 3rem;
+}
+
+/*****B. FORMS*****/
+
+/*****i. Labels, stars, messages and checkbox*****/
+
+label, .mandatory, .error, .success {
+    font-weight: 600;
+    display: block;
+}
+
+.vote {
+    color: initial;
+}
+
+.vote-logos form {
+    display: inline-block;
+}
+
+.answer-form {
+    display: none;
+}
+
+.error {
+    color: rgba(240, 20, 40, 1);
+}
+
+.success {
+    color: rgba(20, 140, 90, 1);
+}
+
+.remember-user label, .remember-user input, .rules input {
+    display: inline-block;
+    width: initial;
+}
+
+.remember-user label, .rules label {
+    padding-right: 0.2rem;
+    font-weight: 400;
+}
+
+.rules label, .rules input {
+    font-weight: 400;
+    display: inline;
+    width: initial;
+    font-style: initial;
+}
+
+.rules p {
+    color: rgba(240, 20, 40, 1);
+}
+
+/*****ii. Inputs, textareas, selects and buttons*****/
+
+input, textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 2rem;
+    border: 0.2rem solid rgba(0, 0, 0, 1);
+    border-radius: 1rem;
+    text-align: center;
+    white-space: normal;
+}
+
+select {
+    text-align-last: center;
+}
+
+input:hover, input:focus, textarea:hover, textarea:focus {
+    background: rgba(70, 170, 220, 0.7);
+}
+
+input[type=file] {
+    cursor: pointer;
+}
+
+input[type=submit] {
+    background: rgba(70, 70, 255, 1);
+    font-weight: 900;
+}
+
+input[type=submit]:hover, input[type=submit]:focus {
+    background: rgba(70, 195, 20, 0.8);
+    border-color: rgba(255, 30, 30, 1);
+    cursor: pointer;
+}
+
+.delete, #see-album, #hide-form, #hide-answers, #hide-content, #close {
+    border: none;
+    background: none;
+    /* text-decoration: underline; */
+    font-family: "Roboto", sans-serif;
+    word-wrap: break-word;
+    padding: 0;
+}
+
+form button:hover, form button:focus, .delete:hover, .delete:focus, #see-album:hover, #hide-form:hover, #hide-answers:hover, #see-album:focus, #hide-form:focus, #hide-answers:focus, #hide-content:hover, #hide-content:focus, #close:hover, #close:focus {
+    cursor: pointer;
+    color: rgba(50, 30, 255, 1);
+}
+
+/*****iii. Cover preview*****/
+
+.cover-modif p {
+    font-style: italic;
+}
+
+.cover-modif img {
+    max-width: 60%;
+}
+
+/* .stars {
+    margin-bottom: 2rem;
+} */
+
+/*****iv. JavaScript divs*****/
+
+input ~ div, textarea ~ div, .no-content {
+    margin: 1rem;
+    font-style: italic;
+}
+
+/*****C. TABLES*****/
+
+table {
+    margin: auto;
+    width: 100%;
+    table-layout: auto;
+}
+
+table thead {
+    display: none;
+}
+
+table tr, table td {
+    display: block;
+    border: 0.1rem solid rgba(10, 10, 10, 1);
+}
+
+table td {
+    text-align: right;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+table td:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 700;
+}
+
+.deletion form, .deletion p {
+    display: inline;
+    vertical-align: middle;
+}
+
+.picture-modif img {
+    max-width: 60%;
+}
+
+.change {
+    text-align: center;
+}
+
+.picture-replacement {
+    table-layout: fixed;
+}
+
+/*****D. ADMIN DASHBOARDS*****/
+
+/*****i. Links*****/
+
+.admin-links a {
+    display:flex;
+    justify-content: center;
+}
+
+.deletion a {
+    color: rgba(20, 140, 90, 1);
+}
+
+/*****ii. Dialog*****/
+
+dialog {
+    visibility: hidden;
+    width: 80%;
+    text-align: center;
+    border: .3rem solid rgba(10, 10, 10, 1);
+    border-radius: 2rem;
+    background: linear-gradient(.25turn, rgba(230, 230, 230, 1), rgba(140, 140, 140, .8));
+}
+
+dialog p {
+    word-wrap: break-word;
+}
+
+dialog > form, dialog > button {
+    display: inline;
+    vertical-align: middle;
+}
+
+.fa-window-close {
+    font-size: 2rem;
+}
+
+/*****E. ALBUMS VIEW*****/
+
+article > img {
+    display: grid;
+    grid-gap: 1.5px;
+    grid-auto-rows: minmax(70px, auto);
+}
+
+figure {
+    box-shadow: 0.5rem 0.5rem 1rem rgba(85, 75, 65, 0.5);
+    transition: transform 0.5s;
+    position: relative;
+    display: block;
+    width: 70%;
+    /* overflow: auto;
+    white-space: nowrap; */
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 1);
+}
+
+figure:hover {
+    transform: scale(1.05);
+}
+
+figcaption {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: 0.8s all;
+}
+
+figcaption h2::before, figcaption h2::after {
+    content:"";
+}
+
+figure:hover figcaption {
+    opacity: 1;
+}
+
+figcaption button {
+    display: block;
+    animation: button-effect 2.5s linear infinite;
+}
+
+figcaption button:hover {
+    animation-play-state: paused;
+}
+
+#hide-content + p {
+    display: none;
+}
+
+/*****F. FIGURE ANIMATION*****/
+
+@keyframes button-effect {
+
+    33% {
+        background: rgba(255, 70, 70, 1);
+        border: 0.4rem solid rgba(0, 0, 0, 1);
+        
+    }
+    
+    66% {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        border-radius: 5rem;
+    }
+    
+/*****END OF THE SLIDER ANIMATION*****/
+}
+
+/* .scroll-slider {
+    display: none;
+} */
+
+/*****3. MOBILE (LANDSCAPE)*****/
+
+@media screen and (min-width: 576px) {
+    
+/*****A. HEADER AND FOOTER*****/
+
+/*****i. Common properties*****/
+    header nav ul, footer nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-around;
+    }
+    
+/*****ii. Header specificities*****/
+    header nav li {
+        flex-basis: 50%;
+    }
+
+    .logo {
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+    }
+    
+/*****iii. Footer specificities*****/
+    footer nav ul {
+        flex-wrap: wrap;
+    }
+
+    footer nav ul li {
+        flex-basis: 30%;
+    }
+    
+/*****C. TABLES*****/
+    table {
+        width: 80%;
+    }
+    
+/*****D. FORMS*****/
+    input, textarea {
+        display: block;
+        margin: 0 auto 20px;
+        width: 80%;
+    }
+    
+/*****END OF THE MOBILE FORMATS*****/
+}
+
+/*****4. TABLET*****/
+
+@media screen and (min-width: 768px) {
+    
+/*****A. HEADER*****/
+    header nav ul {
+        flex-wrap: nowrap;
+    }
+
+    header nav li {
+        flex-basis: 50%;
+    }
+    
+/*****B. FORMS*****/
+
+    input, textarea {
+        width: 60%;
+    }
+
+    .cover-modif img {
+        max-width: 40%;
+    }
+
+/*****C. TABLES*****/
+    table {
+        border-collapse: collapse;
+    }
+
+    table thead {
+        display: table-header-group;
+    }
+
+    table tr {
+        display: table-row;
+    }
+
+    table th, table td {
+        text-align: center;
+        border: 0.2rem solid rgba(10, 10, 10, 1);
+        padding: 1rem;
+    }
+
+    table th {
+        background: rgba(70, 70, 255, 1);
+    }
+
+    table td:nth-child(1n+0) {
+        display: table-cell;
+        background: rgba(255, 255, 255, 0.7);
+    }
+
+    table td:before {
+        content: "";
+    }
+
+    /* .table-overflow {
+        height: 100px;
+        overflow: auto;
+        word-wrap: break-word;
+    } */
+
+    table tr td input[type=file], table tr td input[type=submit] {
+        width: 100%;
+    }
+
+    .picture-modif img {
+        max-width: 100%;
+    }
+    
+/*****D. ALBUMS VIEW*****/
+
+    .albums {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+/*****E. HOMEPAGE*****/
+    
+/*****i. Link to the Albums view*****/
+    .mobile-more {
+        display:none;
+    }
+
+/*****ii. Slider*****/
+    .scroll-slider {
+        display: block;
+        width: 70%;
+        overflow: auto;
+        white-space: nowrap;
+        margin: 0 auto;
+        background: rgba(240, 240, 240, 1);
+        scroll-snap-type: x mandatory;
+    }
+    
+    .content {
+        display: inline-block;
+        scroll-snap-align: start;
+    }
+
+/*****END OF THE TABLET FORMAT*****/
+}
+
+/*****5. DESKTOP*****/
+/* @media screen and (min-width: 992px) { */
+  
+/*****END OF THE DESKTOP FORMAT*****/ 
+/* } */
+
+/*****6. LARGE DESKTOP*****/
+@media screen and (min-width: 1200px) {
+    
+/*****A. CONTAINER*****/
+    .container {
+        max-width: 1100px;
+        margin: auto;
+    }
+    
+/*****B. HOMEPAGE*****/
+    /* .scroll-slider {
+        width: 60%;
+    } */
+
+/*****END OF THE LARGE DESKTOP FORMAT*****/ 
+}
