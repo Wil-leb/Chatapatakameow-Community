@@ -153,14 +153,14 @@ img {
     color: rgba(255, 0, 0, 1);
 }
 
-.comment-content, .answer-content {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+.comment-content {
+    border-bottom: .1rem solid rgba(10, 10, 10, 1);
+    margin-bottom: 2rem;
 }
 
 .comment-content > p, .answer-content > p {
+    display: inline;
+    overflow-wrap: break-word;
     margin-right: 1rem;
 }
 
@@ -170,6 +170,13 @@ img {
 
 .comment-content > p:nth-child(2), .answer-content > p:nth-child(2) {
     color: rgba(65, 65, 65, 1);
+}
+
+.action-buttons, .answer-content .vote-logos {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 
 .delete {
@@ -226,7 +233,7 @@ header nav ul li:hover, footer nav ul li:hover, header nav ul li a:focus, footer
     background: center / cover no-repeat url("../img/header-footer/Mount_Fuji.jpg");
 } */
 
-.fas {
+.fas, .far {
     padding-right: 0.8rem;
 }
 
@@ -342,7 +349,7 @@ input[type=submit]:hover, input[type=submit]:focus {
     cursor: pointer;
 }
 
-.delete, #see-album, #hide-form, #hide-answers {
+.delete, #see-album, #hide-form, #hide-answers, #hide-content, #close {
     border: none;
     background: none;
     /* text-decoration: underline; */
@@ -351,14 +358,10 @@ input[type=submit]:hover, input[type=submit]:focus {
     padding: 0;
 }
 
-form button:hover, form button:focus, .delete:hover, .delete:focus, #see-album:hover, #hide-form:hover, #hide-answers:hover, #see-album:focus, #hide-form:focus, #hide-answers:focus {
+form button:hover, form button:focus, .delete:hover, .delete:focus, #see-album:hover, #hide-form:hover, #hide-answers:hover, #see-album:focus, #hide-form:focus, #hide-answers:focus, #hide-content:hover, #hide-content:focus, #close:hover, #close:focus {
     cursor: pointer;
     color: rgba(50, 30, 255, 1);
 }
-
-/* .delete:hover, .delete:focus {
-    color: rgba(255, 0, 0, 1);
-} */
 
 /*****iii. Cover preview*****/
 
@@ -386,7 +389,7 @@ input ~ div, textarea ~ div, .no-content {
 table {
     margin: auto;
     width: 100%;
-    table-layout: fixed;
+    table-layout: auto;
 }
 
 table thead {
@@ -423,6 +426,10 @@ table td:before {
     text-align: center;
 }
 
+.picture-replacement {
+    table-layout: fixed;
+}
+
 /*****D. ADMIN DASHBOARDS*****/
 
 /*****i. Links*****/
@@ -434,6 +441,30 @@ table td:before {
 
 .deletion a {
     color: rgba(20, 140, 90, 1);
+}
+
+/*****ii. Dialog*****/
+
+dialog {
+    visibility: hidden;
+    width: 80%;
+    text-align: center;
+    border: .3rem solid rgba(10, 10, 10, 1);
+    border-radius: 2rem;
+    background: linear-gradient(.25turn, rgba(230, 230, 230, 1), rgba(140, 140, 140, .8));
+}
+
+dialog p {
+    word-wrap: break-word;
+}
+
+dialog > form, dialog > button {
+    display: inline;
+    vertical-align: middle;
+}
+
+.fa-window-close {
+    font-size: 2rem;
 }
 
 /*****E. ALBUMS VIEW*****/
@@ -489,6 +520,10 @@ figcaption button {
 
 figcaption button:hover {
     animation-play-state: paused;
+}
+
+#hide-content + p {
+    display: none;
 }
 
 /*****F. FIGURE ANIMATION*****/
@@ -618,11 +653,11 @@ figcaption button:hover {
         content: "";
     }
 
-    .table-overflow {
+    /* .table-overflow {
         height: 100px;
         overflow: auto;
         word-wrap: break-word;
-    }
+    } */
 
     table tr td input[type=file], table tr td input[type=submit] {
         width: 100%;
