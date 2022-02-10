@@ -105,7 +105,7 @@ $findComments = new Comments();
     <h2>Commentaires</h2>
 
     <?php if(empty($comments)) : ?>
-        <p class="no-content">Aucun commentaire n'a encore été publié pour cet album.</p>
+        <p class="no-content">Sois le premier à commenter cet album&nbsp;!</p>
     <?php else : ?>
         <div>
             <?php foreach($comments as $comment) : ?>
@@ -123,33 +123,31 @@ $findComments = new Comments();
                                 <button class="delete" name="deleteComment"><i class="fas fa-trash-alt"></i>Supprimer</button>
                             </form>
 
-                            <button id="hide-form" value="ON"><i class="fas fa-pen"></i>Modifier</button>
+                            <button id="hide-content" value="ON"><i class="fas fa-pen"></i>Modifier</button>
 
-                            <form class="answer-form" action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
-                                <p class="mandatory">Ce champ est obligatoire.</p>
+                            <dialog open>
+                                <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
+                                    <p class="mandatory">Ce champ est obligatoire.</p>
 
-                                <div>
-                                    <label for="comment">Commentaire&nbsp;:</label>
                                     <textarea name="comment" class="comment" rows="8" cols="40"><?= htmlspecialchars(trim($comment["comment"])) ?></textarea>
-
                                     <div></div>
-                                </div>
+                                    
+                                    <div class="rules">
+                                        <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
+                                        <input type="checkbox" value="true" name="acceptRules">
+                                    </div>
 
-                                <div class="rules">
-                                    <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
-                                    <input type="checkbox" value="true" name="acceptRules">
-                                </div>
+                                    <div class="rules">
+                                        <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
+                                        <input type="checkbox" value="true" name="acceptPolicy">
+                                    </div>
 
-                                <div class="rules">
-                                    <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
-                                    <input type="checkbox" value="true" name="acceptPolicy">
-                                </div>
-
-                                <div>
                                     <input type="text" name="commentId" value="<?= htmlspecialchars($comment["id"]) ?>" hidden>
                                     <input type="submit" name="changeComment" value="Modifier le commentaire">
-                                </div>
-                            </form>
+                                </form>
+
+                                <button id="close"><i class="far fa-window-close"></i>Fermer</button>
+                            </dialog>
                         </div>
                     <?php endif; ?>
 
@@ -168,57 +166,45 @@ $findComments = new Comments();
                             </form>
                         </div>
 
-                        <button id="hide-form" value="ON"><i class="fas fa-reply"></i>Répondre</button>
+                        <button id="hide-content" value="ON"><i class="fas fa-reply"></i>Répondre</button>
 
-                        <form class="answer-form" action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
-                            <p class="mandatory">Tous les champs sont obligatoires.</p>
+                        <dialog open>
+                            <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
+                                <p class="mandatory">Tous les champs sont obligatoires.</p>
 
-                            <div>
-                                <label for="email">Adresse électronique&nbsp;:</label>
-                                <input type="text" name="email" class="email" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["email"] ?>" <?php endif; ?>>
-
+                                <input type="text" name="email" class="email" placeholder="Email" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["email"] ?>" <?php endif; ?>>
                                 <div></div>
-                            </div>
 
-                            <div>
-                                <label for="commentLogin">Pseudo&nbsp;:</label>
-                                <input type="text" name="commentLogin" class="comment-login" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["login"] ?>" <?php endif; ?>>
-
+                                <input type="text" name="commentLogin" class="comment-login" placeholder="Pseudo" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["login"] ?>" <?php endif; ?>>
                                 <div></div>
-                            </div>
 
-                            <div>
-                                <label for="answer">Réponse&nbsp;:</label>
-                                <textarea name="answer" class="answer" rows="8" cols="40"></textarea>
-
+                                <textarea name="answer" class="answer" rows="8" cols="40" placeholder="Réponse"></textarea>
                                 <div></div>
-                            </div>
 
-                            <div class="rules">
+                                <div class="rules">
                                     <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
                                     <input type="checkbox" value="true" name="acceptRules">
                                 </div>
 
-                            <div class="rules">
-                                <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
-                                <input type="checkbox" value="true" name="acceptPolicy">
-                            </div>
+                                <div class="rules">
+                                    <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
+                                    <input type="checkbox" value="true" name="acceptPolicy">
+                                </div>
 
-                            <div>
                                 <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
                                 <input type="text" name="albumTitle" value="<?= htmlspecialchars(trim($comment["album_title"])) ?>" hidden>
                                 <input type="submit" name="postAnswer" value="Publier la réponse">
-                            </div>
-                        </form>
+                            </form>
+
+                            <button id="close"><i class="far fa-window-close"></i>Fermer</button>
+                        </dialog>
 
                         <button id="hide-answers" value="ON"><i class="fas fa-caret-right"></i>Réponses</button>
                     </div>
 
-                    <!-- <button id="hide-answers" value="ON"><i class="fas fa-caret-right"></i>Réponses</button> -->
-
                     <div class="answer-content">
                         <?php if(empty($answers)) : ?>
-                            <p class="no-content">Aucune réponse n'a encore été publiée pour ce commentaire.</p>
+                            <p class="no-content">Sois le premier à répondre à ce commentaire&nbsp;!</p>
                         <?php else : ?>
                             <?php foreach($answers as $answer) : ?>
                                 <p><?= htmlspecialchars($answer["user_login"]) ?></p>
@@ -234,33 +220,31 @@ $findComments = new Comments();
                                             <button class="delete" name="deleteAnswer"><i class="fas fa-trash-alt"></i>Supprimer</button>
                                         </form>
 
-                                        <button id="hide-form" value="ON"><i class="fas fa-pen"></i>Modifier</button>
+                                        <button id="hide-content" value="ON"><i class="fas fa-pen"></i>Modifier</button>
 
-                                        <form class="answer-form" action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
-                                            <p class="mandatory">Ce champ est obligatoire.</p>
-
-                                            <div>
-                                                <label for="answer">Réponse&nbsp;:</label>
+                                        <dialog open>
+                                            <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
+                                                <p class="mandatory">Ce champ est obligatoire.</p>
+                                                
                                                 <textarea name="answer" class="answer" rows="8" cols="40"><?= htmlspecialchars(trim($answer["answer"])) ?></textarea>
-
                                                 <div></div>
-                                            </div>
 
-                                            <div class="rules">
-                                                <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
-                                                <input type="checkbox" value="true" name="acceptRules">
-                                            </div>
+                                                <div class="rules">
+                                                    <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
+                                                    <input type="checkbox" value="true" name="acceptRules">
+                                                </div>
 
-                                            <div class="rules">
-                                                <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
-                                                <input type="checkbox" value="true" name="acceptPolicy">
-                                            </div>
-
-                                            <div>
+                                                <div class="rules">
+                                                    <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
+                                                    <input type="checkbox" value="true" name="acceptPolicy">
+                                                </div>
+                                                
                                                 <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
                                                 <input type="submit" name="changeAnswer" value="Modifier la réponse">
-                                            </div>
-                                        </form>
+                                            </form>
+
+                                            <button id="close"><i class="far fa-window-close"></i>Fermer</button>
+                                        </dialog>
                                     </div>
                                 <?php endif; ?>
 
@@ -289,26 +273,15 @@ $findComments = new Comments();
     <p class="mandatory">Tous les champs sont obligatoires.</p>
         
     <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmCommaddition(event)">
-        <div>
-            <label for="email">Adresse électronique&nbsp;:</label>
-            <input type="text" name="email" class="email" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["email"] ?>" <?php endif; ?>>
+        <input type="text" name="email" class="email" placeholder="Email" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["email"] ?>" <?php endif; ?>>
+        <div></div>
 
-            <div></div>
-        </div>
+        <label for="commentLogin">Pseudo&nbsp;:</label>
+        <input type="text" name="commentLogin" class="comment-login" placeholder="Pseudo" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["login"] ?>" <?php endif; ?>>
+        <div></div>
 
-        <div>
-            <label for="commentLogin">Pseudo&nbsp;:</label>
-            <input type="text" name="commentLogin" class="comment-login" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["login"] ?>" <?php endif; ?>>
-
-            <div></div>
-        </div>
-
-        <div>
-            <label for="comment">Commentaire&nbsp;:</label>
-            <textarea name="comment" class="comment" rows="8" cols="40" maxlength="200" title="Saisis 200 caractères maximum, espaces comprises"></textarea>
-
-            <div></div>
-        </div>
+        <textarea name="comment" class="comment" rows="8" cols="40" placeholder="Commentaire"></textarea>
+        <div></div>
 
         <div class="rules">
             <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
@@ -320,10 +293,8 @@ $findComments = new Comments();
             <input type="checkbox" value="true" name="acceptPolicy">
         </div>
 
-        <div>
-            <input type="text" name="albumTitle" value="<?= htmlspecialchars(trim($albums["title"])) ?>" hidden>
-            <input type="submit" name="postComment" value="Publier le commentaire">
-        </div>
+        <input type="text" name="albumTitle" value="<?= htmlspecialchars(trim($albums["title"])) ?>" hidden>
+        <input type="submit" name="postComment" value="Publier le commentaire">
     </form>
     
     <p class="redirect">Revenir à la <a href="index.php?p=albumPublishers">liste des auteurs</a></p>

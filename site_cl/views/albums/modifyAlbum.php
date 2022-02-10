@@ -58,36 +58,24 @@
         <p class="mandatory">Tous les champs sont obligatoires. Modifie le contenu désiré et soumets le formulaire pour mettre l'album à jour.</p>
         
         <form enctype="multipart/form-data" action="index.php?p=modifyAlbum&albumId=<?= htmlspecialchars($findAlbum["id"]) ?>" method="post" onsubmit="confirmChange(event)">
-            <div>
-                <label for="title">Titre&nbsp;:</label>
-                <input type="text" name="title" class="album-title" value="<?= htmlspecialchars(trim($findAlbum["title"])) ?>"  maxlength="30" title="Saisis 30 caractères maximum, espaces comprises">
-
-                <div><?= 30 - strlen(htmlspecialchars(trim($findAlbum["title"]))) ?> caractères restants</div>
-                <div></div>
-            </div>
+            <input type="text" name="title" class="album-title" value="<?= htmlspecialchars(trim($findAlbum["title"])) ?>"  maxlength="30" placeholder="Titre (30 caractères)">
+            <div><?= 30 - strlen(htmlspecialchars(trim($findAlbum["title"]))) ?> caractères restants</div>
+            <div></div>
             
-            <div>
-                <label for="description">Description&nbsp;:</label>
-                <textarea name="description" class="album-description" rows="5" cols="60" maxlength="200" title="Saisis 200 caractères maximum, espaces comprises"><?= htmlspecialchars(trim($findAlbum["description"])) ?></textarea>
-
-                <div><?= 200 - strlen(htmlspecialchars(trim($findAlbum["description"]))) ?> caractères restants</div>
-                <div></div>
-            </div>
+            <textarea name="description" class="album-description" rows="5" cols="60" maxlength="200" placeholder="Description (200 caractères)"><?= htmlspecialchars(trim($findAlbum["description"])) ?></textarea>
+            <div><?= 200 - strlen(htmlspecialchars(trim($findAlbum["description"]))) ?> caractères restants</div>
+            <div></div>
 
             <div class="cover-modif">
-                <p>Couverture actuelle&nbsp;:</p>
-
+                <p>Couverture actuelle</p>
                 <?php require "assets/php/CoverReplacement.php"; ?>
             </div>
 
-            <div>
-                <label for="cover">Remplacer la couverture&nbsp;:</label>
-                <input type="text" name="coverName" value="<?= htmlspecialchars(trim($currentCover["cover_name"])) ?>" hidden>
-                <input type="file" name="cover" id="album-cover" accept=".jpg, .jpeg, .png" title="Sélectionne un fichier .jpg, .jpeg ou .png ne dépassant pas 3 Mo">
-
-                <div>Aperçu de la nouvelle couverture&nbsp;:</div>
-                <div>Taille de la nouvelle couverture&nbsp;:</div>
-            </div>
+            <label for="cover">Nouvelle couverture</label>
+            <input type="text" name="coverName" value="<?= htmlspecialchars(trim($currentCover["cover_name"])) ?>" hidden>
+            <input type="file" name="cover" id="album-cover" accept=".jpg, .jpeg, .png" title="Fichier .jp(e)g / .png ne dépassant pas 3 Mo"">
+            <div>Aperçu nouvelle couverture</div>
+            <div>Taille nouvelle couverture</div>
 
             <div class="rules">
                 <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
@@ -99,9 +87,7 @@
                 <input type="checkbox" value="true" name="acceptPolicy">
             </div>
             
-            <div>
-                <input type="submit" name="albumChanges" value="Confirmer la/les modification(s)">
-            </div>
+            <input type="submit" name="albumChanges" value="Confirmer la/les modification(s)">
         </form>
     </section>
 
@@ -111,7 +97,7 @@
         <?php if(empty($currentPictures)) : ?>
             <p class="no-content">Cet album ne contient aucune image.</p>
         <?php else : ?>
-            <table>
+            <table class="picture-replacement">
                 <thead>
                     <tr>
                         <th>Image(s) actuelle(s)</th>
@@ -135,12 +121,12 @@
                                 <p class="mandatory">Ce champ est obligatoire.</p>
 
                                 <form enctype="multipart/form-data" action="index.php?p=modifyAlbum&albumId=<?= htmlspecialchars($findAlbum["id"]) ?>" method="post" onsubmit="confirmChange(event)">
-                                    <label for="newPicture">Remplacer l'image&nbsp;:</label>
-                                    <input type="file" name="newPicture" id="new-picture" accept=".jpg, .jpeg, .png" title="Sélectionne un fichier .jpg, .jpeg ou .png. Le total des images existantes ou remplacées ne doit pas dépasser 30 Mo">
+                                    <label for="newPicture">Nouvelle image</label>
+                                    <input type="file" name="newPicture" id="new-picture" accept=".jpg, .jpeg, .png" title="Fichier .jp(e)g / .png. Le total des images existantes et remplacées ne doit pas dépasser 30 Mo">
 
-                                    <div>Aperçu de la nouvelle image&nbsp;:</div>
-                                    <div>Taille de la nouvelle image&nbsp;:</div>
-                                    <div>Taille totale des images existantes&nbsp;:</div>
+                                    <div>Aperçu nouvelle image</div>
+                                    <div>Taille nouvelle image</div>
+                                    <div>Taille totale images existantes et remplacées</div>
 
                                     <div class="rules">
                                         <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
@@ -153,7 +139,6 @@
                                     </div>
 
                                     <input type="text" name="pictureId" value="<?= htmlspecialchars($currentPicture["id"]) ?>" hidden>
-                                    
                                     <input type="text" name="currentName" value="<?= htmlspecialchars(trim($currentPicture["picture_name"])) ?>" hidden>
                                     <input type="submit" name="pictureChange" value="Confirmer le remplacement d'image">
                                 </form>
@@ -173,11 +158,11 @@
         <p class="mandatory">Ce champ est obligatoire.</p>
             
         <form enctype="multipart/form-data" action="index.php?p=modifyAlbum&albumId=<?= htmlspecialchars($findAlbum["id"]) ?>" method="post" onsubmit="confirmPicaddition(event)">
-            <label for="extraPictures[]">Ajouter une ou plusieurs image(s)&nbsp;:</label>
+            <label for="extraPictures[]">Image(s) supplémentaire(s)</label>
             <input type="file" class="form-control-file" name="extraPictures[]" id="extra-pictures" multiple accept=".jpg, .jpeg, .png" title="Sélectionne un/des fichier(s) .jpg, .jpeg ou .png. Le total des images existantes et des images ajoutées ne doit pas dépasser 30 Mo">
 
-            <div>Aperçu de l'image / des images supplémentaire(s)&nbsp;:</div>
-            <div>Taille totale des images existantes et de l'image / des images supplémentaire(s)&nbsp;:</div>
+            <div>Aperçu image(s) supplémentaire(s)</div>
+            <div>Taille totale images existantes et supplémentaire(s)</div>
 
             <div class="rules">
                 <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
