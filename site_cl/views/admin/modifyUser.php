@@ -58,33 +58,21 @@
 
 <?php if(!$_POST) : ?>
     <section class="container">    
-        <h2>Adresse électronique</h2>
+        <h2>Email</h2>
 
         <p class="mandatory">Tous les champs sont obligatoires.</p>
         
         <form action="index.php?p=modifyUser&userId=<?= htmlspecialchars($findUser["id"]) ?>" method="post" onsubmit="confirmChange(event)">
-            <div>
-                <label for="currentEmail">Adresse électronique actuelle&nbsp;:</label>
-                <input type="text" name="currentEmail" value="<?= htmlspecialchars($findUser["email"]) ?>" readonly>
-            </div>
+            <label for="currentEmail">Email actuel</label>
+            <input type="text" name="currentEmail" value="<?= htmlspecialchars($findUser["email"]) ?>" readonly>
             
-            <div>
-                <label for="email">Nouvelle adresse électronique demandée&nbsp;:</label>
-                <input type="text" name="email" class="email">
-
-                <div></div>
-            </div>
+            <input type="text" name="email" class="email" placeholder="Nouvel email demandé">
+            <div></div>
             
-            <div>
-                <label for="confirmEmail">Confirmer la nouvelle adresse électronique&nbsp;:</label>
-                <input type="text" name="confirmEmail" class="confirm-email" title="Saisis la même valeur que le champ ci-dessus" >
-
-                <div></div>
-            </div>
+            <input type="text" name="confirmEmail" class="confirm-email" placeholder="Confirmation du nouvel email" title="Saisis la même valeur que le champ ci-dessus">
+            <div></div>
             
-            <div>
-                <input type="submit" name="emailChange" value="Confirmer le changement d'adresse électronique">
-            </div>
+            <input type="submit" name="emailChange" value="Confirmer le changement d'email">
         </form>
     </section>
 
@@ -94,28 +82,16 @@
         <p class="mandatory">Tous les champs sont obligatoires.</p>
         
         <form action="index.php?p=modifyUser&userId=<?= htmlspecialchars($findUser["id"]) ?>" method="post" onsubmit="confirmChange(event)">
-            <div>
-                <label for="currentLogin">Pseudo actuel&nbsp;:</label>
-                <input type="text" name="currentLogin" value="<?= htmlspecialchars($findUser["login"]) ?>" readonly>
-            </div>
+            <label for="currentLogin">Pseudo actuel</label>
+            <input type="text" name="currentLogin" value="<?= htmlspecialchars($findUser["login"]) ?>" readonly>
             
-            <div>
-                <label for="login">Nouveau pseudo demandé&nbsp;:</label>
-                <input type="text" name="login" class="login" minlength="3" maxlength="10" title="Saisis trois à dix caractères">
-
-                <div></div>
-            </div>
+            <input type="text" name="login" class="login" minlength="3" maxlength="10" placeholder="Nouveau pseudo demandé (3 à 10 caractères)" title="Saisis trois à dix caractères">
+            <div></div>
             
-            <div>
-                <label for="confirmLogin">Confirmer le nouveau pseudo&nbsp;:</label>
-                <input type="text" name="confirmLogin" class="confirm-login" minlength="3" maxlength="10" title="Saisis la même valeur que le champ ci-dessus">
-
-                <div></div>
-            </div>
+            <input type="text" name="confirmLogin" class="confirm-login" minlength="3" maxlength="10" placeholder="Confirmation du nouveau pseudo" title="Saisis la même valeur que le champ ci-dessus">
+            <div></div>
             
-            <div>
-                <input type="submit" name="loginChange" value="Confirmer le changement de pseudo">
-            </div>
+            <input type="submit" name="loginChange" value="Confirmer le changement de pseudo">
         </form>
     </section>
 
@@ -125,21 +101,12 @@
         <p class="mandatory">Tous les champs sont obligatoires.</p>
             
         <form action="index.php?p=modifyUser&userId=<?= htmlspecialchars($findUser["id"]) ?>" method="post" onsubmit="confirmChange(event)">
-            <div>
-                <label for="password">Nouveau mot de passe demandé&nbsp;:</label>
-                <input type="password" name="password" class="password">
-            </div>
+            <input type="password" name="password" class="password" placeholder="Nouveau mot de passe demandé">
             
-            <div>
-                <label for="confirmPassword">Confirmer le nouveau mot de passe&nbsp;:</label>
-                <input type="password" name="confirmPassword" class="confirm-password" title="Saisis la même valeur que le champ ci-dessus">
-
-                <div></div>
-            </div>
+            <input type="password" name="confirmPassword" class="confirm-password" placeholder="Confirmation du nouveau mot de passe" title="Saisis la même valeur que le champ ci-dessus">
+            <div></div>
             
-            <div>
-                <input type="submit" name="passwordChange" value="Confirmer le changement de mot de passe">
-            </div>
+            <input type="submit" name="passwordChange" value="Confirmer le changement de mot de passe">
         </form>
     </section>
 <?php endif; ?>
@@ -152,20 +119,15 @@
             <p class="mandatory">Ce champ est obligatoire.</p>
             
             <form action="index.php?p=modifyUser&userId=<?= htmlspecialchars($findUser["id"]) ?>" method="post" onsubmit="confirmChange(event)">
-                <div>
-                    <label for="role">Rôle de l'utilisateur&nbsp;:</label>
-
-                    <select name="role" title="Clique pour choisir un rôle">
-                        <option value="" selected>[choix du rôle]</option>
-                        <option value="0">Visiteur non membre de la CL</option>
-                        <option value="1">Membre de la CL sans droits d'administration</option>
-                        <option value="2">Membre de la CL avec droits d'aministration</option>
-                    </select>
-                </div>
+                <label for="role">Rôle de l&apos;utilisateur</label>
+                <select name="role" title="Clique pour choisir un rôle">
+                    <option value="" selected>[choix du rôle]</option>
+                    <option value="0">Visiteur non membre de la CL</option>
+                    <option value="1">Membre de la CL sans droits d'administration</option>
+                    <option value="2">Membre de la CL avec droits d'aministration</option>
+                </select>
                 
-                <div>
-                    <input type="submit" name="roleChange" value="Confirmer le changement de rôle">
-                </div>
+                <input type="submit" name="roleChange" value="Confirmer le changement de rôle">
             </form>
         <?php endif; ?>
     <?php endif; ?>
