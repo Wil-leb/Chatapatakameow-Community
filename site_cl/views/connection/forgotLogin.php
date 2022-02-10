@@ -1,5 +1,5 @@
 <section class="container">
-    <h1>Récupération de mot de passe</h1> 
+    <h1>Récupération de pseudo</h1> 
     <?php if(empty($forgotLogMsg["success"])) : ?>
         <?php if(!empty($forgotLogMsg["errors"])) {  ?>
             <ul class="error">
@@ -14,14 +14,9 @@
             <p class="mandatory">Ce champ est obligatoire.</p>
 
             <form action="index.php?p=forgotLogin" method="POST">
-                <div>
-                    <label for="mail">Adresse électronique&nbsp;:</label>
-                    <input type="text" name="mail">
-                </div>
-
-                <div>
-                    <input type="submit" name="recoverLogin" value="Recevoir ton pseudo">
-                </div>
+                <input type="text" name="mail" placeholder="Email">
+                
+                <input type="submit" name="recoverLogin" value="Recevoir ton pseudo">
             </form>
         <?php endif; ?>
 

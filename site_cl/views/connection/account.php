@@ -52,33 +52,20 @@ $findImages = new Album();
 
 <?php if(!$_POST) : ?>
     <section class="container">    
-        <h2>Adresse électronique</h2>
+        <h2>Email</h2>
         
         <p class="mandatory">Tous les champs sont obligatoires.</p>
         
         <form action="index.php?p=account" method="post" onsubmit="confirmChange(event)">
-            <div>
-                <label for="currentEmail">Adresse électronique actuelle&nbsp;:</label>
-                <input type="text" name="currentEmail">
-            </div>
+            <input type="text" name="currentEmail" placeholder="Email actuel">
             
-            <div>
-                <label for="email">Nouvelle adresse électronique&nbsp;:</label>
-                <input type="text" name="email" class="email">
-
-                <div></div>
-            </div>
+            <input type="text" name="email" class="email" placeholder="Nouvel email">
+            <div></div>
             
-            <div>
-                <label for="confirmEmail">Confirme ta nouvelle adresse électronique&nbsp;:</label>
-                <input type="text" name="confirmEmail" class="confirm-email" title="Saisis la même valeur que le champ ci-dessus">
-
-                <div></div>
-            </div>
+            <input type="text" name="confirmEmail" class="confirm-email" placeholder="Confirmation du nouvel email" title="Saisis la même valeur que le champ ci-dessus">
+            <div></div>
             
-            <div>
-                <input type="submit" name="emailChange" value="Confirmer le changement d'adresse électronique">
-            </div>
+            <input type="submit" name="emailChange" value="Confirmer le changement d'email">
         </form>
     </section>
 
@@ -88,28 +75,15 @@ $findImages = new Album();
         <p class="mandatory">Tous les champs sont obligatoires.</p>
         
         <form action="index.php?p=account" method="post" onsubmit="confirmChange(event)">
-            <div>
-                <label for="currentLogin">Pseudo actuel&nbsp;:</label>
-                <input type="text" name="currentLogin">
-            </div>
+            <input type="text" name="currentLogin" placeholder="Pseudo actuel">
             
-            <div>
-                <label for="login">Nouveau pseudo&nbsp;:</label>
-                <input type="text" name="login" class="login" minlength="3" maxlength="10" title="Saisis trois à dix caractères">
-
-                <div></div>
-            </div>
+            <input type="text" name="login" class="login" minlength="3" maxlength="10" placeholder="Nouveau pseudo (3 à 10 caractères)" title="Saisis trois à dix caractères">
+            <div></div>
             
-            <div>
-                <label for="confirmLogin">Confirme ton nouveau pseudo&nbsp;:</label>
-                <input type="text" name="confirmLogin" class="confirm-login" minlength="3" maxlength="10" title="Saisis la même valeur que le champ ci-dessus">
-
-                <div></div>
-            </div>
+            <input type="text" name="confirmLogin" class="confirm-login" minlength="3" maxlength="10" placeholder="Confirmation du nouveau pseudo" title="Saisis la même valeur que le champ ci-dessus">
+            <div></div>
             
-            <div>
-                <input type="submit" name="loginChange" value="Confirmer le changement de pseudo">
-            </div>
+            <input type="submit" name="loginChange" value="Confirmer le changement de pseudo">
         </form>
     </section> 
 
@@ -119,26 +93,14 @@ $findImages = new Album();
         <p class="mandatory">Tous les champs sont obligatoires.</p>
         
         <form action="index.php?p=account" method="post" onsubmit="confirmChange(event)">
-            <div>
-                <label for="currentPassword">Mot de passe actuel&nbsp;:</label>
-                <input type="password" name="currentPassword">
-            </div>
+            <input type="password" name="currentPassword" placeholder="Mot de passe actuel">
             
-            <div>
-                <label for="password">Nouveau mot de passe&nbsp;:</label>
-                <input type="password" name="password" class="password">
-            </div>
-            
-            <div>
-                <label for="confirmPassword">Confirme ton nouveau mot de passe&nbsp;:</label>
-                <input type="password" name="confirmPassword" class="confirm-password" title="Saisis la même valeur que le champ ci-dessus">
-
-                <div></div>
-            </div>
-            
-            <div>
-                <input type="submit" name="passwordChange" value="Confirmer le changement de mot de passe">
-            </div>
+            <input type="password" name="password" class="password" placeholder="Nouveau mot de passe">
+ 
+            <input type="password" name="confirmPassword" class="confirm-password" placeholder="Confirmation du nouveau mot de passe" title="Saisis la même valeur que le champ ci-dessus">
+            <div></div>
+        
+            <input type="submit" name="passwordChange" value="Confirmer le changement de mot de passe">
         </form>
     </section>
 <?php endif; ?>

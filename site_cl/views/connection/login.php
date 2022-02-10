@@ -30,26 +30,19 @@
         <p class="mandatory">Tous les champs sont obligatoires.</p>
         
         <form action="index.php?p=login" method="post">
-            <div>
-                <label for="login">Pseudo&nbsp;:</label>
-                <input type="text" name="login" <?= $cookie::checkCookie("login") ?>>
-                <a class="forgot-account" href="index.php?p=forgotLogin">Pseudo oublié&nbsp;?</a>
-            </div>
+            <input type="text" name="login" placeholder="Pseudo" <?= $cookie::checkCookie("login") ?>>
 
-            <div>
-                <label for="password">Mot de passe&nbsp;:</label>
-                <input type="password" name="password" <?= $cookie::checkCookie("password") ?>>
-                <a class="forgot-account" href="index.php?p=forgotPassword">Mot de passe oublié&nbsp;?</a>
-            </div>
+            <a class="forgot-account" href="index.php?p=forgotLogin">Pseudo oublié&nbsp;?</a>
+
+            <input type="password" name="password" placeholder="Mot de passe" <?= $cookie::checkCookie("password") ?>>
+            <a class="forgot-account" href="index.php?p=forgotPassword">Mot de passe oublié&nbsp;?</a>
             
             <div class="remember-user">
                 <label for="rememberMe">Se souvenir de moi</label>	
                 <input type="checkbox" value="true" name="rememberMe">
             </div>
 
-            <div>
-                <input type="submit" name="connect" value="Se connecter">
-            </div>
+            <input type="submit" name="connect" value="Se connecter">
         </form>
     
         <p>Tu souhaites devenir membre&nbsp;? Clique <a href="index.php?p=register">ici</a> pour t'inscrire&nbsp;!</p>

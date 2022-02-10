@@ -14,14 +14,9 @@
             <p class="mandatory">Ce champ est obligatoire.</p>
 
             <form action="index.php?p=forgotPassword" method="POST">
-                <div>
-                    <label for="mail">Adresse électronique&nbsp;:</label>
-                    <input type="text" name="mail">
-                </div>
-
-                <div>
-                    <input type="submit" name="recoverPassword" value="Recevoir un nouveau mot de passe">
-                </div>
+                <input type="text" name="mail" placeholder="Email">
+                
+                <input type="submit" name="recoverPassword" value="Recevoir un nouveau mot de passe">
             </form>
         <?php endif; ?>
 

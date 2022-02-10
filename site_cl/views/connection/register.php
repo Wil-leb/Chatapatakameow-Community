@@ -23,31 +23,16 @@
         <p class="mandatory">Tous les champs sont obligatoires.</p>
         
         <form action="index.php?p=register" method="post" onsubmit="confirmRegistration(event)">
-            <div>
-                <label for="email">Adresse électronique&nbsp;:</label>
-                <input type="text" name="email" class="email">
+            <input type="text" name="email" class="email" placeholder="Email">
+            <div></div>
 
-                <div></div>
-            </div>
+            <input type="text" name="login" class="login" minlength="3" maxlength="10" placeholder="Pseudo (3 à 10 caractères)">
+            <div></div>
+            
+            <input type="password" name="password" class="password" placeholder="Mot de passe">
 
-            <div>
-                <label for="login">Crée ton pseudo&nbsp;:</label>
-                <input type="text" name="login" class="login" minlength="3" maxlength="10" title="Saisis trois à dix caractères">
-
-                <div></div>
-            </div>
-
-            <div>
-                <label for="password">Crée ton mot de passe&nbsp;:</label>
-                <input type="password" name="password" class="password">
-            </div>
-
-            <div>
-                <label for="confirmPassword">Confirme ton mot de passe&nbsp;:</label>
-                <input type="password" name="confirmPassword" class="confirm-password" title="Saisis la même valeur que le champ ci-dessus">
-
-                <div></div>
-            </div>
+            <input type="password" name="confirmPassword" class="confirm-password" placeholder="Confirmation du mot de passe" title="Saisis la même valeur que le champ ci-dessus">
+            <div></div>
             
             <div class="rules">
                 <p><em>En cochant les deux cases ci-dessous&nbsp;:</em></p>
@@ -66,9 +51,7 @@
                 <input type="checkbox" value="true" name="acceptPolicy">
             </div>
 
-            <div>
-                <input type="submit" name="register" value="S'inscrire">
-            </div>
+            <<input type="submit" name="register" value="S'inscrire">
         </form>
         
         <p>Déjà membre&nbsp;? clique <a href="index.php?p=login">ici</a> pour te connecter&nbsp;!</p>
