@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
     OnchangeEventClass.pictureMessages()
 
-    OnclickEventClass.displayForm()
     OnclickEventClass.displayAnswers()
     OnclickEventClass.openDialog()
 
