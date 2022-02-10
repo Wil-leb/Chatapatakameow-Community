@@ -127,7 +127,7 @@ class FrontController {
                 $user = new User();
                 $findUser = $user->findUserById($id);
                 
-                if(isset($_POST["emailChange"]) && $_POST["emailChange"] == "Confirmer le changement d'adresse électronique") {
+                if(isset($_POST["emailChange"]) && $_POST["emailChange"] == "Confirmer le changement d'email") {
                     $form = new UserFormController(new User());
                     $emailMsg = $form->emailForm($_POST);
 
@@ -257,7 +257,7 @@ class FrontController {
         }
         
         else {
-            if(isset($_POST["emailChange"]) && $_POST["emailChange"] == "Confirmer le changement d'adresse électronique") {
+            if(isset($_POST["emailChange"]) && $_POST["emailChange"] == "Confirmer le changement d'email") {
                 $form = new UserFormController(new User());
                 $emailMsg = $form->emailForm($_POST);
 
