@@ -44,7 +44,7 @@ export default class OnchangeEvent {
                         }
 
                         else {
-                            sizeDiv.textContent = `Taille de la couverture : ${trueCovString}`
+                            sizeDiv.textContent = `Taille couverture : ${trueCovString}`
                             sizeDiv.style.color = "green"
 
                             if(this.pictureRegex.test(cover.files[0].name) && this.extensionRegex.test(cover.files[0].name) &&
@@ -109,7 +109,7 @@ export default class OnchangeEvent {
                             }
 
                             else {
-                                sizeDiv.textContent = `Taille de l'image / taille totale des images : ${truePicString}`
+                                sizeDiv.textContent = `Taille totale image(s) : ${truePicString}`
                                 sizeDiv.style.color = "green"
 
                                 if(this.pictureRegex.test(pictures.files[i].name) && this.extensionRegex.test(pictures.files[i].name) && !pictures.files[i].name.includes(" ")) {
@@ -199,7 +199,7 @@ export default class OnchangeEvent {
                             }
 
                             else {
-                                totalSizeDiv.textContent = `Taille totale des images existantes et remplacées : ${trueCurrentPicString}`
+                                totalSizeDiv.textContent = `Taille totale images existantes et remplacées : ${trueCurrentPicString}`
                                 totalSizeDiv.style.color = "green"
 
                                 if(this.pictureRegex.test(newPicture[i].files[0].name) &&
@@ -220,7 +220,7 @@ export default class OnchangeEvent {
                                     newPic.appendChild(image)
                                     image.style.display = "block"
                                     image.style.margin = "auto"
-                                    sizeDiv.textContent = `Taille de la nouvelle image : ${trueNewPicString}`
+                                    sizeDiv.textContent = `Taille nouvelle image : ${trueNewPicString}`
                                 }
 
                                 else if(!this.pictureRegex.test(newPicture[i].files[0].name) ||
@@ -284,7 +284,7 @@ export default class OnchangeEvent {
                             }
 
                             else {
-                                totalSizeDiv.textContent = `Taille totale des images existantes et ajoutées : ${trueExtraPicString}`
+                                totalSizeDiv.textContent = `Taille totale images existantes et supplémentaire(s) : ${trueExtraPicString}`
                                 totalSizeDiv.style.color = "green"
 
                                 if(this.pictureRegex.test(extraPictures.files[i].name) && this.extensionRegex.test(extraPictures.files[i].name) && !extraPictures.files[i].name.includes(" ") && picSize <= allowedPicsize) {

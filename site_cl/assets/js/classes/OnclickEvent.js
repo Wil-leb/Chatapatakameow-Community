@@ -1,38 +1,4 @@
 export default class OnclickEvent {
-    
-    displayForm() {
-        const hideForm = document.querySelectorAll("#hide-form")
-
-        for(let i = 0; i < hideForm.length; i ++) {
-            if(hideForm[i]) {
-                hideForm[i].addEventListener("click", () => {
-                    const answerForm = hideForm[i].nextElementSibling
-
-                    if(answerForm) {
-                        if(answerForm.previousElementSibling.value == "OFF") {
-                            answerForm.previousElementSibling.value = "ON"
-                            answerForm.style.display = "none"
-                        }
-                
-                        else {
-                            answerForm.previousElementSibling.value = "OFF"
-                            answerForm.style.display = "initial"
-
-                            // if(screen.width > 400) {
-                            //     answerForm.style.display = "initial"
-                            // }
-
-                            // else {
-                            //     answerForm.style.display = "inline-block"
-                            //     answerForm.style.height = "30rem"
-                            //     answerForm.style.overflow = "scroll"
-                            // }
-                        }
-                    }
-                });
-            }
-        }
-    }
 
     displayAnswers() {
         const parentDiv = document.querySelectorAll(".comment-content")
@@ -75,8 +41,8 @@ export default class OnclickEvent {
 
                 closeButton.addEventListener("click", () => {
                     dialog[i].previousElementSibling.value = "ON"
-                    dialog[i].previousElementSibling.removeAttribute("disabled")
                     dialog[i].style.visibility = "hidden"
+                    document.querySelector("body").style.visibility = "visible"
                 });
             }
         }
@@ -88,6 +54,8 @@ export default class OnclickEvent {
         for(let i = 0; i < hideContent.length; i ++) {
             if(hideContent[i]) {
                 hideContent[i].addEventListener("click", () => {
+                    document.querySelector("body").style.visibility = "hidden"
+
                     const content = hideContent[i].nextElementSibling
 
                     if(content) {
@@ -98,7 +66,6 @@ export default class OnclickEvent {
 
                         else {
                             content.previousElementSibling.value = "OFF"
-                            content.previousElementSibling.setAttribute("disabled", "")
                             content.style.visibility = "visible"
                         }
 
@@ -112,23 +79,6 @@ export default class OnclickEvent {
             }
         }
     }
-
-    // closeDialog() {
-    //     const dialog = document.getElementsByTagName("dialog")
-    //     // const closeButton = document.querySelectorAll("#close")
-                        
-    //     for(let i = 0; i < dialog.length; i ++) {
-    //         if(dialog[i]) {
-    //             const closeButton = dialog[i].querySelector("#close")
-
-    //             closeButton.addEventListener("click", () => {
-    //                 dialog.previousElementSibling.value = "ON"
-    //                 dialog.previousElementSibling.removeAttribute("disabled")
-    //                 dialog.style.visibility = "hidden"
-    //             });
-    //         }
-    //     }
-    // }
     
 //*****END OF THE CLASS*****//
 }
