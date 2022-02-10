@@ -16,9 +16,7 @@ What remains to do:
 - Allowing the users to deactivate unessential notifications via email.
 - Preventing the pages to refresh when a form is submitted.
 - Creating and implementing background images for the header, footer, body and error 404.
-- Perfecting the layout of the Admin dashboards and the comment/reply forms.
 - Writing text to replace the Lorem.
-- Reworking the label and placeholder attributes of the form inputs.
 - Implementing emotes for the comments/replies.
 - Creating grids and a slider for the albums/galleries of each user.
 - Creating a pop-up window for accepting or refusing cookies.
