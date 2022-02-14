@@ -20,25 +20,20 @@ class CommentFormController {
                 $commentMsg = [];
 
                 if($_POST["postComment"]) {
-                        $albumId = $_GET["albumId"];
-                        $albumTitle = $data["albumTitle"];
+                        $albumId = $data["albumId"];
+                        $trueId = $_GET["albumId"];
 
                         $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         $pdo->exec("SET NAMES UTF8");
 
-                        $query = $pdo->prepare("SELECT `id` FROM `album` WHERE `id` = :albumId");
+                        $query = $pdo->prepare("SELECT `title` FROM `album` WHERE `id` = :albumId");
 
                         $query->execute([":albumId" => $albumId]);
 
-                        $req = $pdo->prepare("SELECT `title` FROM `album` WHERE `title` = :albumTitle");
+                        $title = $query->fetchColumn();
 
-                        $req->execute([":albumTitle" => $albumTitle]);
-
-                        $trueId = $query->fetchColumn();
-                        $trueTitle = $req->fetchColumn();
-
-                        if($albumId != $trueId || $albumId == null || $albumTitle != $trueTitle || $albumTitle == null) {
+                        if($albumId != $trueId || $albumId == null) {
                                 die("Hacking attempt!");
                         }
 
@@ -78,17 +73,17 @@ class CommentFormController {
                                         $req = $pdo->prepare("SELECT `email` FROM `user`
                                                                 LEFT OUTER JOIN `album`
                                                                 ON user.login = album.user_login
-                                                                WHERE user.id = :userId");
+                                                                WHERE album.id = :albumId");
                                                                 
-                                        $req->execute([":userId" => $userId]);
+                                        $req->execute([":albumId" => $albumId]);
 
                                         $email = $req->fetchColumn();
 
-                                        $message = "Bonjour, ton album ".$albumTitle." vient d'être commenté. Voici le commentaire :\n".$data["comment"]."";
+                                        $message = "Bonjour, ton album ".$title." vient d'être commenté. Voici le commentaire :\n".$data["comment"]."";
                                         $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
                                         if(mail($email, "Nouveau commentaire", $message, $headers)) {
-                                                $commentMsg["success"] = ["Mail de confirmation envoyé."]; 
+                                                $commentMsg["success"] = ["Mail de confirmation envoyé."];
                                         }
                                         
                                         else {
@@ -99,7 +94,7 @@ class CommentFormController {
                                                 $id = uniqid();
                                         } while($pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = $id") > 0);
 
-                                        $commentAddition = $this->_comments->addComment($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $albumId, $albumTitle, $data["comment"]);
+                                        $commentAddition = $this->_comments->addComment($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $albumId, $title, $data["comment"]);
 
                                         $commentMsg["success"] = ["Le commentaire a été publié avec succès."];
                                 }
@@ -115,7 +110,8 @@ class CommentFormController {
 
                 if($_POST["postAnswer"]) {
                         $commentId = $data["commentId"];
-                        $albumTitle = $data["albumTitle"];
+                        $albumId = $data["albumId"];
+                        $trueAlbId = $_GET["albumId"];
 
                         $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -125,14 +121,14 @@ class CommentFormController {
 
                         $query->execute([":commentId" => $commentId]);
 
-                        $req = $pdo->prepare("SELECT `title` FROM `album` WHERE `title` = :albumTitle");
+                        $req = $pdo->prepare("SELECT `title` FROM `album` WHERE `id` = :albumId");
 
-                        $req->execute([":albumTitle" => $albumTitle]);
+                        $req->execute([":albumId" => $albumId]);
 
                         $trueId = $query->fetchColumn();
                         $trueTitle = $req->fetchColumn();
 
-                        if($commentId != $trueId || $commentId == null || $albumTitle != $trueTitle || $albumTitle == null) {
+                        if($commentId != $trueId || $commentId == null || $albumId != $trueId || $albumId == null) {
                                 die("Hacking attempt!");
                         }
 
@@ -163,11 +159,10 @@ class CommentFormController {
                                         $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                                         $pdo->exec("SET NAMES UTF8");
-
-                                        $query = $pdo->prepare("SELECT comments.user_email FROM `comments`
-                                                                LEFT OUTER JOIN `user`
-                                                                ON comments.user_email = user.email
+                                        
+                                        $query = $pdo->prepare("SELECT `user_email` FROM `comments`
                                                                 WHERE comments.id = :commentId");
+
                                         $query->execute([":commentId" => $commentId]);
 
                                         $email = $query->fetchColumn();
@@ -190,6 +185,8 @@ class CommentFormController {
                                         $answerAddition = $this->_comments->addAnswer($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $commentId, $albumTitle, $data["answer"]);
 
                                         $answerMsg["success"] = ["La réponse a été publiée avec succès."];
+
+                                        var_dump($email);
                                 }
                         }
                                 
@@ -207,17 +204,10 @@ class CommentFormController {
 
                 if(isset($_POST["likeAlb"]) || isset($_POST["dislikeAlb"])) {
                         $albumId = $_POST["albumId"];
+                        $trueId = $_GET["albumId"];
                         $voteValue = $_POST["voteValue"];
                         $category = "album";
-                        
-                        $sql = "SELECT `id` FROM `album` WHERE `id` = :id";
-                
-                        $query = $pdo->prepare($sql);
-                
-                        $query->execute([":id" => $albumId]);
 
-                        $trueId = $query->fetchColumn();
-                
                         if(isset($_POST["likeAlb"]) && $voteValue != "1" || isset($_POST["dislikeAlb"]) && $voteValue != "-1" ||
                                 $voteValue == null || $albumId != $trueId || $albumId == null) {
                                 die("Hacking attempt!");
@@ -225,19 +215,9 @@ class CommentFormController {
 
                         else {
                                 if(isset($_SERVER["REMOTE_ADDR"])) {
-                                        $voteId = "";
-
-                                        $formerVotes = $vote->findVotes($category, $_SERVER["REMOTE_ADDR"]);
-
-                                        if($formerVotes) {
-                                                $voteId = $formerVotes["id"];
-                                        }
-
-                                        else {
-                                                do {
-                                                        $voteId = uniqid();
-                                                } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId AND `category` = $category") > 0);
-                                        }
+                                        do {
+                                                $voteId = uniqid();
+                                        } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId AND `category` = $category") > 0);
 
                                         if($_POST["voteValue"] == 1) {
                                                 $vote->like($voteId, $albumId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
@@ -272,19 +252,9 @@ class CommentFormController {
 
                         else {
                                 if(isset($_SERVER["REMOTE_ADDR"])) {
-                                        $voteId = "";
-
-                                        $formerVotes = $vote->findVotes($category, $_SERVER["REMOTE_ADDR"]);
-
-                                        if($formerVotes) {
-                                                $voteId = $formerVotes["id"];
-                                        }
-
-                                        else {
-                                                do {
-                                                        $voteId = uniqid();
-                                                } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId AND `category` = $category") > 0);
-                                        }
+                                        do {
+                                                $voteId = uniqid();
+                                        } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId AND `category` = $category") > 0);
 
                                         if($_POST["voteValue"] == 1) {
                                                 $vote->like($voteId, $commentId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
@@ -295,6 +265,7 @@ class CommentFormController {
                                         }
 
                                         $vote->updateVotecount($commentId, $category);
+                                        var_dump($voteId);
                                 }
                         }
                 }
@@ -319,19 +290,9 @@ class CommentFormController {
 
                         else {
                                 if(isset($_SERVER["REMOTE_ADDR"])) {
-                                        $voteId = "";
-
-                                        $formerVotes = $vote->findVotes($category, $_SERVER["REMOTE_ADDR"]);
-
-                                        if($formerVotes) {
-                                                $voteId = $formerVotes["id"];
-                                        }
-
-                                        else {
-                                                do {
-                                                        $voteId = uniqid();
-                                                } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId AND `category` = $category") > 0);
-                                        }
+                                        do {
+                                                $voteId = uniqid();
+                                        } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId AND `category` = $category") > 0);
 
                                         if($_POST["voteValue"] == 1) {
                                                 $vote->like($voteId, $answerId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
@@ -347,22 +308,32 @@ class CommentFormController {
                 }
         }
 
-//*****D. Comment addition*****//
+//*****D. Comment modification*****//
         public function commentModifForm(array $data) {
                 $comModifMsg = [];
 
                 if($_POST["changeComment"]) {
                         $commentId = $data["commentId"];
+                        // $albumId = $data["albumId"];
+                        // $trueAlbId = $_GET["albumId"];
 
                         $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         $pdo->exec("SET NAMES UTF8");
+
+                        // $query = $pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = :commentId AND `album_id` = :albumId");
+
+                        // $query->execute([":commentId" => $commentId, ":albumId" => $albumId]);
 
                         $query = $pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = :commentId");
 
                         $query->execute([":commentId" => $commentId]);
 
                         $trueCommId = $query->fetchColumn();
+
+                        // if($commentId != $trueCommId || $commentId == null || $albumId != $trueAlbId || $albumId == null) {
+                        //         die("Hacking attempt!");
+                        // }
 
                         if($commentId != $trueCommId || $commentId == null) {
                                 die("Hacking attempt!");
@@ -392,22 +363,37 @@ class CommentFormController {
                 }
         }
 
-//*****E. Answer addition*****//
+//*****E. Answer modification*****//
         public function answerModifForm(array $data) {
                 $answModifMsg = [];
 
                 if($_POST["changeAnswer"]) {
                         $answerId = $data["answerId"];
+                        // $commentId = $data["commentId"];
 
                         $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         $pdo->exec("SET NAMES UTF8");
+
+                        // $query = $pdo->prepare("SELECT `id` FROM `comment_answers` WHERE `id` = :answerId AND `comment_id` = :commentId");
+
+                        // $query->execute([":answerId" => $answerId, ":commentId" => $commentId]);
 
                         $query = $pdo->prepare("SELECT `id` FROM `comment_answers` WHERE `id` = :answerId");
 
                         $query->execute([":answerId" => $answerId]);
 
                         $trueAnswId = $query->fetchColumn();
+
+                        // $req = $pdo->prepare("SELECT `comment_id` FROM `comment_answers` WHERE `id` = :answerId AND `comment_id` = :commentId");
+
+                        // $req->execute([":answerId" => $answerId, ":commentId" => $commentId]);
+
+                        // $trueCommId = $req->fetchColumn();
+
+                        // if($answerId != $trueAnswId || $answerId == null || $commentId != $trueCommId || $commentId == null) {
+                        //         die("Hacking attempt!");
+                        // }
 
                         if($answerId != $trueAnswId || $answerId == null) {
                                 die("Hacking attempt!");
@@ -441,61 +427,79 @@ class CommentFormController {
         public function commentDeletionForm($commentId) {
                 $commentDelMsg = [];
 
-                if(!Session::admin() && isset($_POST["deleteComment"])) {
+                if(!Session::online() && isset($_POST["deleteComment"])) {
                         $commentId = $_POST["commentId"];
-                        $albumTitle = $_POST["albumTitle"];
+                        // $albumId = $_POST["albumId"];
+                        // $trueAlbId = $_GET["albumId"];
 
                         $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         $pdo->exec("SET NAMES UTF8");
 
+                        // $query = $pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = :commentId AND `album_id` = :albumId");
+
+                        // $query->execute([":commentId" => $commentId, ":albumId" => $albumId]);
+
                         $query = $pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = :commentId");
 
                         $query->execute([":commentId" => $commentId]);
 
-                        $req = $pdo->prepare("SELECT `album_title` FROM `comments` WHERE `album_title` = :albumTitle");
+                        // $req = $pdo->prepare("SELECT `album_title` FROM `comments` WHERE `id` = :commentId AND `album_id` = :albumId");
 
-                        $req->execute([":albumTitle" => $albumTitle]);
+                        // $req->execute([":commentId" => $commentId, ":albumId" => $albumId]);
 
-                        $trueId = $query->fetchColumn();
-                        $trueTitle = $req->fetchColumn();
+                        $req = $pdo->prepare("SELECT `album_title` FROM `comments` WHERE `id` = :commentId");
 
-                        if($commentId != $trueId || $commentId == null || $albumTitle != $trueTitle || $albumTitle == null) {
+                        $req->execute([":commentId" => $commentId]);
+
+                        $trueCommId = $query->fetchColumn();
+                        $title = $req->fetchColumn();
+
+                        // if($commentId != $trueCommId || $commentId == null || $albumId != $trueAlbId || $albumId == null) {
+                        //         die("Hacking attempt!");
+                        // }
+
+                        if($commentId != $trueCommId || $commentId == null) {
                                 die("Hacking attempt!");
                         }
 
                         else {
                                 // $deleteComment = $this->_comments->deleteComment($commentId);
-                                $commentDelMsg["success"] = ["Le commentaire sélectionné pour l'album ".$_POST["albumTitle"]." et ses réponses ont été supprimés avec succès."];
+                                $commentDelMsg["success"] = ["Le commentaire sélectionné pour l'album ".$title." et ses réponses ont été supprimés avec succès."];
                         }
                 }
 
                 if(Session::admin() && isset($_POST["adminDelComment"])) {
-                        $commentId = $_GET["commentId"];
-                        $userLogin = $_POST["userLogin"];
+                        $commentId = $_POST["commentId"];
+                        $albumId = $_POST["albumId"];
 
                         $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         $pdo->exec("SET NAMES UTF8");
 
-                        $query = $pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = :commentId");
+                        $query = $pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = :commentId AND `album_id` = :albumId");
 
-                        $query->execute([":commentId" => $commentId]);
+                        $query->execute([":commentId" => $commentId, ":albumId" => $albumId]);
 
-                        $req = $pdo->prepare("SELECT `user_login` FROM `comments` WHERE `user_login` = :userLogin");
+                        $que = $pdo->prepare("SELECT `album_id` FROM `comments` WHERE `id` = :commentId AND `album_id` = :albumId");
 
-                        $req->execute([":userLogin" => $userLogin]);
+                        $que->execute([":commentId" => $commentId, ":albumId" => $albumId]);
 
-                        $trueId = $query->fetchColumn();
-                        $trueLogin = $req->fetchColumn();
+                        $req = $pdo->prepare("SELECT `user_login` FROM `comments` WHERE `id` = :commentId");
 
-                        if($commentId != $trueId || $commentId == null || $userLogin != $trueLogin || $userLogin == null) {
+                        $req->execute([":commentId" => $commentId]);
+
+                        $trueCommId = $query->fetchColumn();
+                        $trueAlbId = $que->fetchColumn();
+                        $login = $req->fetchColumn();
+
+                        if($commentId != $trueCommId || $commentId == null || $albumId != $trueAlbId || $albumId == null) {
                                 die("Hacking attempt!");
                         }
 
                         else {
                                 // $deleteComment = $this->_comments->deleteComment($commentId);
-                                $commentDelMsg["success"] = ["Le commentaire sélectionné de l'utilisateur ".$_POST["userLogin"]." et ses réponses ont été supprimés avec succès."];
+                                $commentDelMsg["success"] = ["Le commentaire sélectionné de l'utilisateur ".$login." et ses réponses ont été supprimés avec succès."];
                         }
                 }
                 
@@ -507,58 +511,36 @@ class CommentFormController {
                 $answerDelMsg = [];
 
                 $answerId = $_POST["answerId"];
-                $albumTitle = $_POST["albumTitle"];
+                $commentId = $_POST["commentId"];
 
                 $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $pdo->exec("SET NAMES UTF8");
 
-                $query = $pdo->prepare("SELECT `id` FROM `comment_answers` WHERE `id` = :answerId");
+                $query = $pdo->prepare("SELECT `id` FROM `comment_answers` WHERE `id` = :answerId AND `comment_id` = :commentId");
 
-                $query->execute([":answerId" => $answerId]);
+                $query->execute([":answerId" => $answerId, ":commentId" => $commentId]);
 
-                $demand = $pdo->prepare("SELECT `album_title` FROM `comment_answers` WHERE `album_title` = :albumTitle");
+                $que = $pdo->prepare("SELECT `album_title` FROM `comment_answers` WHERE `id` = :answerId AND `comment_id` = :commentId");
 
-                $demand->execute([":albumTitle" => $albumTitle]);
+                $que->execute([":answerId" => $answerId, ":commentId" => $commentId]);
+
+                $req = $pdo->prepare("SELECT `comment_id` FROM `comment_answers` WHERE `comment_id` = :commentId");
+
+                $req->execute([":commentId" => $commentId]);
 
                 $trueAnswId = $query->fetchColumn();
-                $trueTitle = $demand->fetchColumn();
+                $title = $que->fetchColumn();
+                $trueCommId = $req->fetchColumn();
                 
-                if(!Session::admin() && isset($_POST["deleteAnswer"])) {
-                        $commentId = $_POST["commentId"];
-
-                        $req = $pdo->prepare("SELECT `comment_id` FROM `comment_answers` WHERE `comment_id` = :commentId");
-
-                        $req->execute([":commentId" => $commentId]);
-
-                        $trueCommId = $req->fetchColumn();
-
-                        if($commentId != $trueCommId || $commentId == null || $answerId != $trueAnswId || $answerId == null || $albumTitle != $trueTitle || $albumTitle == null) {
+                if(!Session::admin() && isset($_POST["deleteAnswer"]) || Session::admin() && isset($_POST["adminDelAnswer"])) {
+                        if($commentId != $trueCommId || $commentId == null || $answerId != $trueAnswId || $answerId == null) {
                                 die("Hacking attempt!");
                         }
 
                         else {
                                 // $deleteAnswer = $this->_comments->deleteAnswer($answerId);
-                                $answerDelMsg["success"] = ["La réponse sélectionnée au commentaire n° ".$_POST["commentId"]." pour l'album ".$_POST["albumTitle"]." a été supprimée avec succès."];
-                        }
-                }
-
-                if(Session::admin() && isset($_POST["adminDelAnswer"])) {
-                        $commentId = $_GET["commentId"];
-
-                        $req = $pdo->prepare("SELECT `comment_id` FROM `comment_answers` WHERE `comment_id` = :commentId");
-
-                        $req->execute([":commentId" => $commentId]);
-
-                        $trueCommId = $req->fetchColumn();
-
-                        if($commentId != $trueCommId || $commentId == null || $answerId != $trueAnswId || $answerId == null || $albumTitle != $trueTitle || $albumTitle == null) {
-                                die("Hacking attempt!");
-                        }
-
-                        else {
-                                // $deleteAnswer = $this->_comments->deleteAnswer($answerId);
-                                $answerDelMsg["success"] = ["La réponse sélectionnée au commentaire n° ".$_GET["commentId"]." pour l'album ".$_POST["albumTitle"]." a été supprimée avec succès."];
+                                $answerDelMsg["success"] = ["La réponse sélectionnée au commentaire n° ".$commentId." pour l'album ".$title." a été supprimée avec succès."];
                         }
                 }
                 
