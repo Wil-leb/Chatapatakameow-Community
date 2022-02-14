@@ -128,35 +128,24 @@ class Votes extends Connect {
         return false;
     }
 
-//*****E. Finding a user's votes*****//
-    public function findVotes(string $category, string $userIp) {
-        $sql = "SELECT `id`, `ref_id` FROM `votes` WHERE `category` = :category AND `user_ip` = :userIp";
-                    
-        $query = $this->_pdo->prepare($sql);
+//*****E. Styling the thumb logos according to the votes*****//
+    // public function getClass(int $vote) {
+    //     $sql = "SELECT `vote` FROM `votes` WHERE `vote` = :vote";
+
+    //     $query = $this->_pdo->prepare($sql);
         
-        $query->execute([":category" => $category, ":userIp" => $userIp]);
-        
-        return $query->fetch();
-    }
+    //     $query->execute([":vote" => $vote]);
 
-//*****F. Styling the thumb logos according to the votes*****//
-    public function getClass(int $vote) {
-        $sql = "SELECT `vote` FROM `votes` WHERE `vote` = :vote";
+    //     $query->fetchAll(\PDO::FETCH_ASSOC);
 
-        $query = $this->_pdo->prepare($sql);
-        
-        $query->execute([":vote" => $vote]);
+    //     if($vote) {
+    //         return $vote == 1 ? "is-liked" : "is-disliked"; 
+    //     }
 
-        $query->fetchAll(\PDO::FETCH_ASSOC);
+    //     return null;
+    // }
 
-        if($vote) {
-            return $vote == 1 ? "is-liked" : "is-disliked"; 
-        }
-
-        return null;
-    }
-
-//*****G. Modifying the (dis)like count according to the votes*****//
+//*****F. Modifying the (dis)like count according to the votes*****//
     public function updateVotecount(string $refId, string $category) {
         $sql = "SELECT COUNT(id) AS voteCount, `vote` FROM `votes` WHERE `ref_id` = :refId AND `category` = :category GROUP BY `vote`";
 
