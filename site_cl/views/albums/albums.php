@@ -10,6 +10,7 @@ $findComments = new Comments();
 
     <p>Bienvenue sur la page de l'album sélectionné publié par <?= htmlspecialchars(trim($albums["user_login"])) ?>. Bon visionnage et n'hésite pas à voter et à laisser des commentaires&nbsp;! Aucun de tes identifiants ne sera divulgué à des sites tiers. N'hésite pas à consulter notre <a href="index.php?p=privacyPolicy">politique de confidentialité</a> pour plus d'informations.</p>
 
+<!-- ANSWER POST MESSAGES ------------------------------------------------------------------------------------------------------------->
     <?php if(empty($answerMsg["success"])) : ?>
         <?php if(!empty($answerMsg["errors"])) { ?>
             <ul class="error">
@@ -22,6 +23,7 @@ $findComments = new Comments();
         <p class="success"><?= $answerMsg["success"][0] ?></p>
     <?php endif; ?>
 
+<!-- COMMENT POST MESSAGES ------------------------------------------------------------------------------------------------------------>
     <?php if(empty($commentMsg["success"])) : ?>
         <?php if(!empty($commentMsg["errors"])) { ?>
             <ul class="error">
@@ -34,6 +36,7 @@ $findComments = new Comments();
         <p class="success"><?= $commentMsg["success"][0] ?></p>
     <?php endif; ?>
 
+<!-- ANSWER MODIFICATION MESSAGES ----------------------------------------------------------------------------------------------------->
     <?php if(empty($answModifMsg["success"])) : ?>
         <?php if(!empty($answModifMsg["errors"])) { ?>
             <ul class="error">
@@ -46,6 +49,7 @@ $findComments = new Comments();
         <p class="success"><?= $answModifMsg["success"][0] ?></p>
     <?php endif; ?>
 
+<!-- COMMENT MODIFICATION MESSAGES ---------------------------------------------------------------------------------------------------->
     <?php if(empty($comModifMsg["success"])) : ?>
         <?php if(!empty($comModifMsg["errors"])) { ?>
             <ul class="error">
@@ -58,12 +62,14 @@ $findComments = new Comments();
         <p class="success"><?= $comModifMsg["success"][0] ?></p>
     <?php endif; ?>
 
-    <?php if(!empty($commentDelMsg["success"])) : ?>
-        <p class="success"><?= $commentDelMsg["success"][0] ?></p>
-    <?php endif; ?>
-
+<!-- ANSWER DELETION MESSAGE ---------------------------------------------------------------------------------------------------------->
     <?php if(!empty($answerDelMsg["success"])) : ?>
         <p class="success"><?= $answerDelMsg["success"][0] ?></p>
+    <?php endif; ?>
+
+<!-- COMMENT DELETION MESSAGE --------------------------------------------------------------------------------------------------------->
+    <?php if(!empty($commentDelMsg["success"])) : ?>
+        <p class="success"><?= $commentDelMsg["success"][0] ?></p>
     <?php endif; ?>
 </section>
     
@@ -71,6 +77,7 @@ $findComments = new Comments();
     <?php $comments = $findComments->findAlbumComments($albums["id"]); ?>
     <?php $pictures = $findImages->findAlbumPictures($albums["id"]); ?>
 
+<!-- ALBUM SLIDER --------------------------------------------------------------------------------------------------------------------->
     <article>
         <div class="scroll-slider">
             <div class="albums">
@@ -81,18 +88,21 @@ $findComments = new Comments();
         </div>
 
         <div class="vote <?= $opinion ?>">
-            <div class="vote-bar">
+            <!-- <div class="vote-bar">
                 <div class="vote-progress" style="width: <?= (htmlspecialchars(trim($albums["likes"])) + htmlspecialchars(trim($albums["dislikes"]))) == 0 ? 100 : round(100 * (htmlspecialchars(trim($albums["likes"])) / (htmlspecialchars(trim($albums["likes"])) + htmlspecialchars(trim($albums["dislikes"]))))); ?>%"></div>
-            </div>
+            </div> -->
 
+<!-- FORMS TO (DIS)LIKE AN ALBUM ------------------------------------------------------------------------------------------------------>
             <div class="vote-logos">
-                <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
+                <form id="like-form" method="post">
                     <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden>
                     <input type="text" name="voteValue" value="1" hidden>
                     <button type="submit" name="likeAlb" value="like" class="vote-thumb like"><i class="fas fa-thumbs-up"></i> <?= htmlspecialchars(trim($albums["likes"]))?></button>
                 </form>
                 
-                <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
+                <form id="dislike-form" method="post">
                     <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden>
                     <input type="text" name="voteValue" value="-1" hidden>
                     <button type="submit" name="dislikeAlb" value="dislike" class="vote-thumb dislike"><i class="fas fa-thumbs-down"></i> <?= htmlspecialchars(trim($albums["dislikes"]))?></button>
@@ -100,7 +110,6 @@ $findComments = new Comments();
             </div>
         </div>
     </article>
-    
 
     <h2>Commentaires</h2>
 
@@ -117,14 +126,18 @@ $findComments = new Comments();
 
                     <?php if($comment["user_ip"]) : ?>
                         <div class="action-buttons">
-                            <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmDeletion(event)">
-                                <input type="text" name="commentId" value="<?= htmlspecialchars($comment["id"]) ?>" hidden>
-                                <input type="text" name="albumTitle" value="<?= htmlspecialchars(trim($comment["album_title"])) ?>" hidden>
+<!-- COMMENT DELETION FORM ------------------------------------------------------------------------------------------------------------>
+                            <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmDeletion(event)"> -->
+                            <form method="post" onsubmit="confirmDeletion(event)">
+                                <!-- <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden> -->
+                                <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
                                 <button class="delete" name="deleteComment"><i class="fas fa-trash-alt"></i>Supprimer</button>
                             </form>
 
+<!-- BUTTON TO DISPLAY THE COMMENT MODIFICATION FORM ---------------------------------------------------------------------------------->
                             <button id="hide-content" value="ON"><i class="fas fa-pen"></i>Modifier</button>
 
+<!-- COMMENT MODIFICATION FORM -------------------------------------------------------------------------------------------------------->
                             <dialog open>
                                 <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
                                     <p class="mandatory">Ce champ est obligatoire.</p>
@@ -142,6 +155,7 @@ $findComments = new Comments();
                                         <input type="checkbox" value="true" name="acceptPolicy">
                                     </div>
 
+                                    <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden>
                                     <input type="text" name="commentId" value="<?= htmlspecialchars($comment["id"]) ?>" hidden>
                                     <input type="submit" name="changeComment" value="Modifier le commentaire">
                                 </form>
@@ -152,22 +166,27 @@ $findComments = new Comments();
                     <?php endif; ?>
 
                     <div class="action-buttons">
+<!-- FORMS TO (DIS)LIKE A COMMENT ----------------------------------------------------------------------------------------------------->
                         <div class="vote-logos">
-                            <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                            <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
+                            <form id="like-form" method="post">
                                 <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
                                 <input type="text" name="voteValue" value="1" hidden>
                                 <button type="submit" name="likeComm" value="like" class="vote-thumb like"><i class="fas fa-thumbs-up"></i> <?= htmlspecialchars(trim($comment["likes"]))?></button>
                             </form>
                     
-                            <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                            <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
+                            <form id="dislike-form" method="post">
                                 <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
                                 <input type="text" name="voteValue" value="-1" hidden>
                                 <button type="submit" name="dislikeComm" value="dislike" class="vote-thumb dislike"><i class="fas fa-thumbs-down"></i> <?= htmlspecialchars(trim($comment["dislikes"]))?></button>
                             </form>
                         </div>
 
+<!-- BUTTON TO DISPLAY THE ANSWER ADDITION FORM --------------------------------------------------------------------------------------->
                         <button id="hide-content" value="ON"><i class="fas fa-reply"></i>Répondre</button>
 
+<!-- ANSWER ADDITION FORM ------------------------------------------------------------------------------------------------------------->
                         <dialog open>
                             <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
                                 <p class="mandatory">Tous les champs sont obligatoires.</p>
@@ -191,18 +210,20 @@ $findComments = new Comments();
                                     <input type="checkbox" value="true" name="acceptPolicy">
                                 </div>
 
+                                <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden>
                                 <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
-                                <input type="text" name="albumTitle" value="<?= htmlspecialchars(trim($comment["album_title"])) ?>" hidden>
                                 <input type="submit" name="postAnswer" value="Publier la réponse">
                             </form>
 
                             <button id="close"><i class="far fa-window-close"></i>Fermer</button>
                         </dialog>
 
+<!-- BUTTON TO DISPLAY THE ANSWERS ---------------------------------------------------------------------------------------------------->
                         <button id="hide-answers" value="ON"><i class="fas fa-caret-right"></i>Réponses</button>
                     </div>
 
                     <div class="answer-content">
+<!-- ANSWERS -------------------------------------------------------------------------------------------------------------------------->
                         <?php if(empty($answers)) : ?>
                             <p class="no-content">Sois le premier à répondre à ce commentaire&nbsp;!</p>
                         <?php else : ?>
@@ -213,6 +234,7 @@ $findComments = new Comments();
 
                                 <?php if($answer["user_ip"]) : ?>
                                     <div class="action-buttons">
+<!-- ANSWER DELETION FORM ------------------------------------------------------------------------------------------------------------->
                                         <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmDeletion(event)">
                                             <input type="text" name="commentId" value="<?= htmlspecialchars($answer["comment_id"]) ?>" hidden>
                                             <input type="text" name="answerId" value="<?= htmlspecialchars($answer["id"]) ?>" hidden>
@@ -220,8 +242,10 @@ $findComments = new Comments();
                                             <button class="delete" name="deleteAnswer"><i class="fas fa-trash-alt"></i>Supprimer</button>
                                         </form>
 
+<!-- BUTTON TO DISPLAY THE ANSWER MODIFICATION FORM ----------------------------------------------------------------------------------->
                                         <button id="hide-content" value="ON"><i class="fas fa-pen"></i>Modifier</button>
 
+<!-- ANSWER MODIFICATION FORM --------------------------------------------------------------------------------------------------------->
                                         <dialog open>
                                             <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
                                                 <p class="mandatory">Ce champ est obligatoire.</p>
@@ -239,6 +263,7 @@ $findComments = new Comments();
                                                     <input type="checkbox" value="true" name="acceptPolicy">
                                                 </div>
                                                 
+                                                <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
                                                 <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
                                                 <input type="submit" name="changeAnswer" value="Modifier la réponse">
                                             </form>
@@ -248,14 +273,17 @@ $findComments = new Comments();
                                     </div>
                                 <?php endif; ?>
 
+<!-- FORMS TO (DIS)LIKE AN ANSWER ----------------------------------------------------------------------------------------------------->
                                 <div class="vote-logos">
-                                    <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                                    <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
+                                    <form id="like-form" method="post">
                                         <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
                                         <input type="text" name="voteValue" value="1" hidden>
                                         <button type="submit" name="likeAnsw" value="like" class="vote-thumb like"><i class="fas fa-thumbs-up"></i> <?= htmlspecialchars(trim($answer["likes"]))?></button>
                                     </form>
                             
-                                    <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                                    <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
+                                    <form id="dislike-form" method="post">
                                         <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
                                         <input type="text" name="voteValue" value="-1" hidden>
                                         <button type="submit" name="dislikeAnsw" value="dislike" class="vote-thumb dislike"><i class="fas fa-thumbs-down"></i> <?= htmlspecialchars(trim($answer["dislikes"]))?></button>
@@ -271,7 +299,8 @@ $findComments = new Comments();
 
     <h3>Commenter l'album</h3>
     <p class="mandatory">Tous les champs sont obligatoires.</p>
-        
+      
+<!-- COMMENT ADDITION FORM ------------------------------------------------------------------------------------------------------------>
     <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmCommaddition(event)">
         <input type="text" name="email" class="email" placeholder="Email" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["email"] ?>" <?php endif; ?>>
         <div></div>
@@ -293,7 +322,7 @@ $findComments = new Comments();
             <input type="checkbox" value="true" name="acceptPolicy">
         </div>
 
-        <input type="text" name="albumTitle" value="<?= htmlspecialchars(trim($albums["title"])) ?>" hidden>
+        <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden>
         <input type="submit" name="postComment" value="Publier le commentaire">
     </form>
     
