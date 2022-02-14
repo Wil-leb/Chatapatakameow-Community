@@ -45,8 +45,9 @@
                                 <dialog open>
                                     <p><?= htmlspecialchars(trim($comment["comment"])) ?></p>
 
-                                    <form action="index.php?p=commentDashboard&commentId=<?= htmlspecialchars($comment["id"]) ?>" method="post" onsubmit="confirmDeletion(event)">
-                                        <input type="text" name="userLogin" value="<?= htmlspecialchars(trim($comment["user_login"])) ?>" hidden>
+                                    <form action="index.php?p=commentDashboard" method="post" onsubmit="confirmDeletion(event)">
+                                        <!-- <input type="text" name="albumId" value="<?= htmlspecialchars(trim($comment["album_id"])) ?>" hidden> -->
+                                        <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
                                         <button class="delete" type="submit" name="adminDelComment"><i class="fas fa-trash-alt"></i>Supprimer</button>
                                     </form>
 
@@ -94,9 +95,9 @@
                             <dialog open>
                                 <p><?= htmlspecialchars(trim($answer["answer"])) ?></p>
                             
-                                <form action="index.php?p=commentDashboard&commentId=<?= htmlspecialchars($answer["comment_id"]) ?>" method="post" onsubmit="confirmDeletion(event)">
-                                    <input type="text" name="answerId" value="<?= htmlspecialchars($answer["id"]) ?>" hidden>
-                                    <input type="text" name="albumTitle" value="<?= htmlspecialchars($answer["album_title"]) ?>" hidden>
+                                <form action="index.php?p=commentDashboard" method="post" onsubmit="confirmDeletion(event)">
+                                    <input type="text" name="commentId" value="<?= htmlspecialchars(trim($answer["comment_id"])) ?>" hidden>
+                                    <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
                                     <button class="delete" type="submit" name="adminDelAnswer"><i class="fas fa-trash-alt"></i>Supprimer</button>
                                 </form>
 
