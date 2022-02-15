@@ -17,12 +17,8 @@ class Votes extends Connect {
 //*****A. Finding the existing votes of a specific album*****//
     private function recordExists(string $refId, string $category) {
         $sql = $this->_pdo->prepare("SELECT `id` FROM $category WHERE `id` = :id");
-
-        // $query = $this->_pdo->prepare($sql);
         
         $sql->execute([":id" => $refId]);
-
-        // $query->fetch(\PDO::FETCH_ASSOC);
 
         if($sql->rowCount() == 0) {
             die("Impossible de voter pour un album qui n'existe pas !");
