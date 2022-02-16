@@ -155,8 +155,7 @@ $findComments = new Comments();
                                         <input type="checkbox" value="true" name="acceptPolicy">
                                     </div>
 
-                                    <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden>
-                                    <input type="text" name="commentId" value="<?= htmlspecialchars($comment["id"]) ?>" hidden>
+                                    <!-- <input type="text" name="commentId" value="<?= htmlspecialchars($comment["id"]) ?>" hidden> -->
                                     <input type="submit" name="changeComment" value="Modifier le commentaire">
                                 </form>
 
@@ -188,7 +187,7 @@ $findComments = new Comments();
 
 <!-- ANSWER ADDITION FORM ------------------------------------------------------------------------------------------------------------->
                         <dialog open>
-                            <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
+                            <form action="" method="post" onsubmit="confirmAnsweraddition(event)">
                                 <p class="mandatory">Tous les champs sont obligatoires.</p>
 
                                 <input type="text" name="email" class="email" placeholder="Email" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["email"] ?>" <?php endif; ?>>
@@ -209,9 +208,7 @@ $findComments = new Comments();
                                     <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
                                     <input type="checkbox" value="true" name="acceptPolicy">
                                 </div>
-
-                                <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden>
-                                <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
+                                
                                 <input type="submit" name="postAnswer" value="Publier la réponse">
                             </form>
 
@@ -301,7 +298,7 @@ $findComments = new Comments();
     <p class="mandatory">Tous les champs sont obligatoires.</p>
       
 <!-- COMMENT ADDITION FORM ------------------------------------------------------------------------------------------------------------>
-    <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmCommaddition(event)">
+    <form action="" method="post" onsubmit="confirmCommaddition(event)">
         <input type="text" name="email" class="email" placeholder="Email" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["email"] ?>" <?php endif; ?>>
         <div></div>
 
@@ -322,7 +319,6 @@ $findComments = new Comments();
             <input type="checkbox" value="true" name="acceptPolicy">
         </div>
 
-        <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden>
         <input type="submit" name="postComment" value="Publier le commentaire">
     </form>
     
