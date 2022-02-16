@@ -20,84 +20,72 @@ class CommentFormController {
                 $commentMsg = [];
 
                 if($_POST["postComment"]) {
-                        $albumId = $data["albumId"];
-                        $trueId = $_GET["albumId"];
+                        $albumId = $_GET["albumId"];
 
-                        $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
-                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        $pdo->exec("SET NAMES UTF8");
+                        $album = new Album();
 
-                        $query = $pdo->prepare("SELECT `title` FROM `album` WHERE `id` = :albumId");
+                        $exist = $album->findAlbumById($albumId);
 
-                        $query->execute([":albumId" => $albumId]);
+                        $title = $exist["title"];
 
-                        $title = $query->fetchColumn();
-
-                        if($albumId != $trueId || $albumId == null) {
-                                die("Hacking attempt!");
+                        if(!$data["email"] || !$data["commentLogin"] || !$data["comment"]) {
+                                $commentMsg["errors"][] = "Veuilles remplir tous les champs.";
                         }
 
-                        else {
+                        if($data["email"] && !filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
+                                $commentMsg["errors"][] = "Le format de l'adresse électronique est invalide.";
+                        }
 
-                                if(!$data["email"] || !$data["commentLogin"] || !$data["comment"]) {
-                                        $commentMsg["errors"][] = "Veuilles remplir tous les champs.";
-                                }
+                        if($data["commentLogin"] && !preg_match(self::LOGIN_REGEX, $data["commentLogin"])) {
+                                $commentMsg["errors"][] = "Caractères autorisés pour le pseudo : lettres, chiffres, tirets et underscores.";
+                        }
 
-                                if($data["email"] && !filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
-                                        $commentMsg["errors"][] = "Le format de l'adresse électronique est invalide.";
-                                }
+                        if($data["comment"] && !preg_match(self::COMMENT_REGEX, $data["comment"])) {
+                                $commentMsg["errors"][] = 'Caractères autorisés pour le commentaire : lettres, chiffres, tilde, tirets, underscores, slash, parenthèses, crochets, accolades, arobases, dièses, signes "+", signes "=", astérisques, accents circonflexes, signes "%", point-virgules, virgules, doubles points, points, points d\'exclamation, points d\'interrogation, apostrophes, esperluettes, guillemets droits et espaces.';
+                        }
 
-                                if($data["commentLogin"] && !preg_match(self::LOGIN_REGEX, $data["commentLogin"])) {
-                                        $commentMsg["errors"][] = "Caractères autorisés pour le pseudo : lettres, chiffres, tirets et underscores.";
-                                }
+                        if(!isset($data["acceptRules"]) || !isset($data["acceptPolicy"])) {
+                                $commentMsg["errors"][] = "Veuilles accepter le règlement général et la politique de confidentialité.";
+                        }
 
-                                if($data["comment"] && !preg_match(self::COMMENT_REGEX, $data["comment"])) {
-                                        $commentMsg["errors"][] = 'Caractères autorisés pour le commentaire : lettres, chiffres, tilde, tirets, underscores, slash, parenthèses, crochets, accolades, arobases, dièses, signes "+", signes "=", astérisques, accents circonflexes, signes "%", point-virgules, virgules, doubles points, points, points d\'exclamation, points d\'interrogation, apostrophes, esperluettes, guillemets droits et espaces.';
-                                }
+                        if(empty($commentMsg["errors"])) {
+                                $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
+                                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                                $pdo->exec("SET NAMES UTF8");
 
-                                if(!isset($data["acceptRules"]) || !isset($data["acceptPolicy"])) {
-                                        $commentMsg["errors"][] = "Veuilles accepter le règlement général et la politique de confidentialité.";
-                                }
+                                $query = $pdo->prepare("SELECT `user_id` FROM `album` WHERE album.id = :albumId");
 
-                                if(empty($commentMsg["errors"])) {
-                                        $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
-                                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                                        $pdo->exec("SET NAMES UTF8");
+                                $query->execute([":albumId" => $albumId]);
 
-                                        $query = $pdo->prepare("SELECT `user_id` FROM `album` WHERE album.id = :albumId");
+                                $userId = $query->fetchColumn();
 
-                                        $query->execute([":albumId" => $albumId]);
+                                $req = $pdo->prepare("SELECT `email` FROM `user`
+                                                        LEFT OUTER JOIN `album`
+                                                        ON user.login = album.user_login
+                                                        WHERE album.id = :albumId");
+                                                        
+                                $req->execute([":albumId" => $albumId]);
 
-                                        $userId = $query->fetchColumn();
+                                $email = $req->fetchColumn();
 
-                                        $req = $pdo->prepare("SELECT `email` FROM `user`
-                                                                LEFT OUTER JOIN `album`
-                                                                ON user.login = album.user_login
-                                                                WHERE album.id = :albumId");
-                                                                
-                                        $req->execute([":albumId" => $albumId]);
+                                // $message = "Bonjour, ton album ".$title." vient d'être commenté. Voici le commentaire :\n".$data["comment"]."";
+                                // $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                                        $email = $req->fetchColumn();
+                                // if(mail($email, "Nouveau commentaire", $message, $headers)) {
+                                //         $commentMsg["success"] = ["Mail de confirmation envoyé."];
+                                // }
+                                
+                                // else {
+                                //         $commentMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
+                                // }
 
-                                        $message = "Bonjour, ton album ".$title." vient d'être commenté. Voici le commentaire :\n".$data["comment"]."";
-                                        $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+                                // do {
+                                //         $id = uniqid();
+                                // } while($pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = $id") > 0);
 
-                                        if(mail($email, "Nouveau commentaire", $message, $headers)) {
-                                                $commentMsg["success"] = ["Mail de confirmation envoyé."];
-                                        }
-                                        
-                                        else {
-                                                $commentMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
-                                        }
+                                // $commentAddition = $this->_comments->addComment($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $albumId, $title, $data["comment"]);
 
-                                        do {
-                                                $id = uniqid();
-                                        } while($pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = $id") > 0);
-
-                                        $commentAddition = $this->_comments->addComment($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $albumId, $title, $data["comment"]);
-
-                                        $commentMsg["success"] = ["Le commentaire a été publié avec succès."];
-                                }
+                                $commentMsg["success"] = ["Le commentaire a été publié avec succès."];
                         }
                                 
                         return $commentMsg;
@@ -109,30 +97,34 @@ class CommentFormController {
                 $answerMsg = [];
 
                 if($_POST["postAnswer"]) {
-                        $commentId = $data["commentId"];
-                        $albumId = $data["albumId"];
-                        $trueAlbId = $_GET["albumId"];
+                        // $commentId = $data["commentId"];
+                        $albumId = $_GET["albumId"];
 
-                        $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
-                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        $pdo->exec("SET NAMES UTF8");
+                        // $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
+                        // $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        // $pdo->exec("SET NAMES UTF8");
 
-                        $query = $pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = :commentId");
+                        // $query = $pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = :commentId");
+                        // $query->execute([":commentId" => $commentId]);
+                        // $trueCommId = $query->fetchColumn();
 
-                        $query->execute([":commentId" => $commentId]);
+                        $album = new Album();
 
-                        $req = $pdo->prepare("SELECT `title` FROM `album` WHERE `id` = :albumId");
+                        $exist = $album->findAlbumById($albumId);
 
-                        $req->execute([":albumId" => $albumId]);
+                        $title = $exist["title"];
 
-                        $trueId = $query->fetchColumn();
-                        $trueTitle = $req->fetchColumn();
+                        $commentLists = $this->_comments->findAlbumComments($albumId);
 
-                        if($commentId != $trueId || $commentId == null || $albumId != $trueId || $albumId == null) {
-                                die("Hacking attempt!");
+                        foreach($commentLists as $commentList) {
+                                $id = $commentList["id"];
                         }
+                        
+                        // if($commentId != $trueCommId || $commentId == null) {
+                        //         die("Hacking attempt!");
+                        // }
 
-                        else {
+                        // else {
                 
                                 if(!$data["email"] || !$data["commentLogin"] || !$data["answer"]) {
                                         $answerMsg["errors"][] = "Veuilles remplir tous les champs.";
@@ -160,35 +152,38 @@ class CommentFormController {
                                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                                         $pdo->exec("SET NAMES UTF8");
                                         
-                                        $query = $pdo->prepare("SELECT `user_email` FROM `comments`
-                                                                WHERE comments.id = :commentId");
+                                        $query = $pdo->prepare("SELECT `user_email` FROM `comments` WHERE comments.id = :commentId");
 
-                                        $query->execute([":commentId" => $commentId]);
+                                        $query->execute([":commentId" => $id]);
 
                                         $email = $query->fetchColumn();
 
-                                        $message = "Bonjour, tu viens de recevoir une réponse à ton commentaire pour l'album ".$albumTitle.". Voici la réponse :\n".$data["answer"]."";
-                                        $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+                                        $url = "/site_cl/index.php?p=albums&commentId=".$id."";
+                                        $array = explode("=", $url);
+                                        $commentId = $array[2];
 
-                                        if(mail($email, "Nouveau commentaire", $message, $headers)) {
-                                                $commentMsg["success"] = ["Mail de confirmation envoyé."]; 
-                                        }
+                                        var_dump($commentId);
+
+                                        // $message = "Bonjour, tu viens de recevoir une réponse à ton commentaire pour l'album ".$title.". Voici la réponse :\n".$data["answer"]."";
+                                        // $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                        // if(mail($email, "Nouveau commentaire", $message, $headers)) {
+                                        //         $commentMsg["success"] = ["Mail de confirmation envoyé."]; 
+                                        // }
                                         
-                                        else {
-                                                $commentMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
-                                        }
+                                        // else {
+                                        //         $commentMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
+                                        // }
 
-                                        do {
-                                                $id = uniqid();
-                                        } while($pdo->prepare("SELECT `id` FROM `comment_answers` WHERE `id` = $id") > 0);
+                                        // do {
+                                        //         $id = uniqid();
+                                        // } while($pdo->prepare("SELECT `id` FROM `comment_answers` WHERE `id` = $id") > 0);
 
-                                        $answerAddition = $this->_comments->addAnswer($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $commentId, $albumTitle, $data["answer"]);
+                                        // $answerAddition = $this->_comments->addAnswer($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $trueCommId, $albumId, $title, $data["answer"]);
 
                                         $answerMsg["success"] = ["La réponse a été publiée avec succès."];
-
-                                        var_dump($email);
                                 }
-                        }
+                        // }
                                 
                         return $answerMsg;
                 }
@@ -312,53 +307,98 @@ class CommentFormController {
         public function commentModifForm(array $data) {
                 $comModifMsg = [];
 
+                $commentId;
+
+                $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $pdo->exec("SET NAMES UTF8");
+
+                // $query = $pdo->prepare("SELECT `id` FROM `comments` WHERE `album_id` = :albumId");
+
+                // $query->execute([":albumId" => $_GET["albumId"]]);
+
+                $query = $pdo->prepare("SELECT `id` FROM `comments`");
+
+                $query->execute();
+
+                $lines = $query->fetchAll();
+
+                var_dump($lines);
+
+                // var_dump($commentIds);
+
+                // foreach($lines as $line) {
+                // if($_POST["changeComment"]) {
+                foreach($lines as $line) {
+                        $commentId = $line["id"];
+                // $commentId = $data["commentId"];
+                // $albumId = $data["albumId"];
+                // $trueAlbId = $_GET["albumId"];
+
+                // $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
+                // $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                // $pdo->exec("SET NAMES UTF8");
+
+                // $query = $pdo->prepare("SELECT `id` FROM `comments` WHERE `album_id` = :albumId");
+
+                // $query->execute([":albumId" => $_GET["albumId"]]);
+
+                // $lines = $query->fetchAll(\PDO::FETCH_COLUMN);
+
+                // var_dump($lines);
+
+                // for($i = 0; $i < $lines; $i ++) {
+                //         var_dump($lines[$i]);
+                //         // $this->_commentId = $lines["id"][$i];
+                // }
+
+                // if($commentId != $trueCommId || $commentId == null || $albumId != $trueAlbId || $albumId == null) {
+                //         die("Hacking attempt!");
+                // }
+
+                // else {
+
+                //         if(!$data["comment"]) {
+                //                 $comModifMsg["errors"][] = "Veuilles remplir le champ.";
+                //         }
+
+                //         if($data["comment"] && !preg_match(self::COMMENT_REGEX, $data["comment"])) {
+                //                 $comModifMsg["errors"][] = 'Caractères autorisés pour le commentaire : lettres, chiffres, tilde, tirets, underscores, slash, parenthèses, crochets, accolades, arobases, dièses, signes "+", signes "=", astérisques, accents circonflexes, signes "%", point-virgules, virgules, doubles points, points, points d\'exclamation, points d\'interrogation, apostrophes, esperluettes, guillemets droits et espaces.';
+                //         }
+
+                //         if(!isset($data["acceptRules"]) || !isset($data["acceptPolicy"])) {
+                //                 $comModifMsg["errors"][] = "Veuilles accepter le règlement général et la politique de confidentialité.";
+                //         }
+
+                //         if(empty($comModifMsg["errors"])) {
+                //                 // $commentModification = $this->_comments->updateComment($line["id"], $data["comment"]);
+                //                 $comModifMsg["success"] = ["Le commentaire a été modifié avec succès."];
+                //                 var_dump($line["id"]);
+                //         }
+                // // }
+                        
+                //         return $comModifMsg;
+                }
+
                 if($_POST["changeComment"]) {
-                        $commentId = $data["commentId"];
-                        // $albumId = $data["albumId"];
-                        // $trueAlbId = $_GET["albumId"];
-
-                        $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
-                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        $pdo->exec("SET NAMES UTF8");
-
-                        // $query = $pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = :commentId AND `album_id` = :albumId");
-
-                        // $query->execute([":commentId" => $commentId, ":albumId" => $albumId]);
-
-                        $query = $pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = :commentId");
-
-                        $query->execute([":commentId" => $commentId]);
-
-                        $trueCommId = $query->fetchColumn();
-
-                        // if($commentId != $trueCommId || $commentId == null || $albumId != $trueAlbId || $albumId == null) {
-                        //         die("Hacking attempt!");
-                        // }
-
-                        if($commentId != $trueCommId || $commentId == null) {
-                                die("Hacking attempt!");
+                        if(!$data["comment"]) {
+                                $comModifMsg["errors"][] = "Veuilles remplir le champ.";
                         }
 
-                        else {
-
-                                if(!$data["comment"]) {
-                                        $comModifMsg["errors"][] = "Veuilles remplir le champ.";
-                                }
-
-                                if($data["comment"] && !preg_match(self::COMMENT_REGEX, $data["comment"])) {
-                                        $comModifMsg["errors"][] = 'Caractères autorisés pour le commentaire : lettres, chiffres, tilde, tirets, underscores, slash, parenthèses, crochets, accolades, arobases, dièses, signes "+", signes "=", astérisques, accents circonflexes, signes "%", point-virgules, virgules, doubles points, points, points d\'exclamation, points d\'interrogation, apostrophes, esperluettes, guillemets droits et espaces.';
-                                }
-
-                                if(!isset($data["acceptRules"]) || !isset($data["acceptPolicy"])) {
-                                        $comModifMsg["errors"][] = "Veuilles accepter le règlement général et la politique de confidentialité.";
-                                }
-
-                                if(empty($comModifMsg["errors"])) {
-                                        // $commentModification = $this->_comments->updateComment($commentId, $data["comment"]);
-                                        $comModifMsg["success"] = ["Le commentaire a été modifié avec succès."];
-                                }
+                        if($data["comment"] && !preg_match(self::COMMENT_REGEX, $data["comment"])) {
+                                $comModifMsg["errors"][] = 'Caractères autorisés pour le commentaire : lettres, chiffres, tilde, tirets, underscores, slash, parenthèses, crochets, accolades, arobases, dièses, signes "+", signes "=", astérisques, accents circonflexes, signes "%", point-virgules, virgules, doubles points, points, points d\'exclamation, points d\'interrogation, apostrophes, esperluettes, guillemets droits et espaces.';
                         }
-                                
+
+                        if(!isset($data["acceptRules"]) || !isset($data["acceptPolicy"])) {
+                                $comModifMsg["errors"][] = "Veuilles accepter le règlement général et la politique de confidentialité.";
+                        }
+
+                        if(empty($comModifMsg["errors"])) {
+                                // $commentModification = $this->_comments->updateComment($commentId, $data["comment"]);
+                                $comModifMsg["success"] = ["Le commentaire a été modifié avec succès."];
+                                var_dump($commentId);
+                        }
+                        
                         return $comModifMsg;
                 }
         }
@@ -467,6 +507,8 @@ class CommentFormController {
                                 // $deleteComment = $this->_comments->deleteComment($commentId);
                                 $commentDelMsg["success"] = ["Le commentaire sélectionné pour l'album ".$title." et ses réponses ont été supprimés avec succès."];
                         }
+
+                        var_dump($commentId, $trueCommId);
                 }
 
                 if(Session::admin() && isset($_POST["adminDelComment"])) {
