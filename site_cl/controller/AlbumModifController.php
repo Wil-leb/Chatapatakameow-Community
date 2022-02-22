@@ -109,7 +109,7 @@ class AlbumModifController {
 
                                         $newCovName = guidv4().".".pathinfo($_FILES["cover"]["name"], PATHINFO_EXTENSION);
 
-                                        $imgRegex = "/^[a-z\d][^.\s]*\.(png$)|^[a-z\d][^.\s]*\.(jpe?g$)/i";
+                                        $imgRegex = "/^[a-z\d\-_][^.\s]*\.(png$)|^[a-z\d\-_][^.\s]*\.(jpe?g$)/i";
 
                                         $covInfo = finfo_open(FILEINFO_MIME_TYPE);
                                         $covMime = finfo_file($covInfo, $_FILES["cover"]["tmp_name"]);
@@ -325,7 +325,7 @@ class AlbumModifController {
 
                                         $newPicName = guidv4().".".pathinfo($_FILES["newPicture"]["name"], PATHINFO_EXTENSION);
 
-                                        $imgRegex = "/^[a-z\d][^.\s]*\.(png$)|^[a-z\d][^.\s]*\.(jpe?g$)/i";
+                                        $imgRegex = "/^[a-z\d\-_][^.\s]*\.(png$)|^[a-z\d\-_][^.\s]*\.(jpe?g$)/i";
 
                                         $picInfo = finfo_open(FILEINFO_MIME_TYPE);
                                         $picMime = finfo_file($picInfo, $_FILES["newPicture"]["tmp_name"]);
