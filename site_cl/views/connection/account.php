@@ -117,8 +117,7 @@ $findImages = new Album();
                     <tr>
                         <th>Titre</th>
                         <th>Date</th>
-                        <th>Supprimer</th>
-                        <th>Modifier</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                             
@@ -126,18 +125,21 @@ $findImages = new Album();
                     <?php foreach($albums as $album) : ?>
                         <?php $cover = $findImages->findAlbumCover(htmlspecialchars(trim($album["id"]))); ?>
                         <?php $pictures = $findImages->findAlbumPictures(htmlspecialchars(trim($album["id"]))); ?>
+
                         <tr>
                             <td data-label="Titre"><?= htmlspecialchars(trim($album["title"])) ?></td>
                             <td data-label="Date" id="description"><?= htmlspecialchars(trim($album["post_date"])) ?></td>
-                            <td data-label="Supprimer" class="deletion">
-                                <form action="index.php?p=account&albumId=<?= htmlspecialchars($album["id"]) ?>" method="post" onsubmit="confirmDeletion(event)">
-                                    <input type="text" name="cover" value="<?= htmlspecialchars(trim($cover["cover_name"])) ?>" hidden>
-                                    <input type="text" name="picture" value="<?php foreach($pictures as $picture) : ?> <?= htmlspecialchars(trim($picture["picture_name"])) ?> <?php endforeach; ?>" hidden>
-                                    <button class="delete" type="submit" name="deleteAlbum">Supprimer l'album</button>
-                                </form>
-                            </td>
-                            <td data-label="Modifier">
-                                <a href="index.php?p=modifyAlbum&albumId=<?= htmlspecialchars($album["id"])?>">Modifier l'album</a>
+                            <td data-label="Action" class="deletion">
+                                <div class="deletion"></div>
+                                    <form action="" method="post" onsubmit="confirmDeletion(event)">
+                                        <input type="text" name="albumId" value="<?= htmlspecialchars(trim($album["id"])) ?>" hidden>
+                                        <input type="text" name="cover" value="<?= htmlspecialchars(trim($cover["cover_name"])) ?>" hidden>
+                                        <input type="text" name="picture" value="<?php foreach($pictures as $picture) : ?> <?= htmlspecialchars(trim($picture["picture_name"])) ?> <?php endforeach; ?>" hidden>
+                                        <button class="delete" type="submit" name="deleteAlbum"><i class="fas fa-trash-alt"></i>Supprimer</button>
+                                    </form>
+                            
+                                    <p><a href="index.php?p=modifyAlbum&albumId=<?= htmlspecialchars($album["id"])?>"><i class="fas fa-pen"></i>Modifier</a></p>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
