@@ -45,7 +45,8 @@ $findImages = new Album();
                             <td data-label="Date" id="description"><?= htmlspecialchars(trim(strftime("%d/%m/%Y %H:%M:%S", strtotime($album["post_date"])))) ?></td>
                             <td data-label="Action">
                                 <div class="deletion">
-                                    <form action="index.php?p=albumDashboard&albumId=<?= htmlspecialchars(trim($album["id"])) ?>" method="post" onsubmit="confirmDeletion(event)">
+                                    <form action="" method="post" onsubmit="confirmDeletion(event)">
+                                        <input type="text" name="albumId" value="<?= htmlspecialchars(trim($album["id"])) ?>" hidden>
                                         <input type="text" name="cover" value="<?= htmlspecialchars(trim($cover["cover_name"])) ?>" hidden>
                                         <input type="text" name="picture" value="<?php foreach($pictures as $picture) : ?> <?= htmlspecialchars(trim($picture["picture_name"])) ?> <?php endforeach; ?>" hidden>
                                         <button class="delete" type="submit" name="deleteAlbum"><i class="fas fa-trash-alt"></i>Supprimer</button>

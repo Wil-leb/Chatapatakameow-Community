@@ -46,7 +46,6 @@
                                     <p><?= htmlspecialchars(trim($comment["comment"])) ?></p>
 
                                     <form action="index.php?p=commentDashboard" method="post" onsubmit="confirmDeletion(event)">
-                                        <!-- <input type="text" name="albumId" value="<?= htmlspecialchars(trim($comment["album_id"])) ?>" hidden> -->
                                         <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
                                         <button class="delete" type="submit" name="adminDelComment"><i class="fas fa-trash-alt"></i>Supprimer</button>
                                     </form>
@@ -96,8 +95,8 @@
                                 <p><?= htmlspecialchars(trim($answer["answer"])) ?></p>
                             
                                 <form action="index.php?p=commentDashboard" method="post" onsubmit="confirmDeletion(event)">
-                                    <input type="text" name="commentId" value="<?= htmlspecialchars(trim($answer["comment_id"])) ?>" hidden>
                                     <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
+                                    <input type="text" name="commentId" value="<?= htmlspecialchars(trim($answer["comment_id"])) ?>" hidden>
                                     <button class="delete" type="submit" name="adminDelAnswer"><i class="fas fa-trash-alt"></i>Supprimer</button>
                                 </form>
 
