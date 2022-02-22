@@ -92,7 +92,7 @@ $findComments = new Comments();
                 <div class="vote-progress" style="width: <?= (htmlspecialchars(trim($albums["likes"])) + htmlspecialchars(trim($albums["dislikes"]))) == 0 ? 100 : round(100 * (htmlspecialchars(trim($albums["likes"])) / (htmlspecialchars(trim($albums["likes"])) + htmlspecialchars(trim($albums["dislikes"]))))); ?>%"></div>
             </div> -->
 
-<!-- FORMS TO (DIS)LIKE AN ALBUM ------------------------------------------------------------------------------------------------------>
+<!-- ALBUM (DIS)LIKE FORM ------------------------------------------------------------------------------------------------------------->
             <div class="vote-logos">
                 <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
                 <form id="like-form" method="post">
@@ -127,9 +127,7 @@ $findComments = new Comments();
                     <?php if($comment["user_ip"]) : ?>
                         <div class="action-buttons">
 <!-- COMMENT DELETION FORM ------------------------------------------------------------------------------------------------------------>
-                            <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmDeletion(event)"> -->
-                            <form method="post" onsubmit="confirmDeletion(event)">
-                                <!-- <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden> -->
+                            <form action="" method="post" onsubmit="confirmDeletion(event)">
                                 <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
                                 <button class="delete" name="deleteComment"><i class="fas fa-trash-alt"></i>Supprimer</button>
                             </form>
@@ -139,7 +137,7 @@ $findComments = new Comments();
 
 <!-- COMMENT MODIFICATION FORM -------------------------------------------------------------------------------------------------------->
                             <dialog open>
-                                <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
+                                <form action="" method="post" onsubmit="confirmAnsweraddition(event)">
                                     <p class="mandatory">Ce champ est obligatoire.</p>
 
                                     <textarea name="comment" class="comment" rows="8" cols="40"><?= htmlspecialchars(trim($comment["comment"])) ?></textarea>
@@ -155,7 +153,7 @@ $findComments = new Comments();
                                         <input type="checkbox" value="true" name="acceptPolicy">
                                     </div>
 
-                                    <!-- <input type="text" name="commentId" value="<?= htmlspecialchars($comment["id"]) ?>" hidden> -->
+                                    <input type="text" name="commentId" value="<?= htmlspecialchars($comment["id"]) ?>" hidden>
                                     <input type="submit" name="changeComment" value="Modifier le commentaire">
                                 </form>
 
@@ -165,7 +163,7 @@ $findComments = new Comments();
                     <?php endif; ?>
 
                     <div class="action-buttons">
-<!-- FORMS TO (DIS)LIKE A COMMENT ----------------------------------------------------------------------------------------------------->
+<!-- COMMENT (DIS)LIKE FORM ----------------------------------------------------------------------------------------------------------->
                         <div class="vote-logos">
                             <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
                             <form id="like-form" method="post">
@@ -209,6 +207,7 @@ $findComments = new Comments();
                                     <input type="checkbox" value="true" name="acceptPolicy">
                                 </div>
                                 
+                                <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
                                 <input type="submit" name="postAnswer" value="Publier la réponse">
                             </form>
 
@@ -232,10 +231,9 @@ $findComments = new Comments();
                                 <?php if($answer["user_ip"]) : ?>
                                     <div class="action-buttons">
 <!-- ANSWER DELETION FORM ------------------------------------------------------------------------------------------------------------->
-                                        <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmDeletion(event)">
-                                            <input type="text" name="commentId" value="<?= htmlspecialchars($answer["comment_id"]) ?>" hidden>
+                                        <form action="" method="post" onsubmit="confirmDeletion(event)">
                                             <input type="text" name="answerId" value="<?= htmlspecialchars($answer["id"]) ?>" hidden>
-                                            <input type="text" name="albumTitle" value="<?= htmlspecialchars($answer["album_title"]) ?>" hidden>
+                                            <input type="text" name="commentId" value="<?= htmlspecialchars($answer["comment_id"]) ?>" hidden>
                                             <button class="delete" name="deleteAnswer"><i class="fas fa-trash-alt"></i>Supprimer</button>
                                         </form>
 
@@ -244,7 +242,7 @@ $findComments = new Comments();
 
 <!-- ANSWER MODIFICATION FORM --------------------------------------------------------------------------------------------------------->
                                         <dialog open>
-                                            <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post" onsubmit="confirmAnsweraddition(event)">
+                                            <form action="" method="post" onsubmit="confirmAnsweraddition(event)">
                                                 <p class="mandatory">Ce champ est obligatoire.</p>
                                                 
                                                 <textarea name="answer" class="answer" rows="8" cols="40"><?= htmlspecialchars(trim($answer["answer"])) ?></textarea>
@@ -260,8 +258,8 @@ $findComments = new Comments();
                                                     <input type="checkbox" value="true" name="acceptPolicy">
                                                 </div>
                                                 
-                                                <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
                                                 <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
+                                                <input type="text" name="commentId" value="<?= htmlspecialchars(trim($answer["comment_id"])) ?>" hidden>
                                                 <input type="submit" name="changeAnswer" value="Modifier la réponse">
                                             </form>
 
@@ -270,7 +268,7 @@ $findComments = new Comments();
                                     </div>
                                 <?php endif; ?>
 
-<!-- FORMS TO (DIS)LIKE AN ANSWER ----------------------------------------------------------------------------------------------------->
+<!-- ANSWER (DIS)LIKE FORM ------------------------------------------------------------------------------------------------------------>
                                 <div class="vote-logos">
                                     <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
                                     <form id="like-form" method="post">
