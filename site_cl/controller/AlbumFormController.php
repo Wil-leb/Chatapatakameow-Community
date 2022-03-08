@@ -253,13 +253,11 @@ class AlbumFormController {
 
                                         $covName = $_POST["cover"];
 
-                                        if($trueCovName != $covName || $covName == null) {
-                                                var_dump($covName, $trueCovName);
+                                        if($trueCovName != $covName) {
                                                 die("Hacking attempt!");
                                         }
 
                                         else {
-                                        
                                                 while(false !== ($trueCovName = readdir($directory))) {
                                                         $path = $covFolder.$trueCovName;
                                                         $info = pathinfo($path);
@@ -277,33 +275,57 @@ class AlbumFormController {
                                 }
 
                                 function deletePictures($picFolder, $truePicNames, $minAge) {
-                                        foreach($truePicNames as $truePicName) {
-                                                $directory = opendir($picFolder);
+                                        $directory = opendir($picFolder);
 
-                                                $picNames = explode(" ", $_POST["pictures"]);
+                                        // $picNames = implode(" ", str_split($_POST["pictures"], 40));
 
-                                                if(!in_array($truePicName, $picNames) || $picNames == null) {
-                                                        die("Hacking attempt!");
-                                                        break;
-                                                }
-        
-                                                else {
+                                        // $trueNames = implode(" ", $truePicNames);
 
+                                        // if(str_contains($picNames, "jpe g")) {
+                                        //         $picNames = str_replace("jpe g", "jpeg", $picNames);
+                                        // }
+
+                                        // $picNames = implode(" ", preg_split("/\.(png)|\.(jpe?g)/i", $_POST["pictures"]));
+
+                                        $trueNames = implode(" ", $truePicNames);
+
+                                        $picNames = "";
+
+                                        $picName = "";
+
+                                        foreach(explode(" ", $trueNames) as $trueName) {
+                                                $picName = $trueName;
+                                                // var_dump($picName);
+
+                                                $picNames .= $picName." ";
+                                                // var_dump($picNames);
+                                        }
+
+                                        var_dump($trueNames, $picNames);
+
+                                        if($trueNames != $picNames) {
+                                                die("Hacking attempt!");
+                                        }
+
+                                        else {
+                                                foreach(explode(" ", $picNames) as $picName) {
                                                         while(false !== ($truePicName = readdir($directory))) {
-                                                                $path = $picFolder.$truePicName;
-                                                                $info = pathinfo($path);
-                                                                $fileAge = time() - filemtime($path);
-                                                        
-                                                                if($truePicName != "." && $truePicName != ".." && !is_dir($truePicName)
-                                                                && in_array($truePicName, $picNames) && $fileAge > $minAge) {
-                                                                        var_dump($truePicName);
-                                                                        // unlink($path);
+                                                                if($truePicName != "." && $truePicName != ".." && !is_dir($truePicName) && $truePicName = $picName) {
+                                                                        $path = $picFolder.$truePicName;
+                                                                        $info = pathinfo($path);
+                                                                        $fileAge = time() - filemtime($path);
+
+                                                                        if($fileAge > $minAge) {
+                                                                                var_dump($path);
+                                                                                // unlink($path);
+                                                                                break;
+                                                                        }
                                                                 }
                                                         }
                                                 }
-                                        
-                                                closedir($directory);
                                         }
+                                
+                                        closedir($directory);
                                 }
                                 
                                 $findAlbum = $this->_album->findAlbumById($albumId);
