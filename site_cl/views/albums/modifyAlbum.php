@@ -4,9 +4,10 @@
     <h1>Modification d'album</h1>
 
     <?php if(!$_POST) : ?>
-        <p>Bienvenue à la page de modification d'album&nbsp;! Ici, tu pourras modifier le contenu de l'album choisi et lui retirer ou ajouter des images.</p>
+        <p>Bienvenue à la page de modification d'album&nbsp;! Ici, tu pourras modifier la description de l'album choisi et lui retirer ou ajouter des images.</p>
     <?php endif; ?>
 
+<!-- DESCRIPTION MODIFICATION MESSAGES ------------------------------------------------------------------------------------------------>
     <?php if(empty($modifMessages["success"])) : ?>
         <?php if(!empty($modifMessages["errors"])) { ?>
             <ul class="error">
@@ -19,11 +20,13 @@
     <?php else : ?>
         <p class="success"><?= $modifMessages["success"][0] ?></p>
     <?php endif; ?>
-    
+
+<!-- PICTURE DELETION MESSAGE --------------------------------------------------------------------------------------------------------->
     <?php if(!empty($deleteMessages["success"])) : ?>
         <p class="success"><?= $deleteMessages["success"][0] ?></p>
     <?php endif; ?>
 
+<!-- PICTURE REPLACEMENT MESSAGES ----------------------------------------------------------------------------------------------------->
     <?php if(empty($replaceMessages["success"])) : ?>
         <?php if(!empty($replaceMessages["errors"])) { ?>
             <ul class="error">
@@ -37,6 +40,7 @@
         <p class="success"><?= $replaceMessages["success"][0] ?></p>
     <?php endif; ?>
 
+<!-- PICTURE ADDITION MESSAGES ----------------------------------------------------------------------------------------------------->
     <?php if(empty($extraPicMessages["success"])) : ?>
         <?php if(!empty($extraPicMessages["errors"])) { ?>
             <ul class="error">
@@ -52,12 +56,13 @@
 </section>
 
 <?php if(!$_POST) : ?>
+<!-- DESCRIPTION MODIFICATION --------------------------------------------------------------------------------------------------------->
     <section class="container">
         <h2>Description de l'album</h2>
 
         <p class="mandatory">Tous les champs sont obligatoires. Modifie le contenu désiré et soumets le formulaire pour mettre l'album à jour.</p>
         
-        <form enctype="multipart/form-data" action="index.php?p=modifyAlbum&albumId=<?= htmlspecialchars($findAlbum["id"]) ?>" method="post" onsubmit="confirmChange(event)">
+        <form enctype="multipart/form-data" action="" method="post" onsubmit="confirmChange(event)">
             <input type="text" name="title" class="album-title" value="<?= htmlspecialchars(trim($findAlbum["title"])) ?>"  maxlength="30" placeholder="Titre (30 caractères)">
             <div><?= 30 - strlen(htmlspecialchars(trim($findAlbum["title"]))) ?> caractères restants</div>
             <div></div>
@@ -72,7 +77,6 @@
             </div>
 
             <label for="cover">Nouvelle couverture</label>
-            <input type="text" name="coverName" value="<?= htmlspecialchars(trim($currentCover["cover_name"])) ?>" hidden>
             <input type="file" name="cover" id="album-cover" accept=".jpg, .jpeg, .png" title="Fichier .jp(e)g / .png ne dépassant pas 3 Mo"">
             <div>Aperçu nouvelle couverture</div>
             <div>Taille nouvelle couverture</div>
@@ -91,6 +95,7 @@
         </form>
     </section>
 
+<!-- PICTURE DELETION AND REPLACEMENT ------------------------------------------------------------------------------------------------->
     <section class="container">
         <h2>Image(s) actuelle(s) de l'album</h2>
         
@@ -110,7 +115,8 @@
                         <tr>
                             <td data-label="Image" class="picture-modif">
                                 <?php require "assets/php/ImageReplacement.php"; ?>
-                                <form action="index.php?p=modifyAlbum&albumId=<?= htmlspecialchars($findAlbum["id"]) ?>" method="post" onsubmit="confirmDeletion(event)">
+<!-- PICTURE DELETION FORM ------------------------------------------------------------------------------------------------------------>
+                                <form action="" method="post" onsubmit="confirmDeletion(event)">
                                     <input type="text" name="pictureId" value="<?= htmlspecialchars($currentPicture["id"]) ?>" hidden>
                                     <input type="text" name="pictureName" value="<?= htmlspecialchars(trim($currentPicture["picture_name"])) ?>" hidden>
                                     <button class="delete" type="submit" name="deletePicture"><i class="fas fa-trash-alt"></i>Supprimer</button>
@@ -120,7 +126,8 @@
                                 <br>
                                 <p class="mandatory">Ce champ est obligatoire.</p>
 
-                                <form enctype="multipart/form-data" action="index.php?p=modifyAlbum&albumId=<?= htmlspecialchars($findAlbum["id"]) ?>" method="post" onsubmit="confirmChange(event)">
+<!-- PICTURE REPLACEMENT FORM --------------------------------------------------------------------------------------------------------->
+                                <form enctype="multipart/form-data" action="" method="post" onsubmit="confirmChange(event)">
                                     <label for="newPicture">Nouvelle image</label>
                                     <input type="file" name="newPicture" id="new-picture" accept=".jpg, .jpeg, .png" title="Fichier .jp(e)g / .png. Le total des images existantes et remplacées ne doit pas dépasser 30 Mo">
 
@@ -151,13 +158,14 @@
     </section>
 <?php endif; ?>
 
+<!-- PICTURE ADDITION ----------------------------------------------------------------------------------------------------------------->
 <section class="container">
     <?php if(!$_POST) : ?>
         <h2>Ajouter une/des image(s) à l'album</h2>
 
         <p class="mandatory">Ce champ est obligatoire.</p>
             
-        <form enctype="multipart/form-data" action="index.php?p=modifyAlbum&albumId=<?= htmlspecialchars($findAlbum["id"]) ?>" method="post" onsubmit="confirmPicaddition(event)">
+        <form enctype="multipart/form-data" action="" method="post" onsubmit="confirmPicaddition(event)">
             <label for="extraPictures[]">Image(s) supplémentaire(s)</label>
             <input type="file" class="form-control-file" name="extraPictures[]" id="extra-pictures" multiple accept=".jpg, .jpeg, .png" title="Sélectionne un/des fichier(s) .jpg, .jpeg ou .png. Le total des images existantes et des images ajoutées ne doit pas dépasser 30 Mo">
 
