@@ -221,105 +221,87 @@ class AlbumFormController {
         public function albumDeletionForm($albumId) {  
                 $deleteMessages = [];
             
+                $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $pdo->exec("SET NAMES UTF8");
+            
                 if(isset($_POST["deleteAlbum"])) {
                         $albumId = $_POST["albumId"];
                         
                         $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         $pdo->exec("SET NAMES UTF8");
-            
+        
                         $query = $pdo->prepare("SELECT `id` FROM `album` WHERE `id` = :albumId");
                         $query->execute([":albumId" => $albumId]);
                         $trueAlbId = $query->fetchColumn();
+
+                        var_dump($trueAlbId);
 
                         if($albumId != $trueAlbId || $albumId == null) {
                                 die("Hacking attempt!");
                         }
 
                         else {
+                                $minAge = 10;
+
                                 $findCover = $this->_album->findAlbumCover($albumId);
                                 $trueCovName = $findCover["cover_name"];
 
-                                $req = $pdo->prepare("SELECT `picture_name` FROM `album_pictures` WHERE `album_id` = :albumId");
-                                $req->execute([":albumId" => $albumId]);
-                                $truePicNames = $req->fetchAll(\PDO::FETCH_COLUMN, 0);
-
                                 $covFolder = self::COV_SECURE_PATH;
-                                $picFolder = self::PIC_SECURE_PATH;
-                                $minAge = 10;
         
                                 function deleteCover($covFolder, $trueCovName, $minAge) {
                                         $directory = opendir($covFolder);
 
-                                        $covName = $_POST["cover"];
+                                        $covName = $trueCovName;
 
-                                        if($trueCovName != $covName) {
-                                                die("Hacking attempt!");
-                                        }
+                                        while(false !== ($trueCovName = readdir($directory))) {
+                                                $path = $covFolder.$trueCovName;
+                                                $info = pathinfo($path);
+                                                $fileAge = time() - filemtime($path);
 
-                                        else {
-                                                while(false !== ($trueCovName = readdir($directory))) {
-                                                        $path = $covFolder.$trueCovName;
-                                                        $info = pathinfo($path);
-                                                        $fileAge = time() - filemtime($path);
-
-                                                        if($trueCovName != "." && $trueCovName != ".." && !is_dir($trueCovName)
-                                                        && $trueCovName == $covName && $fileAge > $minAge) {
-                                                                unlink($path);
-                                                                
-                                                        }
+                                                if($trueCovName != "." && $trueCovName != ".." && !is_dir($trueCovName)
+                                                && $trueCovName == $covName && $fileAge > $minAge) {
+                                                        unlink($path);
                                                 }
                                         }
                                                 
                                         closedir($directory);
                                 }
 
+                                $req = $pdo->prepare("SELECT `picture_name` FROM `album_pictures` WHERE `album_id` = :albumId");
+                                $req->execute([":albumId" => $albumId]);
+                                $truePicNames = $req->fetchAll(\PDO::FETCH_COLUMN, 0);
+
+                                $picFolder = self::PIC_SECURE_PATH;
+
                                 function deletePictures($picFolder, $truePicNames, $minAge) {
                                         $directory = opendir($picFolder);
-
-                                        // $picNames = implode(" ", str_split($_POST["pictures"], 40));
-
-                                        // $trueNames = implode(" ", $truePicNames);
-
-                                        // if(str_contains($picNames, "jpe g")) {
-                                        //         $picNames = str_replace("jpe g", "jpeg", $picNames);
-                                        // }
-
-                                        // $picNames = implode(" ", preg_split("/\.(png)|\.(jpe?g)/i", $_POST["pictures"]));
 
                                         $trueNames = implode(" ", $truePicNames);
 
                                         $picNames = "";
-
                                         $picName = "";
 
                                         foreach(explode(" ", $trueNames) as $trueName) {
                                                 $picName = $trueName;
-                                                // var_dump($picName);
-
                                                 $picNames .= $picName." ";
-                                                // var_dump($picNames);
                                         }
 
-                                        var_dump($trueNames, $picNames);
-
-                                        if($trueNames != $picNames) {
-                                                die("Hacking attempt!");
+                                        if(str_ends_with($picNames, " ")) {
+                                                $picNames = substr_replace($picNames, "", -1);
                                         }
 
-                                        else {
-                                                foreach(explode(" ", $picNames) as $picName) {
-                                                        while(false !== ($truePicName = readdir($directory))) {
-                                                                if($truePicName != "." && $truePicName != ".." && !is_dir($truePicName) && $truePicName = $picName) {
-                                                                        $path = $picFolder.$truePicName;
-                                                                        $info = pathinfo($path);
-                                                                        $fileAge = time() - filemtime($path);
+                                        foreach(explode(" ", $picNames) as $picName) {
+                                                while(false !== ($truePicName = readdir($directory))) {
+                                                        if($truePicName != "." && $truePicName != ".." && !is_dir($truePicName) && $truePicName = $picName) {
+                                                                $path = $picFolder.$truePicName;
+                                                                $info = pathinfo($path);
+                                                                $fileAge = time() - filemtime($path);
 
-                                                                        if($fileAge > $minAge) {
-                                                                                var_dump($path);
-                                                                                // unlink($path);
-                                                                                break;
-                                                                        }
+                                                                if($fileAge > $minAge) {
+                                                                        unlink($path);
+                                                                        break;
                                                                 }
                                                         }
                                                 }
@@ -331,7 +313,7 @@ class AlbumFormController {
                                 $findAlbum = $this->_album->findAlbumById($albumId);
                                 // $deleteAlbum = $this->_album->deleteAlbum($albumId);
                                 // deleteCover($covFolder, $trueCovName, $minAge);
-                                deletePictures($picFolder, $truePicNames, $minAge);
+                                // deletePictures($picFolder, $truePicNames, $minAge);
 
                                 $deleteMessages["success"] = ["L'album ".$findAlbum["title"]." a été supprimé avec succès."];
                         }
