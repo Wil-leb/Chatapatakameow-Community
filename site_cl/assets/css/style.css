@@ -118,23 +118,6 @@ img {
     text-align: right;
 }
 
-.vote-bar {
-    display: inline-block;
-    width: 15rem;
-    height: 0.4rem;
-    background: rgba(255, 0, 0, 1);
-}
-
-.vote-progress {
-    height: 0.4rem;
-    background: rgba(20, 140, 90, 1);
-}
-
-.vote-logos {
-    margin: 1rem;
-    text-align: right;   
-}
-
 .vote-thumb {
     border: none;
     padding: 0;
@@ -151,6 +134,10 @@ img {
 
 .dislike:hover, .dislike:focus, .is-disliked .dislike {
     color: rgba(255, 0, 0, 1);
+}
+
+.dislike {
+    margin-right: 1rem;
 }
 
 .comment-content {
@@ -172,32 +159,28 @@ img {
     color: rgba(65, 65, 65, 1);
 }
 
-.action-buttons, .answer-content .vote-logos {
+.action-buttons {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    margin: 1rem 0;
 }
 
-.delete {
+.warning {
     color: rgba(255, 0, 0, 1);
 }
 
-.delete, #hide-content {
+.warning, #hide-content {
     margin-right: 1rem;
 }
 
-.comment-content #hide-content, .answer-content #hide-content {
-    color: rgba(20, 140, 90, 1);
-}
-
 #hide-content {
-    color: rgba(65, 65, 65, 1);
+    color: rgba(20, 140, 90, 1);
 }
 
 .answer-content {
     display: none;
-    /* visibility: hidden; */
 }
 
 /*****2. MOBILE (PORTRAIT)*****/
@@ -234,7 +217,7 @@ header nav ul li:hover, footer nav ul li:hover, header nav ul li a:focus, footer
     background: center / cover no-repeat url("../img/header-footer/Mount_Fuji.jpg");
 } */
 
-.fas, .far {
+.fas, .far, .fa-solid {
     padding-right: 0.8rem;
 }
 
@@ -261,7 +244,7 @@ header nav ul li:hover, footer nav ul li:hover, header nav ul li a:focus, footer
     background: center / cover no-repeat url("../img/header-footer/Rising_sun.jpg");
 } */
 
-.fab {
+.fab, .fa-brands {
     font-size: 3rem;
 }
 
@@ -272,14 +255,6 @@ header nav ul li:hover, footer nav ul li:hover, header nav ul li a:focus, footer
 label, .mandatory, .error, .success {
     font-weight: 600;
     display: block;
-}
-
-.vote {
-    color: initial;
-}
-
-.vote-logos form {
-    display: inline-block;
 }
 
 .error {
@@ -350,7 +325,7 @@ input[type=submit]:hover, input[type=submit]:focus {
     cursor: pointer;
 }
 
-.delete, #see-album, #hide-content, #hide-answers, #hide-content, #close {
+.warning, #see-album, #hide-content, #hide-answers, #hide-content, #close {
     border: none;
     background: none;
     font-family: "Roboto", sans-serif;
@@ -358,7 +333,7 @@ input[type=submit]:hover, input[type=submit]:focus {
     padding: 0;
 }
 
-form button:hover, form button:focus, .delete:hover, .delete:focus, #see-album:hover, #hide-content:hover, #hide-answers:hover, #see-album:focus, #hide-content:focus, #hide-answers:focus, #hide-content:hover, #hide-content:focus, #close:hover, #close:focus {
+form button:hover, form button:focus, .warning:hover, .warning:focus, #see-album:hover, #hide-content:hover, #hide-answers:hover, #see-album:focus, #hide-content:focus, #hide-answers:focus, #hide-content:hover, #hide-content:focus, #close:hover, #close:focus {
     cursor: pointer;
     color: rgba(50, 30, 255, 1);
 }
@@ -457,6 +432,12 @@ dialog p {
 dialog > form, dialog > button {
     display: inline;
     vertical-align: middle;
+}
+
+.social-media {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }
 
 .fa-window-close {
