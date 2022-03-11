@@ -1,7 +1,7 @@
 <?php
 
 namespace App\controller;
-use App\model\{Album, Comments, User, Votes};
+use App\model\{Album, Comments, Reports, User, Votes};
 use App\core\{Session};
 use \PDO;
 
@@ -172,7 +172,8 @@ class CommentFormController {
                                 if(isset($_SERVER["REMOTE_ADDR"])) {
                                         do {
                                                 $voteId = uniqid();
-                                        } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId AND `category` = $category") > 0);
+                                        } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId
+                                                                AND `category` = $category") > 0);
 
                                         if($_POST["voteValue"] == 1) {
                                                 $vote->like($voteId, $albumId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
@@ -182,7 +183,7 @@ class CommentFormController {
                                                 $vote->dislike($voteId, $albumId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
                                         }
 
-                                        $vote->updateVotecount($albumId, $category);
+                                        $vote->updateVoteCount($albumId, $category);
                                 }
                         }
                 }
@@ -206,7 +207,8 @@ class CommentFormController {
                                 if(isset($_SERVER["REMOTE_ADDR"])) {
                                         do {
                                                 $voteId = uniqid();
-                                        } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId AND `category` = $category") > 0);
+                                        } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId
+                                                                AND `category` = $category") > 0);
 
                                         if($_POST["voteValue"] == 1) {
                                                 $vote->like($voteId, $commentId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
@@ -216,7 +218,7 @@ class CommentFormController {
                                                 $vote->dislike($voteId, $commentId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
                                         }
 
-                                        $vote->updateVotecount($commentId, $category);
+                                        $vote->updateVoteCount($commentId, $category);
                                 }
                         }
                 }
@@ -250,7 +252,7 @@ class CommentFormController {
                                                 $vote->dislike($voteId, $answerId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
                                         }
 
-                                        $vote->updateVotecount($answerId, $category);
+                                        $vote->updateVoteCount($answerId, $category);
                                 }
                         }
                 }
@@ -424,6 +426,71 @@ class CommentFormController {
                 
                 return $answerDelMsg;
         }
+
+//*****H. Report addition*****//
+public function reportForm() {
+        $report = new Reports();
+
+        $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->exec("SET NAMES UTF8");
+
+        if(isset($_POST["reportComm"])) {
+                $commentId = $_POST["commentId"];
+                $reportValue = $_POST["reportValue"];
+                $category = "comments";
+
+                $sql = "SELECT `id` FROM `comments` WHERE `id` = :id";
+                $query = $pdo->prepare($sql);
+                $query->execute([":id" => $commentId]);
+                $trueId = $query->fetchColumn();
+        
+                if(isset($_POST["reportComm"]) && $reportValue != "1" || $reportValue == null || $commentId != $trueId
+                        || $commentId == null) {
+                        die("Hacking attempt!");
+                }
+
+                else {
+                        if(isset($_SERVER["REMOTE_ADDR"])) {
+                                do {
+                                        $reportId = uniqid();
+                                } while($pdo->prepare("SELECT `id` FROM `reports` WHERE `id` = $reportId AND `category` = $category") > 0);
+
+                                $report->report($reportId, $commentId, $category, $_SERVER["REMOTE_ADDR"], $reportValue);
+
+                                $report->updateReportCount($commentId, $category);
+                        }
+                }
+        }
+
+        if(isset($_POST["reportAnsw"])) {
+                $answerId = $_POST["answerId"];
+                $reportValue = $_POST["reportValue"];
+                $category = "comment_answers";
+
+                $sql = "SELECT `id` FROM `comment_answers` WHERE `id` = :id";
+                $query = $pdo->prepare($sql);
+                $query->execute([":id" => $answerId]);
+                $trueId = $query->fetchColumn();
+        
+                if(isset($_POST["reportAnsw"]) && $reportValue != "1" || $reportValue == null || $answerId != $trueId
+                        || $answerId == null) {
+                        die("Hacking attempt!");
+                }
+
+                else {
+                        if(isset($_SERVER["REMOTE_ADDR"])) {
+                                do {
+                                        $reportId = uniqid();
+                                } while($pdo->prepare("SELECT `id` FROM `reports` WHERE `id` = $reportId AND `category` = $category") > 0);
+
+                                $report->report($reportId, $answerId, $category, $_SERVER["REMOTE_ADDR"], $reportValue);
+
+                                $report->updateReportCount($answerId, $category);
+                        }
+                }
+        }
+}
 
 //*****END OF THE CLASS*****//      
 }

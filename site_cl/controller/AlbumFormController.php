@@ -1,7 +1,7 @@
 <?php
 
 namespace App\controller;
-use App\model\{Album, User};
+use App\model\{Album, Reports, User};
 use \PDO;
 
 require_once("./assets/php/Guid.php");
@@ -319,6 +319,40 @@ class AlbumFormController {
                         }
 
                         return $deleteMessages;
+                }
+        }
+
+//*****C. Report addition*****//
+        public function reportForm() {
+                $report = new Reports();
+        
+                $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $pdo->exec("SET NAMES UTF8");
+        
+                if(isset($_POST["reportAlb"])) {
+                        $albumId = $_POST["albumId"];
+                        $trueId = $_GET["albumId"];
+                        $reportValue = $_POST["reportValue"];
+                        $category = "album";
+
+                        if(isset($_POST["reportAlb"]) && $reportValue != "1" || $reportValue == null || $albumId != $trueId
+                                || $albumId == null) {
+                                die("Hacking attempt!");
+                        }
+
+                        else {
+                                if(isset($_SERVER["REMOTE_ADDR"])) {
+                                        do {
+                                                $reportId = uniqid();
+                                        } while($pdo->prepare("SELECT `id` FROM `reports` WHERE `id` = $reportId
+                                                                AND `category` = $category") > 0);
+
+                                        $report->report($reportId, $albumId, $category, $_SERVER["REMOTE_ADDR"], $reportValue);
+
+                                        $report->updateReportCount($albumId, $category);
+                                }
+                        }
                 }
         }
 

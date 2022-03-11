@@ -5,7 +5,7 @@ namespace App\controller;
 use App\controller\{AlbumFormController, AlbumModifController, CommentFormController, ContactMessageController, ImageDisplayController,
                     UserFormController};
 use App\core\{Cookie, Https, Session};
-use App\model\{Album, Comments, ContactMessage, User, Votes};
+use App\model\{Album, Comments, ContactMessage, Reports, User, Votes};
 use \PDO;
 
 class FrontController {
@@ -457,14 +457,11 @@ public function albumPublishers() {
 
                 $vote = new Votes();
 
-                $opinion = null;
-
                 if(isset($_POST["likeAlb"]) || isset($_POST["dislikeAlb"])
                 || isset($_POST["likeComm"]) || isset($_POST["dislikeComm"])
                 || isset($_POST["likeAnsw"]) || isset($_POST["dislikeAnsw"])) {
                     $form = new CommentFormController(new Comments());
                     $form->voteForm($_POST);
-                    $opinion = $vote->getClass($_POST["voteValue"]);
                 }
 
                 if(isset($_POST["postComment"]) && $_POST["postComment"] == "Publier le commentaire") {
@@ -478,7 +475,7 @@ public function albumPublishers() {
                     $answerMsg = $form->answerForm($_POST);
                     // header("Refresh: 2");
                 }
-
+                
                 if(isset($_POST["changeComment"]) && $_POST["changeComment"] == "Modifier le commentaire") {
                     $form = new CommentFormController(new Comments());
                     $comModifMsg = $form->commentModifForm($_POST);
@@ -502,18 +499,27 @@ public function albumPublishers() {
                     $answerDelMsg = $form->answerDeletionForm($_POST);
                     // header("Refresh: 2");
                 }
+
+                if(isset($_POST["reportAlb"])) {
+                    $form = new AlbumFormController(new Album());
+                    $form->reportForm($_POST);
+                }
+
+                if(isset($_POST["reportComm"]) || isset($_POST["reportAnsw"])) {
+                    $form = new CommentFormController(new Comments());
+                    $form->reportForm($_POST);
+                }
                 
                 $this->render("albums/albums", [
-                                        "title" => $title,
-                                        "albums" => $albums,
-                                        "opinion" => $opinion,
-                                        "commentMsg" => ($commentMsg) ?? null,
-                                        "answerMsg" => ($answerMsg) ?? null,
-                                        "comModifMsg" => ($comModifMsg) ?? null,
-                                        "answModifMsg" => ($answModifMsg) ?? null,
-                                        "commentDelMsg" => ($commentDelMsg) ?? null,
-                                        "answerDelMsg" => ($answerDelMsg) ?? null
-                                        ]);
+                                                "title" => $title,
+                                                "albums" => $albums,
+                                                "commentMsg" => ($commentMsg) ?? null,
+                                                "answerMsg" => ($answerMsg) ?? null,
+                                                "comModifMsg" => ($comModifMsg) ?? null,
+                                                "answModifMsg" => ($answModifMsg) ?? null,
+                                                "commentDelMsg" => ($commentDelMsg) ?? null,
+                                                "answerDelMsg" => ($answerDelMsg) ?? null
+                                                ]);
             }
         }
     }
