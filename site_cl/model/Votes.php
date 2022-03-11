@@ -14,14 +14,14 @@ class Votes extends Connect {
         $this->_formerVote;
     }
 
-//*****A. Finding the existing votes of a specific album*****//
+//*****A. Finding the existing votes of a specific element*****//
     private function recordExists(string $refId, string $category) {
         $sql = $this->_pdo->prepare("SELECT `id` FROM $category WHERE `id` = :id");
         
         $sql->execute([":id" => $refId]);
 
         if($sql->rowCount() == 0) {
-            die("Impossible de voter pour un album qui n'existe pas !");
+            die("Impossible de voter pour un élément qui n'existe pas !");
         }
     }
 
@@ -124,25 +124,8 @@ class Votes extends Connect {
         return false;
     }
 
-//*****E. Styling the thumb logos according to the votes*****//
-    // public function getClass(int $vote) {
-    //     $sql = "SELECT `vote` FROM `votes` WHERE `vote` = :vote";
-
-    //     $query = $this->_pdo->prepare($sql);
-        
-    //     $query->execute([":vote" => $vote]);
-
-    //     $query->fetchAll(\PDO::FETCH_ASSOC);
-
-    //     if($vote) {
-    //         return $vote == 1 ? "is-liked" : "is-disliked"; 
-    //     }
-
-    //     return null;
-    // }
-
-//*****F. Modifying the (dis)like count according to the votes*****//
-    public function updateVotecount(string $refId, string $category) {
+//*****E. Modifying the (dis)like count according to the votes*****//
+    public function updateVoteCount(string $refId, string $category) {
         $sql = "SELECT COUNT(id) AS voteCount, `vote` FROM `votes` WHERE `ref_id` = :refId AND `category` = :category GROUP BY `vote`";
 
         $query = $this->_pdo->prepare($sql);
