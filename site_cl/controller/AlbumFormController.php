@@ -21,7 +21,7 @@ class AlbumFormController {
         public function albumAdditionForm(array $data) {
                 $addMessages = [];
 
-                if($_POST["postAlbum"]) {
+                if(isset($_POST["postAlbum"])) {
                         $pictures = $_FILES["pictures"];
                         $picsName = count($_FILES["pictures"]["name"]);
                 
@@ -218,30 +218,24 @@ class AlbumFormController {
         }
 
 //*****B. Album deletion*****//
-        public function albumDeletionForm($albumId) {  
+        public function albumDeletionForm() {  
                 $deleteMessages = [];
             
                 $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $pdo->exec("SET NAMES UTF8");
-            
+                
                 if(isset($_POST["deleteAlbum"])) {
                         $albumId = $_POST["albumId"];
-                        
-                        $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
-                        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        $pdo->exec("SET NAMES UTF8");
-        
+
                         $query = $pdo->prepare("SELECT `id` FROM `album` WHERE `id` = :albumId");
                         $query->execute([":albumId" => $albumId]);
                         $trueAlbId = $query->fetchColumn();
 
-                        var_dump($trueAlbId);
-
                         if($albumId != $trueAlbId || $albumId == null) {
                                 die("Hacking attempt!");
                         }
-
+                
                         else {
                                 $minAge = 10;
 
@@ -249,7 +243,7 @@ class AlbumFormController {
                                 $trueCovName = $findCover["cover_name"];
 
                                 $covFolder = self::COV_SECURE_PATH;
-        
+
                                 function deleteCover($covFolder, $trueCovName, $minAge) {
                                         $directory = opendir($covFolder);
 
@@ -316,9 +310,9 @@ class AlbumFormController {
                                 // deletePictures($picFolder, $truePicNames, $minAge);
 
                                 $deleteMessages["success"] = ["L'album ".$findAlbum["title"]." a été supprimé avec succès."];
-                        }
 
-                        return $deleteMessages;
+                                return $deleteMessages;
+                        }
                 }
         }
 
@@ -333,11 +327,9 @@ class AlbumFormController {
                 if(isset($_POST["reportAlb"])) {
                         $albumId = $_POST["albumId"];
                         $trueId = $_GET["albumId"];
-                        $reportValue = $_POST["reportValue"];
                         $category = "album";
 
-                        if(isset($_POST["reportAlb"]) && $reportValue != "1" || $reportValue == null || $albumId != $trueId
-                                || $albumId == null) {
+                        if($albumId != $trueId || $albumId == null) {
                                 die("Hacking attempt!");
                         }
 
@@ -348,7 +340,7 @@ class AlbumFormController {
                                         } while($pdo->prepare("SELECT `id` FROM `reports` WHERE `id` = $reportId
                                                                 AND `category` = $category") > 0);
 
-                                        $report->report($reportId, $albumId, $category, $_SERVER["REMOTE_ADDR"], $reportValue);
+                                        $report->report($reportId, $albumId, $category, $_SERVER["REMOTE_ADDR"], 1);
 
                                         $report->updateReportCount($albumId, $category);
                                 }

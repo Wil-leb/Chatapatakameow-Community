@@ -160,11 +160,9 @@ class CommentFormController {
                 if(isset($_POST["likeAlb"]) || isset($_POST["dislikeAlb"])) {
                         $albumId = $_POST["albumId"];
                         $trueId = $_GET["albumId"];
-                        $voteValue = $_POST["voteValue"];
                         $category = "album";
 
-                        if(isset($_POST["likeAlb"]) && $voteValue != "1" || isset($_POST["dislikeAlb"]) && $voteValue != "-1" ||
-                                $voteValue == null || $albumId != $trueId || $albumId == null) {
+                        if($albumId != $trueId || $albumId == null) {
                                 die("Hacking attempt!");
                         }
 
@@ -175,12 +173,12 @@ class CommentFormController {
                                         } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId
                                                                 AND `category` = $category") > 0);
 
-                                        if($_POST["voteValue"] == 1) {
-                                                $vote->like($voteId, $albumId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
+                                        if(isset($_POST["likeAlb"])) {
+                                                $vote->like($voteId, $albumId, $category, $_SERVER["REMOTE_ADDR"], 1);
                                         }
 
-                                        else {
-                                                $vote->dislike($voteId, $albumId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
+                                        elseif(isset($_POST["dislikeAlb"])) {
+                                                $vote->dislike($voteId, $albumId, $category, $_SERVER["REMOTE_ADDR"], -1);
                                         }
 
                                         $vote->updateVoteCount($albumId, $category);
@@ -190,16 +188,14 @@ class CommentFormController {
 
                 if(isset($_POST["likeComm"]) || isset($_POST["dislikeComm"])) {
                         $commentId = $_POST["commentId"];
-                        $voteValue = $_POST["voteValue"];
                         $category = "comments";
 
                         $sql = "SELECT `id` FROM `comments` WHERE `id` = :id";
                         $query = $pdo->prepare($sql);
                         $query->execute([":id" => $commentId]);
                         $trueId = $query->fetchColumn();
-                
-                        if(isset($_POST["likeComm"]) && $voteValue != "1" || isset($_POST["dislikeComm"]) && $voteValue != "-1" ||
-                                $voteValue == null || $commentId != $trueId || $commentId == null) {
+
+                        if($commentId != $trueId || $commentId == null) {
                                 die("Hacking attempt!");
                         }
 
@@ -210,12 +206,12 @@ class CommentFormController {
                                         } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId
                                                                 AND `category` = $category") > 0);
 
-                                        if($_POST["voteValue"] == 1) {
-                                                $vote->like($voteId, $commentId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
+                                        if(isset($_POST["likeComm"])) {
+                                                $vote->like($voteId, $commentId, $category, $_SERVER["REMOTE_ADDR"], 1);
                                         }
 
-                                        else {
-                                                $vote->dislike($voteId, $commentId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
+                                        elseif(isset($_POST["dislikeComm"])) {
+                                                $vote->dislike($voteId, $commentId, $category, $_SERVER["REMOTE_ADDR"], -1);
                                         }
 
                                         $vote->updateVoteCount($commentId, $category);
@@ -225,16 +221,14 @@ class CommentFormController {
 
                 if(isset($_POST["likeAnsw"]) || isset($_POST["dislikeAnsw"])) {
                         $answerId = $_POST["answerId"];
-                        $voteValue = $_POST["voteValue"];
                         $category = "comment_answers";
 
                         $sql = "SELECT `id` FROM `comment_answers` WHERE `id` = :id";
                         $query = $pdo->prepare($sql);
                         $query->execute([":id" => $answerId]);
                         $trueId = $query->fetchColumn();
-                
-                        if(isset($_POST["likeAnsw"]) && $voteValue != "1" || isset($_POST["dislikeAnsw"]) && $voteValue != "-1" ||
-                                $voteValue == null || $answerId != $trueId || $answerId == null) {
+
+                        if($answerId != $trueId || $answerId == null) {
                                 die("Hacking attempt!");
                         }
 
@@ -244,12 +238,12 @@ class CommentFormController {
                                                 $voteId = uniqid();
                                         } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId AND `category` = $category") > 0);
 
-                                        if($_POST["voteValue"] == 1) {
-                                                $vote->like($voteId, $answerId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
+                                        if(isset($_POST["likeAnsw"])) {
+                                                $vote->like($voteId, $answerId, $category, $_SERVER["REMOTE_ADDR"], 1);
                                         }
 
-                                        else {
-                                                $vote->dislike($voteId, $answerId, $category, $_SERVER["REMOTE_ADDR"], $voteValue);
+                                        elseif(isset($_POST["dislikeAnsw"])) {
+                                                $vote->dislike($voteId, $answerId, $category, $_SERVER["REMOTE_ADDR"], -1);
                                         }
 
                                         $vote->updateVoteCount($answerId, $category);
@@ -437,16 +431,14 @@ public function reportForm() {
 
         if(isset($_POST["reportComm"])) {
                 $commentId = $_POST["commentId"];
-                $reportValue = $_POST["reportValue"];
                 $category = "comments";
 
                 $sql = "SELECT `id` FROM `comments` WHERE `id` = :id";
                 $query = $pdo->prepare($sql);
                 $query->execute([":id" => $commentId]);
                 $trueId = $query->fetchColumn();
-        
-                if(isset($_POST["reportComm"]) && $reportValue != "1" || $reportValue == null || $commentId != $trueId
-                        || $commentId == null) {
+
+                if($commentId != $trueId || $commentId == null) {
                         die("Hacking attempt!");
                 }
 
@@ -456,7 +448,7 @@ public function reportForm() {
                                         $reportId = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `reports` WHERE `id` = $reportId AND `category` = $category") > 0);
 
-                                $report->report($reportId, $commentId, $category, $_SERVER["REMOTE_ADDR"], $reportValue);
+                                $report->report($reportId, $commentId, $category, $_SERVER["REMOTE_ADDR"], 1);
 
                                 $report->updateReportCount($commentId, $category);
                         }
@@ -465,16 +457,14 @@ public function reportForm() {
 
         if(isset($_POST["reportAnsw"])) {
                 $answerId = $_POST["answerId"];
-                $reportValue = $_POST["reportValue"];
                 $category = "comment_answers";
 
                 $sql = "SELECT `id` FROM `comment_answers` WHERE `id` = :id";
                 $query = $pdo->prepare($sql);
                 $query->execute([":id" => $answerId]);
                 $trueId = $query->fetchColumn();
-        
-                if(isset($_POST["reportAnsw"]) && $reportValue != "1" || $reportValue == null || $answerId != $trueId
-                        || $answerId == null) {
+
+                if($answerId != $trueId || $answerId == null) {
                         die("Hacking attempt!");
                 }
 
@@ -484,7 +474,7 @@ public function reportForm() {
                                         $reportId = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `reports` WHERE `id` = $reportId AND `category` = $category") > 0);
 
-                                $report->report($reportId, $answerId, $category, $_SERVER["REMOTE_ADDR"], $reportValue);
+                                $report->report($reportId, $answerId, $category, $_SERVER["REMOTE_ADDR"], 1);
 
                                 $report->updateReportCount($answerId, $category);
                         }
