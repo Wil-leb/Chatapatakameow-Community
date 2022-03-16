@@ -89,17 +89,15 @@ $findComments = new Comments();
 
         <div class="action-buttons">
 <!-- ALBUM (DIS)LIKE FORM ------------------------------------------------------------------------------------------------------------->
-            <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
-            <form id="like-form" method="post">
+            <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+            <!-- <form id="like-form" method="post"> -->
                 <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden>
-                <input type="text" name="voteValue" value="1" hidden>
                 <button type="submit" name="likeAlb" value="like" class="vote-thumb like"><i class="fas fa-thumbs-up"></i><?= htmlspecialchars(trim($albums["likes"]))?></button>
             </form>
             
-            <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
-            <form id="dislike-form" method="post">
+            <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+            <!-- <form id="dislike-form" method="post"> -->
                 <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden>
-                <input type="text" name="voteValue" value="-1" hidden>
                 <button type="submit" name="dislikeAlb" value="dislike" class="vote-thumb dislike"><i class="fas fa-thumbs-down"></i><?= htmlspecialchars(trim($albums["dislikes"]))?></button>
             </form>
 
@@ -120,7 +118,6 @@ $findComments = new Comments();
 <!-- ALBUM REPORT FORM ---------------------------------------------------------------------------------------------------------------->
             <form action="" method="post">
                 <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden>
-                <input type="text" name="reportValue" value="1" hidden>
                 <button type="submit" name="reportAlb" class="warning"><i class="fa-solid fa-circle-minus"></i>Signaler</button>
             </form>
         </div>
@@ -179,17 +176,15 @@ $findComments = new Comments();
 
                     <div class="action-buttons">
 <!-- COMMENT (DIS)LIKE FORM ----------------------------------------------------------------------------------------------------------->
-                        <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
-                        <form id="like-form" method="post">
+                        <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                        <!-- <form id="like-form" method="post"> -->
                             <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
-                            <input type="text" name="voteValue" value="1" hidden>
                             <button type="submit" name="likeComm" value="like" class="vote-thumb like"><i class="fas fa-thumbs-up"></i><?= htmlspecialchars(trim($comment["likes"]))?></button>
                         </form>
                 
-                        <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
-                        <form id="dislike-form" method="post">
+                        <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                        <!-- <form id="dislike-form" method="post"> -->
                             <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
-                            <input type="text" name="voteValue" value="-1" hidden>
                             <button type="submit" name="dislikeComm" value="dislike" class="vote-thumb dislike"><i class="fas fa-thumbs-down"></i><?= htmlspecialchars(trim($comment["dislikes"]))?></button>
                         </form>
 
@@ -230,7 +225,6 @@ $findComments = new Comments();
 <!-- COMMENT REPORT FORM -------------------------------------------------------------------------------------------------------------->
                         <form action="" method="post">
                             <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
-                            <input type="text" name="reportValue" value="1" hidden>
                             <button type="submit" name="reportComm" class="warning"><i class="fa-solid fa-circle-minus"></i>Signaler</button>
                         </form>
 
@@ -290,24 +284,21 @@ $findComments = new Comments();
 
                                 <div class="action-buttons">
 <!-- ANSWER (DIS)LIKE FORM ------------------------------------------------------------------------------------------------------------>
-                                <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
-                                    <form id="like-form" method="post">
+                                <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                                    <!-- <form id="like-form" method="post"> -->
                                         <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
-                                        <input type="text" name="voteValue" value="1" hidden>
                                         <button type="submit" name="likeAnsw" value="like" class="vote-thumb like"><i class="fas fa-thumbs-up"></i><?= htmlspecialchars(trim($answer["likes"]))?></button>
                                     </form>
                             
-                                    <!-- <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post"> -->
-                                    <form id="dislike-form" method="post">
+                                    <form action="index.php?p=albums&albumId=<?= htmlspecialchars(trim($albums["id"])) ?>" method="post">
+                                    <!-- <form id="dislike-form" method="post"> -->
                                         <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
-                                        <input type="text" name="voteValue" value="-1" hidden>
                                         <button type="submit" name="dislikeAnsw" value="dislike" class="vote-thumb dislike"><i class="fas fa-thumbs-down"></i><?= htmlspecialchars(trim($answer["dislikes"]))?></button>
                                     </form>
 
 <!-- ANSWER REPORT FORM --------------------------------------------------------------------------------------------------------------->
                                     <form action="" method="post">
                                         <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
-                                        <input type="text" name="reportValue" value="1" hidden>
                                         <button type="submit" name="reportAnsw" class="warning"><i class="fa-solid fa-circle-minus"></i>Signaler</button>
                                     </form>
                                 </div>
