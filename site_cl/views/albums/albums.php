@@ -152,7 +152,7 @@ $findComments = new Comments();
                                 <form action="" method="post" onsubmit="confirmAnsweraddition(event)">
                                     <p class="mandatory">Ce champ est obligatoire.</p>
 
-                                    <textarea name="comment" class="comment" rows="8" cols="40"><?= htmlspecialchars(trim($comment["comment"])) ?></textarea>
+                                    <textarea name="comment" class="editor" rows="8" cols="40"><?= htmlspecialchars(trim($comment["comment"])) ?></textarea>
                                     <div></div>
                                     
                                     <div class="rules">
@@ -202,7 +202,7 @@ $findComments = new Comments();
                                 <input type="text" name="commentLogin" class="comment-login" placeholder="Pseudo" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["login"] ?>" <?php endif; ?>>
                                 <div></div>
 
-                                <textarea name="answer" class="answer" rows="8" cols="40" placeholder="Réponse"></textarea>
+                                <textarea name="answer" class="editor" rows="8" cols="40" placeholder="Réponse"></textarea>
                                 <div></div>
 
                                 <div class="rules">
@@ -259,7 +259,7 @@ $findComments = new Comments();
                                             <form action="" method="post" onsubmit="confirmAnsweraddition(event)">
                                                 <p class="mandatory">Ce champ est obligatoire.</p>
                                                 
-                                                <textarea name="answer" class="answer" rows="8" cols="40"><?= htmlspecialchars(trim($answer["answer"])) ?></textarea>
+                                                <textarea name="answer" class="editor" rows="8" cols="40"><?= htmlspecialchars(trim($answer["answer"])) ?></textarea>
                                                 <div></div>
 
                                                 <div class="rules">
@@ -314,7 +314,7 @@ $findComments = new Comments();
     <p class="mandatory">Tous les champs sont obligatoires.</p>
       
 <!-- COMMENT ADDITION FORM ------------------------------------------------------------------------------------------------------------>
-    <form action="" method="post" onsubmit="confirmCommaddition(event)">
+    <form action="" method="post" class="comment-form" onsubmit="confirmCommaddition(event)">
         <input type="text" name="email" class="email" placeholder="Email" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["email"] ?>" <?php endif; ?>>
         <div></div>
 
@@ -322,7 +322,7 @@ $findComments = new Comments();
         <input type="text" name="commentLogin" class="comment-login" placeholder="Pseudo" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["login"] ?>" <?php endif; ?>>
         <div></div>
 
-        <textarea name="comment" class="comment" rows="8" cols="40" placeholder="Commentaire"></textarea>
+        <textarea name="comment" class="editor" rows="8" cols="40" placeholder="Commentaire"></textarea>
         <div></div>
 
         <div class="rules">
