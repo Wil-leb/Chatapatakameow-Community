@@ -9,7 +9,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Carter+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Carter+One&family=Roboto:wght@500&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/normalize.css">
 	<link rel="stylesheet" href="assets/css/style.css">
 	
@@ -57,7 +57,6 @@
 					<?php endif; ?>
 				</ul>
 			</nav> -->
-			
         </div>
 	</header>
 
@@ -69,7 +68,6 @@
     <!-- Footer -->
 	<footer>
 		<div class="container">
-
             <nav>
                 <ul>
                     <li><a href="index.php?p=privacyPolicy" <?= $https::active("privacyPolicy") ?>>Politique de confidentialité</a></li>
@@ -78,11 +76,15 @@
                     <li><a href="https://discord.com/" target="blank"><i class="fab fa-discord"></i></a>
                 </ul>
             </nav>
-
         </div>
 	</footer>
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="./assets/js/ckeditor/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replaceAll("editor");
+        CKEDITOR.config.extraPlugins="emoji";
+    </script>
 	<script src="./assets/js/function.js"></script>
 	<script type="module" src="./assets/js/main.js"></script>
 </body>
