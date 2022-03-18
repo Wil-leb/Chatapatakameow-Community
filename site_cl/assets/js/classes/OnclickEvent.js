@@ -42,7 +42,14 @@ export default class OnclickEvent {
                 closeButton.addEventListener("click", () => {
                     dialog[i].previousElementSibling.value = "ON"
                     dialog[i].style.visibility = "hidden"
-                    document.querySelector("body").style.visibility = "visible"
+                    
+                    if(document.querySelector(".comment-content")) {
+                        document.querySelector(".comment-content").style.visibility = "visible"
+                    }
+
+                    if(document.querySelector(".comment-form")) {
+                        document.querySelector(".comment-form").style.visibility = "visible"
+                    }
                 });
             }
         }
@@ -54,7 +61,13 @@ export default class OnclickEvent {
         for(let i = 0; i < hideContent.length; i ++) {
             if(hideContent[i]) {
                 hideContent[i].addEventListener("click", () => {
-                    document.querySelector("body").style.visibility = "hidden"
+                    if(document.querySelector(".comment-content")) {
+                        document.querySelector(".comment-content").style.visibility = "hidden"
+                    }
+
+                    if(document.querySelector(".comment-form")) {
+                        document.querySelector(".comment-form").style.visibility = "hidden"
+                    }
 
                     const content = hideContent[i].nextElementSibling
 
