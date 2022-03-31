@@ -94,7 +94,35 @@ function confirmDeletion(event) {
     }
 }
 
-//*****G. Table label modification for mobile (portrait format)*****//
+//*****G. Suspension confirm*****//
+
+function confirmSuspension(event) {
+    check = confirm("Confirmes-tu cette suspension ?")
+
+    if(check) {
+        event.submit()
+    }
+
+    else {
+        event.preventDefault()
+    }
+}
+
+//*****G. Reactivation confirm*****//
+
+function confirmReactivation(event) {
+    check = confirm("Confirmes-tu cette réactivation ?")
+
+    if(check) {
+        event.submit()
+    }
+
+    else {
+        event.preventDefault()
+    }
+}
+
+//*****I. Table label modification for mobile (portrait format)*****//
 function changeDataLabel() {
     const userEmailrows = document.querySelectorAll("#userEmail")
     const commentIdrows = document.querySelectorAll("#commentId")
