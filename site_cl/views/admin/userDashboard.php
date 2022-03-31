@@ -5,6 +5,35 @@
         <p>Bienvenue au tableau de bord des utilisateurs&nbsp;! Cette page permet de supprimer des utilisateurs, ou d'accéder à une autre page pour modifier leurs informations.</p>
     <?php endif; ?>
 
+<!-- ACCOUNT SUSPENSION MESSAGES ------------------------------------------------------------------------------------------------------>
+    <?php if(empty($suspensionMsg["success"])) : ?>
+        <?php if(!empty($suspensionMsg["errors"])) { ?>
+            <p class="error"><?= $suspensionMsg["errors"][0] ?></p>
+        <?php } ?>
+    
+    <?php else : ?>
+        <ul class="success">
+            <?php foreach($suspensionMsg["success"] as $success) : ?>    
+                <li><?= $success ?></li>
+            <?php endforeach ?>    
+        </ul>
+    <?php endif; ?>
+
+<!-- ACCOUNT REACTIVATION MESSAGES ---------------------------------------------------------------------------------------------------->
+    <?php if(empty($reactivationMsg["success"])) : ?>
+        <?php if(!empty($reactivationMsg["errors"])) { ?>
+            <p class="error"><?= $reactivationMsg["errors"][0] ?></p>
+        <?php } ?>
+    
+    <?php else : ?>
+        <ul class="success">
+            <?php foreach($reactivationMsg["success"] as $success) : ?>    
+                <li><?= $success ?></li>
+            <?php endforeach ?>    
+        </ul>
+    <?php endif; ?>
+
+<!-- USER DELETION MESSAGES ----------------------------------------------------------------------------------------------------------->
     <?php if(!empty($userDelMsg["success"])) : ?>
         <p class="success"><?= $userDelMsg["success"][0] ?></p>
     <?php endif; ?>
@@ -19,6 +48,8 @@
                 <tr>
                     <th>Adresse électronique</th>
                     <th>Pseudo</th>
+                    <th>Publications signalées</th>
+                    <th>État du compte</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -29,10 +60,34 @@
                     <tr>
                         <td data-label="Adresse électronique" id="userEmail"><?= htmlspecialchars(trim($user["email"])) ?></td>
                         <td data-label="Pseudo"><?= htmlspecialchars(trim($user["login"])) ?></td>
-                        <td data-label="Action" class="deletion">
+                        <td data-label="Publications signalées">xxxx</td>
+                        <td data-label="État du compte">
+                            <?php if($user["account_suspended"] === "0") : ?>
+                                Actif
+                            <?php else : ?>
+                                Suspendu
+                            <?php endif; ?>
+
                             <div class="deletion">
-                                <form action="index.php?p=userDashboard&userId=<?= htmlspecialchars(trim($user["id"])) ?>" method="post" onsubmit="confirmDeletion(event)">
-                                    <button class="delete" type="submit" name="deleteUser"><i class="fas fa-trash-alt"></i>Supprimer</button>
+                                
+                                    <form action="" method="post" onsubmit="confirmSuspension(event)">
+                                        <input type="text" name="userId" value="<?= htmlspecialchars(trim($user["id"])) ?>" hidden>
+                                        <button class="deactivate" type="submit" name="suspendAccount"><i class="fa-solid fa-circle-minus"></i>Suspendre</button>
+                                    </form>
+
+                                
+                                    <form action="" method="post" onsubmit="confirmReactivation(event)">
+                                        <input type="text" name="userId" value="<?= htmlspecialchars(trim($user["id"])) ?>" hidden>
+                                        <button class="reactivate" type="submit" name="reactivateAccount"><i class="fa-solid fa-arrow-rotate-right"></i>Réactiver</button>
+                                    </form>
+                                
+                            </div>
+                        </td>
+                        <td data-label="Action">
+                            <div class="deletion">
+                                <form action="" method="post" onsubmit="confirmDeletion(event)">
+                                <input type="text" name="userId" value="<?= htmlspecialchars(trim($user["id"])) ?>" hidden>
+                                    <button class="warning" type="submit" name="deleteUser"><i class="fas fa-trash-alt"></i>Supprimer</button>
                                 </form>
 
                                 <p><a href="index.php?p=modifyUser&userId=<?= htmlspecialchars($user["id"])?>"><i class="fas fa-pen"></i>Modifier</a></p>

@@ -121,10 +121,25 @@
             <form action="index.php?p=modifyUser&userId=<?= htmlspecialchars($findUser["id"]) ?>" method="post" onsubmit="confirmChange(event)">
                 <label for="role">Rôle de l&apos;utilisateur</label>
                 <select name="role" title="Clique pour choisir un rôle">
-                    <option value="" selected>[choix du rôle]</option>
-                    <option value="0">Visiteur non membre de la CL</option>
-                    <option value="1">Membre de la CL sans droits d'administration</option>
-                    <option value="2">Membre de la CL avec droits d'aministration</option>
+                    <option value="" selected>
+                        <?php if($findUser["role"] === "0") : ?>
+                            Visiteur non membre de la CL
+                        <?php elseif($findUser["role"] === "1") : ?>
+                            Membre de la CL sans droits d'administration
+                        <?php else : ?>
+                            Membre de la CL avec droits d'aministration
+                        <?php endif; ?>
+                    </option>
+                    <?php if($findUser["role"] == "0") : ?>
+                        <option value="1">Membre de la CL sans droits d'administration</option>
+                        <option value="2">Membre de la CL avec droits d'aministration</option>
+                    <?php elseif($findUser["role"] == "1") : ?>
+                        <option value="0">Visiteur non membre de la CL</option>
+                        <option value="2">Membre de la CL avec droits d'aministration</option>
+                    <?php else : ?>
+                        <option value="0">Visiteur non membre de la CL</option>
+                        <option value="1">Membre de la CL sans droits d'administration</option>
+                    <?php endif; ?>
                 </select>
                 
                 <input type="submit" name="roleChange" value="Confirmer le changement de rôle">

@@ -30,6 +30,7 @@ $findImages = new Album();
                         <th>Auteur</th>
                         <th>Titre</th>
                         <th>Date</th>
+                        <th>Signalements</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -43,11 +44,12 @@ $findImages = new Album();
                             <td data-label="Auteur"><?= htmlspecialchars(trim($album["user_login"])) ?></td>
                             <td data-label="Titre"><?= htmlspecialchars(trim($album["title"])) ?></td>
                             <td data-label="Date" id="description"><?= htmlspecialchars(trim(strftime("%d/%m/%Y %H:%M:%S", strtotime($album["post_date"])))) ?></td>
+                            <td data-label="Signalements"><?= htmlspecialchars(trim($album["reports_number"])) ?></td>
                             <td data-label="Action">
                                 <div class="deletion">
                                     <form action="" method="post" onsubmit="confirmDeletion(event)">
                                         <input type="text" name="albumId" value="<?= htmlspecialchars(trim($album["id"])) ?>" hidden>
-                                        <button class="delete" type="submit" name="deleteAlbum"><i class="fas fa-trash-alt"></i>Supprimer</button>
+                                        <button class="warning" type="submit" name="deleteAlbum"><i class="fas fa-trash-alt"></i>Supprimer</button>
                                     </form>
 
                                     <p><a href="index.php?p=modifyAlbum&albumId=<?= htmlspecialchars($album["id"])?>"><i class="fas fa-pen"></i>Modifier</a></p>
