@@ -225,6 +225,18 @@ class FrontController {
             // $offset->execute();
             
             // $allUsers = $offset->fetchAll(\PDO::FETCH_ASSOC);
+
+            if(isset($_POST["suspendAccount"])) {
+                $form = new UserFormController(new User());
+                $suspensionMsg = $form->accountSuspensionForm($_POST);
+                // header("Refresh: 2");
+            }
+
+            if(isset($_POST["reactivateAccount"])) {
+                $form = new UserFormController(new User());
+                $reactivationMsg = $form->accountReactivationForm($_POST);
+                // header("Refresh: 2");
+            }
             
             if(isset($_POST["deleteUser"])) {
                 $form = new UserFormController(new User());
@@ -237,6 +249,8 @@ class FrontController {
                                                 "users" => $users,
                                                 // "page" => $pages,
                                                 // "currentPage" => $currentPage,
+                                                "suspensionMsg" => ($suspensionMsg) ?? null,
+                                                "reactivationMsg" => ($reactivationMsg) ?? null,
                                                 "userDelMsg" => ($userDelMsg) ?? null
                                                 ]);
         }
@@ -330,7 +344,7 @@ class FrontController {
                                                         "accountConfMsg" => ($accountConfMsg) ?? null]);
     }
 
-//*****iii. Login forgotten*****//
+//*****iii. Forgotten login*****//
     public function forgotLogin() {
 
         $title = "xxx - Récupération de pseudo";
@@ -343,7 +357,7 @@ class FrontController {
         $this->render("connection/forgotLogin", ["title" => $title, "forgotLogMsg" => ($forgotLogMsg) ?? null]);
     }
 
-//*****iv. Password forgotten*****//
+//*****iv. Forgotten password*****//
     public function forgotPassword() {
 
         $title = "xxx - Récupération de mot de passe";

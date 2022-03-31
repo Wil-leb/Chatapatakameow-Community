@@ -51,35 +51,31 @@ class CommentFormController {
                                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                                 $pdo->exec("SET NAMES UTF8");
 
-                                $query = $pdo->prepare("SELECT `user_id` FROM `album` WHERE album.id = :albumId");
-                                $query->execute([":albumId" => $albumId]);
-                                $userId = $query->fetchColumn();
-
-                                $req = $pdo->prepare("SELECT `email` FROM `user` LEFT OUTER JOIN `album`
-                                                        ON user.login = album.user_login WHERE album.id = :albumId");                  
-                                $req->execute([":albumId" => $albumId]);
-                                $email = $req->fetchColumn();
-
-                                $message = "Bonjour, ton album ".$title." vient d'être commenté. Voici le commentaire :\n".$data["comment"]."";
-                                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
-
-                                if(mail($email, "Nouveau commentaire", $message, $headers)) {
-                                        $commentMsg["success"] = ["Mail de confirmation envoyé."];
-                                }
-                                
-                                else {
-                                        $commentMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
-                                }
-
                                 do {
                                         $id = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = $id") > 0);
 
-                                $commentAddition = $this->_comments->addComment($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $albumId, $title, $data["comment"]);
+                                // $commentAddition = $this->_comments->addComment($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $albumId, $title, $data["comment"]);
 
-                                $commentMsg["success"] = ["Le commentaire a été publié avec succès."];
-                        }
+                                $commentMsg["success"][] = "Le commentaire a été publié avec succès.";
+
+                                $query = $pdo->prepare("SELECT `email` FROM `user` LEFT OUTER JOIN `album`
+                                                        ON user.login = album.user_login WHERE album.id = :albumId");                  
+                                $query->execute([":albumId" => $albumId]);
+                                $email = $query->fetchColumn();
+
+                                $message = "Bonjour, ton album ".$title." vient d'être commenté. Voici le commentaire :\n".$data["comment"]."";
+                                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                // if(mail($email, "Nouveau commentaire", $message, $headers)) {
+                                        $commentMsg["success"][] = "Mail de confirmation envoyé.";
+                                // }
                                 
+                                // else {
+                                //         $commentMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
+                                // }
+                        }
+
                         return $commentMsg;
                 }
         }
@@ -120,33 +116,35 @@ class CommentFormController {
                                 $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                                 $pdo->exec("SET NAMES UTF8");
-                                
-                                $query = $pdo->prepare("SELECT `user_email` FROM `comments` WHERE comments.id = :commentId");
-                                $query->execute([":commentId" => $commentId]);
-                                $email = $query->fetchColumn();
-
-                                $message = "Bonjour, tu viens de recevoir une réponse à ton commentaire pour l'album ".$title.". Voici la réponse :\n".$data["answer"]."";
-                                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
-
-                                if(mail($email, "Nouveau commentaire", $message, $headers)) {
-                                        $commentMsg["success"] = ["Mail de confirmation envoyé."]; 
-                                }
-                                
-                                else {
-                                        $commentMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
-                                }
 
                                 do {
                                         $id = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `comment_answers` WHERE `id` = $id") > 0);
 
-                                $answerAddition = $this->_comments->addAnswer($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $commentId, $albumId, $title, $data["answer"]);
+                                // $answerAddition = $this->_comments->addAnswer($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $commentId, $albumId, $title, $data["answer"]);
                                 
-                                $answerMsg["success"] = ["La réponse a été publiée avec succès."];
-                        }
-                }
+                                $answerMsg["success"][] = "La réponse a été publiée avec succès.";
 
-                return $answerMsg;
+                                $query = $pdo->prepare("SELECT `user_email`, `comment` FROM `comments` WHERE comments.id = :commentId");
+                                $query->execute([":commentId" => $commentId]);
+                                $result = $query->fetch();
+                                $email = $result["user_email"];
+                                $comment = $result["comment"];
+
+                                $message = "Bonjour, tu viens de recevoir une réponse à ton commentaire ".$comment." pour l'album ".$title.". Voici la réponse :\n".$data["answer"]."";
+                                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                // if(mail($email, "Nouvelle réponse", $message, $headers)) {
+                                        $answerMsg["success"][] = "Mail de confirmation envoyé.";
+                                // }
+                                
+                                // else {
+                                //         $commentMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
+                                // }
+                        }
+
+                        return $answerMsg;
+                }
         }
 
 //*****C. Vote addition*****//
@@ -285,7 +283,8 @@ class CommentFormController {
                                 }
         
                                 if(empty($comModifMsg["errors"])) {
-                                        $commentModification = $this->_comments->updateComment($commentId, $data["comment"]);
+                                        // $commentModification = $this->_comments->updateComment($commentId, $data["comment"]);
+
                                         $comModifMsg["success"] = ["Le commentaire a été modifié avec succès."];
                                 }   
                         }
@@ -333,8 +332,9 @@ class CommentFormController {
                                 }
 
                                 if(empty($answModifMsg["errors"])) {
-                                        $answerModification = $this->_comments->updateAnswer($answerId, $data["answer"]);
-                                        $answModifMsg["success"] = ["La réponse a été modifié avec succès."];
+                                        // $answerModification = $this->_comments->updateAnswer($answerId, $data["answer"]);
+
+                                        $answModifMsg["success"] = ["La réponse a été modifiée avec succès."];
                                 }
                         }
                                 
@@ -357,26 +357,41 @@ class CommentFormController {
                         $query->execute([":commentId" => $commentId]);
                         $trueCommId = $query->fetchColumn();
 
-                        $req = $pdo->prepare("SELECT `album_title` FROM `comments` WHERE `id` = :commentId");
-                        $req->execute([":commentId" => $commentId]);
-                        $title = $req->fetchColumn();
-
                         if($commentId != $trueCommId || $commentId == null) {
                                 die("Hacking attempt!");
                         }
 
                         else {
-                                $deleteComment = $this->_comments->deleteComment($commentId);
+                                $req = $pdo->prepare("SELECT `album_title` FROM `comments` WHERE `id` = :commentId");
+                                $req->execute([":commentId" => $commentId]);
+                                $title = $req->fetchColumn();
+
                                 if(isset($_POST["deleteComment"])) {
-                                        $commentDelMsg["success"] = ["Le commentaire sélectionné pour l'album ".$title." et ses réponses ont été supprimés avec succès."];
+                                        // $deleteComment = $this->_comments->deleteComment($commentId);
+
+                                        $commentDelMsg["success"] = ["Le commentaire sélectionné pour l'album ".$title." et ses réponses ont été supprimés avec succès."];
                                 }
 
                                 elseif(Session::admin() && isset($_POST["adminDelComment"])) {
-                                        $req = $pdo->prepare("SELECT `user_login` FROM `comments` WHERE `id` = :commentId");
-                                        $req->execute([":commentId" => $commentId]);
-                                        $login = $req->fetchColumn();
+                                        // $deleteComment = $this->_comments->deleteComment($commentId);
 
-                                        $commentDelMsg["success"] = ["Le commentaire sélectionné de l'utilisateur ".$login." et ses réponses ont été supprimés avec succès."];
+                                        $fetch = $pdo->prepare("SELECT `user_email`, `user_login`, `comment` FROM `comments`
+                                                                WHERE `id` = :commentId");
+                                        $fetch->execute([":commentId" => $commentId]);
+                                        $result = $fetch->fetch();
+
+                                        $commentDelMsg["success"][] = "Le commentaire sélectionné de l'utilisateur ".$result["user_login"]." pour l'album ".$title." et ses réponses ont été supprimés avec succès.";
+
+                                        $message = "Bonjour, ton commentaire ".$result["comment"]." vient d'être modéré suite à des signalements. En cas de contestation, contacte-moi.";
+                                        $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                        // if(mail($result["user_email"], "Commentaire modéré", $message, $headers)) {
+                                                $commentDelMsg["success"][] = "Mail de modération envoyé.";
+                                        // }
+                                        
+                                        // else {
+                                        //         $commentDelMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, réeesaie ultérieurement.";
+                                        // }
                                 }
                         }
                 }
@@ -404,17 +419,49 @@ class CommentFormController {
                         $req->execute([":answerId" => $answerId, ":commentId" => $commentId]);
                         $trueCommId = $req->fetchColumn();
 
-                        $que = $pdo->prepare("SELECT `album_title` FROM `comment_answers` WHERE `id` = :answerId AND `comment_id` = :commentId");
-                        $que->execute([":answerId" => $answerId, ":commentId" => $commentId]);
-                        $title = $que->fetchColumn();
-
                         if($answerId != $trueAnswId || $answerId == null || $commentId != $trueCommId || $commentId == null) {
                                 die("Hacking attempt!");
                         }
 
                         else {
-                                $deleteAnswer = $this->_comments->deleteAnswer($answerId);
-                                $answerDelMsg["success"] = ["La réponse sélectionnée au commentaire n° ".$commentId." pour l'album ".$title." a été supprimée avec succès."];
+                                $que = $pdo->prepare("SELECT `album_title` FROM `comment_answers` WHERE `id` = :answerId AND `comment_id` = :commentId");
+                                $que->execute([":answerId" => $answerId, ":commentId" => $commentId]);
+                                $title = $que->fetchColumn();
+
+                                if(isset($_POST["deleteAnswer"])) {
+                                        // $deleteAnswer = $this->_comments->deleteAnswer($answerId);
+
+                                        $fetch = $pdo->prepare("SELECT `comment` FROM `comments` WHERE `id` = :commentId");
+                                        $fetch->execute([":commentId" => $commentId]);
+                                        $comment = $fetch->fetchColumn();
+
+                                        $answerDelMsg["success"] = ["La réponse sélectionnée au commentaire ".$comment." pour l'album ".$title." a été supprimée avec succès."];
+                                }
+
+                                elseif(Session::admin() && isset($_POST["adminDelAnswer"])) {
+                                        // $deleteAnswer = $this->_comments->deleteAnswer($answerId);
+
+                                        $fetch = $pdo->prepare("SELECT comment_answers.user_email, comment_answers.user_login,
+                                                                `comment_id`, `answer`, `comment`
+                                                                FROM `comment_answers`
+                                                                LEFT OUTER JOIN `comments` ON comments.id = comment_answers.comment_id
+                                                                WHERE comment_answers.id = :answerId AND `comment_id` = :commentId");
+                                        $fetch->execute([":answerId" => $answerId, ":commentId" => $commentId]);
+                                        $result = $fetch->fetch(\PDO::FETCH_ASSOC);
+
+                                        $answerDelMsg["success"][] = "La réponse sélectionnée de l'utilisateur ".$result["user_login"]." au commentaire n° ".$commentId." pour l'album ".$title." a été supprimée avec succès.";
+
+                                        $message = "Bonjour, ta réponse ".$result["answer"]." au commentaire ".$result["comment"]." vient d'être modérée suite à des signalements. En cas de contestation, contacte-moi.";
+                                        $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                        // if(mail($result["user_email"], "Réponse modérée", $message, $headers)) {
+                                                $answerDelMsg["success"][] = "Mail de modération envoyé.";
+                                        // }
+                                        
+                                        // else {
+                                        //         $answerDelMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, réeesaie ultérieurement.";
+                                        // }
+                                }
                         }
                 }
                 
@@ -448,7 +495,13 @@ public function reportForm() {
                                         $reportId = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `reports` WHERE `id` = $reportId AND `category` = $category") > 0);
 
-                                $report->report($reportId, $commentId, $category, $_SERVER["REMOTE_ADDR"], 1);
+                                $req = $pdo->prepare("SELECT user.id FROM `user` LEFT OUTER JOIN `comments`
+                                                        ON user.login = comments.user_login
+                                                        WHERE comments.id = :commentId");
+                                $req->execute([":commentId" => $commentId]);
+                                $publisherId = $req->fetchColumn();
+
+                                $report->report($reportId, $publisherId, $commentId, $category, $_SERVER["REMOTE_ADDR"], 1);
 
                                 $report->updateReportCount($commentId, $category);
                         }
@@ -474,7 +527,13 @@ public function reportForm() {
                                         $reportId = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `reports` WHERE `id` = $reportId AND `category` = $category") > 0);
 
-                                $report->report($reportId, $answerId, $category, $_SERVER["REMOTE_ADDR"], 1);
+                                $req = $pdo->prepare("SELECT user.id FROM `user` LEFT OUTER JOIN `comment_answers`
+                                                        ON user.login = comment_answers.user_login
+                                                        WHERE comment_answers.id = :answerId");
+                                $req->execute([":answerId" => $answerId]);
+                                $publisherId = $req->fetchColumn();
+
+                                $report->report($reportId, $publisherId, $answerId, $category, $_SERVER["REMOTE_ADDR"], 1);
 
                                 $report->updateReportCount($answerId, $category);
                         }

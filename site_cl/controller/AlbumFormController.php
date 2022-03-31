@@ -340,7 +340,13 @@ class AlbumFormController {
                                         } while($pdo->prepare("SELECT `id` FROM `reports` WHERE `id` = $reportId
                                                                 AND `category` = $category") > 0);
 
-                                        $report->report($reportId, $albumId, $category, $_SERVER["REMOTE_ADDR"], 1);
+                                        $req = $pdo->prepare("SELECT user.id FROM `user` LEFT OUTER JOIN `album`
+                                        ON user.login = album.user_login
+                                        WHERE album.id = :albumId");                  
+                                        $req->execute([":albumId" => $albumId]);
+                                        $publisherId = $req->fetchColumn();
+
+                                        $report->report($reportId, $publisherId, $albumId, $category, $_SERVER["REMOTE_ADDR"], 1);
 
                                         $report->updateReportCount($albumId, $category);
                                 }

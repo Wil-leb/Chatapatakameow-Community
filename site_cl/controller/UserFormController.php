@@ -153,8 +153,6 @@ public function accountConfForm() {
                 $accountConfMsg["errors"][] = "Cet utilisateur n'existe pas !";
             }
 
-            // var_dump($_GET);
-
             return $accountConfMsg;
         }
 
@@ -176,14 +174,17 @@ public function accountConfForm() {
             else { 
                 $exist = $this->_user->findLogin($data["login"]);
 
-                    if($exist["account_confirmed"] == 0) {
-                        $connectionMsg["errors"][] = "Tu n'as pas validé la création de ton compte. Pour ce faire, vérifie tes emails et clique sur le lien de confirmation. Pense à vérifier ton dossier de courrier indésirable.";
-                    }
+                if($exist["account_confirmed"] == 0) {
+                    $connectionMsg["errors"][] = "Tu n'as pas validé la création de ton compte. Pour ce faire, vérifie tes emails et clique sur le lien de confirmation. Pense à vérifier ton dossier de courrier indésirable.";
+                }
 
-                    else {
-                    
+                else {
                     if(!$exist) {
                         $connectionMsg["errors"][] = "Le pseudo est invalide.";
+                    }
+
+                    elseif($exist["account_suspended"] === "1") {
+                        $connectionMsg["errors"][] = "Ton compte a été suspendu. Pour plus de détails, vérifie tes emails d'état de compte. Pense à vérifier ton dossier de courrier indésirable. Si tu n'as pas de tels mails, contacte-moi.";
                     }
                     
                     elseif(password_verify($data["password"], $exist["password"])) {
@@ -625,40 +626,6 @@ public function forgotPasswordForm(array $data) {
         if($_POST["roleChange"]) {
             $id = $_GET["userId"];
 
-            // $doc = new \DOMDocument;
-            // $doc->loadHTML("<option>[choix du r&ocirc;le]</option>
-            //                 <option>Visiteur non membre de la CL</option>
-            //                 <option>Membre de la CL sans droits d'administration</option>
-            //                 <option>Membre de la CL avec droits d'administration</option>");
-
-            // $options = $doc->getElementsByTagName("option");
-
-            // $nullOption = $options->item(0)->nodeValue;
-            // $optionOne = $options->item(1)->nodeValue;
-            // $optionTwo = $options->item(2)->nodeValue;
-            // $optionThree = $options->item(3)->nodeValue;
-
-            // echo "$nullOption, <br> $optionOne, <br> $optionTwo, <br> $optionThree <br>";
-
-            $optionOne = ["0" => "Visiteur non membre de la CL"];
-            $optionTwo = ["1" => "Membre de la CL sans droits d'administration"];
-            $optionThree = ["2" => "Membre de la CL avec droits d'administration"];
-
-            // $value = $data["role"];
-            // $textOne = $optionOne[$value];
-            // $textTwo = $optionTwo[$value];
-            // $textThree = $optionThree[$value];
-            // $textOne = array_search("Visiteur non membre de la CL", $optionOne);
-            // $textTwo = array_search("Membre de la CL sans droits d'administration", $optionOne);
-            // $textThree = array_search("Membre de la CL avec droits d'administration", $optionOne);
-
-            $textOne = $optionOne["0"];
-            $textTwo = $optionTwo["1"];
-            $textThree = $optionThree["2"];
-
-            // var_dump($textOne);
-            // echo $optionOne["0"];
-
             $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->exec("SET NAMES UTF8");
@@ -677,14 +644,8 @@ public function forgotPasswordForm(array $data) {
                 $userInfo = $this->_user->findUserById($id);
 
                 if($data["role"] == "0") {
-                    if(!str_contains($textOne, "Visiteur non membre de la CL")) {
-                        die("Hacking attempt!");
-                    }
-
-                    // else {
-                        // $updateRole = $this->_user->updateRole($id, $data["role"]);
-                        $roleMsg["success"] = ["L'utilisateur ".$userInfo["login"]." n'est désormais ni membre de la CL ni administrateur du site."];
-                    // }
+                    // $updateRole = $this->_user->updateRole($id, $data["role"]);
+                    $roleMsg["success"] = ["L'utilisateur ".$userInfo["login"]." n'est désormais ni membre de la CL ni administrateur du site."];
                 }
 
                 elseif($data["role"] == "1") {
@@ -698,76 +659,110 @@ public function forgotPasswordForm(array $data) {
                 }
 
                 elseif($data["role"] == "") {
-                    // if(!str_contains($nullValue, $nullOption)) {
-                    //     die("Hacking attempt!");
-                    // }
-
-                    // else {
                     $roleMsg["errors"] = ["Veuilles attribuer un rôle avant de valider le formulaire."];
-                    // }
                 }
 
                 else {
                     die("Hacking attempt!");
                 }
-
-                // if($data["role"] == "" && str_contains($nullOption, "Visiteur non membre de la CL") || str_contains($nullOption, "Membre de la CL sans droits d'administration") || str_contains($nullOption, "Membre de la CL avec droits d'administration")) {
-                //     die("Hacking attempt!");
-                // }
-
-                // if($data["role"] == "0" && str_contains($optionOne, "[choix du rôle]") || str_contains($optionOne, "Membre de la CL sans droits d'administration") || str_contains($optionOne, "Membre de la CL avec droits d'administration")) {
-                //     die("Hacking attempt!");
-                // }
-
-                // elseif($data["role"] == "1" && str_contains($optionTwo, "[choix du rôle]") || str_contains($optionTwo, "Visiteur non membre de la CL") || str_contains($optionTwo, "Membre de la CL avec droits d'administration")) {
-                //     die("Hacking attempt!");
-                // }
-
-                // elseif($data["role"] == "2" && str_contains($optionThree, "Membre de la CL avec droits d'administration")) {
-                //     die("Hacking attempt!");
-                // }
-
-                // if($data["role"] == "" && str_contains($nullOption, "Visiteur non membre de la CL") || str_contains($nullOption, "Membre de la CL sans droits d'administration") || str_contains($nullOption, "Membre de la CL avec droits d'administration")) {
-                //     die("Hacking attempt!");
-                // }
-
-                if($data["role"] == "0" && $optionOne["0"] != "Visiteur non membre de la CL") {
-                    die("Hacking attempt!");
-                }
-
-                elseif($data["role"] == "1" && !str_contains($textTwo, "Membre de la CL sans droits d'administration")) {
-                    die("Hacking attempt!");
-                }
-
-                elseif($data["role"] == "2" && !str_contains($textThree, "Membre de la CL avec droits d'administration")) {
-                    die("Hacking attempt!");
-                }
-
-                // if($data["role"] == "0" && !str_contains($textOne, "Visiteur non membre de la CL")) {
-                //     die("Hacking attempt!");
-                // }
-
-                // elseif($data["role"] == "1" && !str_contains($textTwo, "Membre de la CL sans droits d'administration")) {
-                //     die("Hacking attempt!");
-                // }
-
-                // elseif($data["role"] == "2" && !str_contains($textThree, "Membre de la CL avec droits d'administration")) {
-                //     die("Hacking attempt!");
-                // }
             }
-
-            echo $optionOne["0"];
 
             return $roleMsg;
         }
     }
 
-//*****J. User deletion*****//
+//*****J. Account suspension*****//
+public function accountSuspensionForm($id) {  
+    $suspensionMsg = [];
+    
+    if(isset($_POST["suspendAccount"])) {
+        $id = $_POST["userId"];
+
+        $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->exec("SET NAMES UTF8");
+
+        $query = $pdo->prepare("SELECT `id` FROM `user` WHERE `id` = :id");
+
+        $query->execute([":id" => $id]);
+
+        $trueId = $query->fetchColumn();
+
+        if($id != $trueId || $id == null) {
+            die("Hacking attempt!");
+        }
+
+        else {
+            $findUser = $this->_user->findUserById($id);
+            // $suspendAccount = $this->_user->suspendAccount($id, 1);
+
+            $suspensionMsg["success"][] = "Le compte de l'utilisateur ".$findUser["login"]." a été suspendu avec succès.";
+
+            $message = "Bonjour, ton compte a été suspendu suite à une publication et/ou un comportement inapproprié(e). En cas de contestation, contacte-moi.";
+            $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+            // if(mail($findUser["email"], "Compte suspendu", $message, $headers)) {
+                $suspensionMsg["success"][] = "Mail de suspension de compte envoyé.";
+            // }
+                
+            // else {
+            //     $suspensionMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, réeesaie ultérieurement.";
+            // }
+        }
+
+        return $suspensionMsg;
+    }
+}
+
+//*****K. Account reactivation*****//
+public function accountReactivationForm($id) {  
+    $reactivationMsg = [];
+    
+    if(isset($_POST["reactivateAccount"])) {
+        $id = $_POST["userId"];
+
+        $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->exec("SET NAMES UTF8");
+
+        $query = $pdo->prepare("SELECT `id` FROM `user` WHERE `id` = :id");
+
+        $query->execute([":id" => $id]);
+
+        $trueId = $query->fetchColumn();
+
+        if($id != $trueId || $id == null) {
+            die("Hacking attempt!");
+        }
+
+        else {
+            $findUser = $this->_user->findUserById($id);
+            // $reactivateAccount = $this->_user->reactivateAccount($id, 0);
+
+            $reactivationMsg["success"][] = "Le compte de l'utilisateur ".$findUser["login"]." a été réactivé avec succès.";
+
+            $message = "Bonjour, ton compte a été réactivé. Toute nouvelle publication indésirable et/ou tout nouveau comportement indésirable mènera à une nouvelle suspension de ton compte, voire à un bannissement définitif.";
+            $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+            // if(mail($findUser["email"], "Compte réactivé", $message, $headers)) {
+                $reactivationMsg["success"][] = "Mail de réactivation de compte envoyé.";
+            // }
+                
+            // else {
+            //     $reactivationMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, réeesaie ultérieurement.";
+            // }
+        }
+
+        return $reactivationMsg;
+    }
+}
+
+//*****L. User deletion*****//
     public function userDeletionForm($id) {  
         $userDelMsg = [];
         
         if(isset($_POST["deleteUser"])) {
-            $id = $_GET["userId"];
+            $id = $_POST["userId"];
 
             $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -785,7 +780,7 @@ public function forgotPasswordForm(array $data) {
 
             else {
                 $findUser = $this->_user->findUserById($id);
-                // $deleteUser = $this->_user->deleteUser($id);
+                $deleteUser = $this->_user->deleteUser($id);
                 $userDelMsg["success"] = ["L'utilisateur ".$findUser["login"]." a été supprimé avec succès."];
             }
 
