@@ -12,7 +12,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/normalize.css">
 	<link rel="stylesheet" href="assets/css/style.css">
-	
+
 	<title><?= $title ?></title>
 </head>
 
@@ -78,13 +78,7 @@
             </nav>
         </div>
 	</footer>
-	
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="./assets/js/ckeditor/ckeditor.js"></script>
-    <script>
-        CKEDITOR.replaceAll("editor");
-        CKEDITOR.config.extraPlugins="emoji";
-    </script>
+
 	<script src="./assets/js/function.js"></script>
 	<script type="module" src="./assets/js/main.js"></script>
 </body>
