@@ -4,7 +4,7 @@ use App\model\{Album, Comments};
 $findImages = new Album();
 $findComments = new Comments();
 ?>
-    
+
 <section class="container">
     <h1>Album <?= htmlspecialchars(trim($albums["title"])) ?></h1>
 
@@ -19,8 +19,13 @@ $findComments = new Comments();
                 <?php endforeach ?>
             </ul>
         <?php } ?>
+    
     <?php else : ?>
-        <p class="success"><?= $answerMsg["success"][0] ?></p>
+        <ul class="success">
+            <?php foreach($answerMsg["success"] as $success) : ?>    
+                <li><?= $success ?></li>
+            <?php endforeach ?>    
+        </ul>
     <?php endif; ?>
 
 <!-- COMMENT POST MESSAGES ------------------------------------------------------------------------------------------------------------>
@@ -32,8 +37,13 @@ $findComments = new Comments();
                 <?php endforeach ?>
             </ul>
         <?php } ?>
+    
     <?php else : ?>
-        <p class="success"><?= $commentMsg["success"][0] ?></p>
+        <ul class="success">
+            <?php foreach($commentMsg["success"] as $success) : ?>    
+                <li><?= $success ?></li>
+            <?php endforeach ?>    
+        </ul>
     <?php endif; ?>
 
 <!-- ANSWER MODIFICATION MESSAGES ----------------------------------------------------------------------------------------------------->
@@ -62,14 +72,32 @@ $findComments = new Comments();
         <p class="success"><?= $comModifMsg["success"][0] ?></p>
     <?php endif; ?>
 
-<!-- ANSWER DELETION MESSAGE ---------------------------------------------------------------------------------------------------------->
-    <?php if(!empty($answerDelMsg["success"])) : ?>
-        <p class="success"><?= $answerDelMsg["success"][0] ?></p>
+<!-- ANSWER DELETION MESSAGES --------------------------------------------------------------------------------------------------------->
+    <?php if(empty($answerDelMsg["success"])) : ?>
+        <?php if(!empty($answerDelMsg["errors"])) { ?>
+            <p class="error"><?= $answerDelMsg["errors"][0] ?></p>
+        <?php } ?>
+    
+    <?php else : ?>
+        <ul class="success">
+            <?php foreach($answerDelMsg["success"] as $success) : ?>    
+                <li><?= $success ?></li>
+            <?php endforeach ?>    
+        </ul>
     <?php endif; ?>
 
-<!-- COMMENT DELETION MESSAGE --------------------------------------------------------------------------------------------------------->
-    <?php if(!empty($commentDelMsg["success"])) : ?>
-        <p class="success"><?= $commentDelMsg["success"][0] ?></p>
+<!-- COMMENT DELETION MESSAGES -------------------------------------------------------------------------------------------------------->
+    <?php if(empty($commentDelMsg["success"])) : ?>
+        <?php if(!empty($commentDelMsg["errors"])) { ?>
+            <p class="error"><?= $addMessages["errors"][0] ?></p>
+        <?php } ?>
+    
+    <?php else : ?>
+        <ul class="success">
+            <?php foreach($commentDelMsg["success"] as $success) : ?>    
+                <li><?= $success ?></li>
+            <?php endforeach ?>    
+        </ul>
     <?php endif; ?>
 </section>
     
@@ -152,16 +180,16 @@ $findComments = new Comments();
                                 <form action="" method="post" onsubmit="confirmAnsweraddition(event)">
                                     <p class="mandatory">Ce champ est obligatoire.</p>
 
-                                    <textarea name="comment" class="editor" rows="8" cols="40"><?= htmlspecialchars(trim($comment["comment"])) ?></textarea>
+                                    <textarea name="comment" id="comment" rows="8" cols="40"><?= htmlspecialchars(trim($comment["comment"])) ?></textarea>
                                     <div></div>
                                     
                                     <div class="rules">
-                                        <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
+                                        <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules" target="blank">règlement général</a></label>	
                                         <input type="checkbox" value="true" name="acceptRules">
                                     </div>
 
                                     <div class="rules">
-                                        <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
+                                        <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy" target="blank">politique de confidentialité</a></label>	
                                         <input type="checkbox" value="true" name="acceptPolicy">
                                     </div>
 
@@ -202,16 +230,16 @@ $findComments = new Comments();
                                 <input type="text" name="commentLogin" class="comment-login" placeholder="Pseudo" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["login"] ?>" <?php endif; ?>>
                                 <div></div>
 
-                                <textarea name="answer" class="editor" rows="8" cols="40" placeholder="Réponse"></textarea>
+                                <textarea name="answer" id="answer" rows="8" cols="40" placeholder="Réponse"></textarea>
                                 <div></div>
 
                                 <div class="rules">
-                                    <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
+                                    <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules" target="blank">règlement général</a></label>	
                                     <input type="checkbox" value="true" name="acceptRules">
                                 </div>
 
                                 <div class="rules">
-                                    <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
+                                    <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy" target="blank">politique de confidentialité</a></label>	
                                     <input type="checkbox" value="true" name="acceptPolicy">
                                 </div>
                                 
@@ -259,16 +287,16 @@ $findComments = new Comments();
                                             <form action="" method="post" onsubmit="confirmAnsweraddition(event)">
                                                 <p class="mandatory">Ce champ est obligatoire.</p>
                                                 
-                                                <textarea name="answer" class="editor" rows="8" cols="40"><?= htmlspecialchars(trim($answer["answer"])) ?></textarea>
+                                                <textarea name="answer" id="answer" rows="8" cols="40"><?= htmlspecialchars(trim($answer["answer"])) ?></textarea>
                                                 <div></div>
 
                                                 <div class="rules">
-                                                    <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
+                                                    <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules" target="blank">règlement général</a></label>	
                                                     <input type="checkbox" value="true" name="acceptRules">
                                                 </div>
 
                                                 <div class="rules">
-                                                    <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
+                                                    <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy" target="blank">politique de confidentialité</a></label>	
                                                     <input type="checkbox" value="true" name="acceptPolicy">
                                                 </div>
                                                 
@@ -322,16 +350,16 @@ $findComments = new Comments();
         <input type="text" name="commentLogin" class="comment-login" placeholder="Pseudo" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["login"] ?>" <?php endif; ?>>
         <div></div>
 
-        <textarea name="comment" class="editor" rows="8" cols="40" placeholder="Commentaire"></textarea>
+        <textarea name="comment" id="comment" rows="8" cols="40" placeholder="Commentaire"></textarea>
         <div></div>
 
         <div class="rules">
-            <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
+            <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules" target="blank">règlement général</a></label>	
             <input type="checkbox" value="true" name="acceptRules">
         </div>
 
         <div class="rules">
-            <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
+            <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy" target="blank">politique de confidentialité</a></label>	
             <input type="checkbox" value="true" name="acceptPolicy">
         </div>
 
