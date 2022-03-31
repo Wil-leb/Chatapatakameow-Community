@@ -171,7 +171,7 @@ img {
     color: rgba(255, 0, 0, 1);
 }
 
-.warning, #hide-content {
+.warning, .deactivate, #hide-content {
     margin-right: 1rem;
 }
 
@@ -325,7 +325,7 @@ input[type=submit]:hover, input[type=submit]:focus {
     cursor: pointer;
 }
 
-.warning, #see-album, #hide-content, #hide-answers, #hide-content, #close {
+.warning, .deactivate, .reactivate, #see-album, #hide-content, #hide-answers, #hide-content, #close {
     border: none;
     background: none;
     font-family: "Roboto", sans-serif;
@@ -414,7 +414,13 @@ table td:before {
     color: rgba(20, 140, 90, 1);
 }
 
-/*****ii. Dialog*****/
+/*****ii. Account suspension buttons *****/
+
+.deactivate {
+    color: rgb(245, 75, 10);
+}
+
+/*****iii. Dialog*****/
 
 dialog {
     visibility: hidden;
