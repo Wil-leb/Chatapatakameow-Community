@@ -31,7 +31,7 @@ class User extends Connect {
 //*****B. Finding all the users*****//
     public function findAllUsers() {
         
-        $sql = "SELECT `id`, `email`, `login`, `password`, `role` FROM `user`";
+        $sql = "SELECT `id`, `email`, `login`, `password`, `role`, `account_suspended` FROM `user`";
                     
         $query = $this->_pdo->prepare($sql);
         
@@ -55,7 +55,8 @@ class User extends Connect {
 //*****D. Finding a user's login*****//
     public function findLogin(string $login) {
             
-        $sql = "SELECT `id`, `email`, `login`, `password`, `account_confirmed`, `role` FROM `user` WHERE `login` = :login";
+        $sql = "SELECT `id`, `email`, `login`, `password`, `account_confirmed`, `role`, `account_suspended` FROM `user`
+                WHERE `login` = :login";
                     
         $query = $this->_pdo->prepare($sql);
         
@@ -67,7 +68,7 @@ class User extends Connect {
 //*****E. Finding a specific user*****//    
     public function findUserById(string $id) {
                     
-        $sql = "SELECT `id`, `email`, `login`, `password`, `role` FROM `user` WHERE `id` = :id";
+        $sql = "SELECT `id`, `email`, `login`, `password`, `role`, `account_suspended` FROM `user` WHERE `id` = :id";
                     
         $query = $this->_pdo->prepare($sql);
         
@@ -113,9 +114,27 @@ class User extends Connect {
         $query = $this->_pdo->prepare($sql);
 
         $query->execute([":id" => $id, ":role" => $role]);                 
-    }  
+    }
+
+//*****J. Account suspension*****//
+public function suspendAccount(string $id, int $state) {
+    $sql = "UPDATE `user` SET `account_suspended` = :state WHERE `id` = :id";
+        
+    $query = $this->_pdo->prepare($sql);
+
+    $query->execute([":id" => $id, ":state" => $state]);                 
+}
+
+//*****K. Account suspension*****//
+public function reactivateAccount(string $id, int $state) {
+    $sql = "UPDATE `user` SET `account_suspended` = :state WHERE `id` = :id";
+        
+    $query = $this->_pdo->prepare($sql);
+
+    $query->execute([":id" => $id, ":state" => $state]);                 
+} 
     
-//*****J. User deletion*****//
+//*****L. User deletion*****//
     public function deleteUser(string $id) {
             
         $sql = "DELETE FROM `user` WHERE `id` = :id";

@@ -72,7 +72,7 @@ class Votes extends Connect {
         return true;
     }
 
-//*****C. Like addition*****//
+//*****C. Like update*****//
     public function like(string $id, string $refId, string $category, string $userIp) {
         if($this->addVote($id, $refId, $category, $userIp, 1)) {
             $sqlPart = "";
@@ -98,7 +98,7 @@ class Votes extends Connect {
         return false;
     }
 
-//*****D. Dislike addition*****//
+//*****D. Dislike update*****//
     public function dislike(string $id, string $refId, string $category, string $userIp) {
         if($this->addVote($id, $refId, $category, $userIp, -1)) {
             $sqlPart = "";

@@ -21,19 +21,20 @@ class Reports extends Connect {
         $sql->execute([":id" => $refId]);
 
         if($sql->rowCount() == 0) {
-            die("Impossible de voter pour un élément qui n'existe pas !");
+            die("Impossible de signaler un élément qui n'existe pas !");
         }
     }
 
-//*****B. Vote addition*****//
-    private function addReport(string $id, string $refId, string $category, string $userIp, int $report) {
+//*****B. Report addition*****//
+    private function addReport(string $id, string $publisherId, string $refId, string $category, string $userIp, int $report) {
         $this->recordExists($refId, $category);
 
-        $sql = "SELECT `id`, `report` FROM `reports` WHERE `ref_id` = :refId AND `category` = :category AND `user_ip` = :userIp";
+        $sql = "SELECT `id`, `report` FROM `reports` WHERE `publisher_id` = :publisherId AND `ref_id` = :refId
+                AND `category` = :category AND `user_ip` = :userIp";
 
         $query = $this->_pdo->prepare($sql);
 
-        $query->execute([":refId" => $refId, ":category" => $category, ":userIp" => $userIp]);
+        $query->execute([":publisherId" => $publisherId, ":refId" => $refId, ":category" => $category, ":userIp" => $userIp]);
 
         $reportRow = $query->fetch();
 
@@ -57,12 +58,14 @@ class Reports extends Connect {
             return true;
         }
 
-        $req = "INSERT INTO `reports` (`id`, `ref_id`, `category`, `user_ip`, `report`) VALUES (:id, :refId, :category, :userIp, :report)";
+        $req = "INSERT INTO `reports` (`id`, `publisher_id`, `ref_id`, `category`, `user_ip`, `report`)
+                VALUES (:id, :publisherId, :refId, :category, :userIp, :report)";
 
         $query = $this->_pdo->prepare($req);
         
         $query->execute([
                         ":id" => $id,
+                        ":publisherId" => $publisherId,
                         ":refId" => $refId,
                         ":category" => $category,
                         ":userIp" => $userIp,
@@ -72,9 +75,9 @@ class Reports extends Connect {
         return true;
     }
 
-//*****C. Report addition*****//
-    public function report(string $id, string $refId, string $category, string $userIp) {
-        if($this->addReport($id, $refId, $category, $userIp, 1)) {
+//*****C. Report update*****//
+    public function report(string $id, string $publisherId, string $refId, string $category, string $userIp) {
+        if($this->addReport($id, $publisherId, $refId, $category, $userIp, 1)) {
             $sqlPart = "";
 
             if($this->_formerReport) {

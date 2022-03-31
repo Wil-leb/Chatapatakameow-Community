@@ -30,7 +30,7 @@ class Album extends Connect {
     
 //*****B. Finding all the albums*****//
     public function findAllAlbums() {
-        $sql = "SELECT `id`, `user_login`, `title`, `description`, `post_date`, `likes`, `dislikes` FROM `album`
+        $sql = "SELECT `id`, `user_login`, `title`, `description`, `post_date`, `likes`, `dislikes`, `reports_number` FROM `album`
                 ORDER BY `post_date` DESC";
         
         $query = $this->_pdo->prepare($sql);

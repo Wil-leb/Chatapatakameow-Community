@@ -55,7 +55,8 @@ class Comments extends Connect {
 
 //*****C. Finding all the comments*****//    
     public function findAllComments() {
-        $sql = "SELECT `id`, `user_email`, `user_login`, `user_ip`, `album_id`, `album_title`, `comment`, `post_date` FROM `comments` ORDER BY `album_title`";
+        $sql = "SELECT `id`, `user_email`, `user_login`, `user_ip`, `album_id`, `album_title`, `comment`, `post_date`, `reports_number`
+                FROM `comments` ORDER BY `album_title`, `post_date` DESC";
                     
         $query = $this->_pdo->prepare($sql);
         
@@ -66,8 +67,8 @@ class Comments extends Connect {
 
 //*****D. Finding all the answers*****//    
 public function findAllAnswers() {
-    $sql = "SELECT `id`, `user_email`, `user_login`, `user_ip`, `comment_id`, `album_title`, `answer`, `post_date` FROM `comment_answers`
-            ORDER BY `album_title`, `comment_id`, `post_date`";
+    $sql = "SELECT `id`, `user_email`, `user_login`, `user_ip`, `comment_id`, `album_title`, `answer`, `post_date`, `reports_number`
+            FROM `comment_answers` ORDER BY `album_title`, `comment_id`, `post_date` DESC";
                 
     $query = $this->_pdo->prepare($sql);
     
@@ -97,7 +98,7 @@ public function findAllAnswers() {
                 FROM `comments`
                 LEFT OUTER JOIN `comment_answers` ON comment_answers.comment_id = comments.id
                 WHERE (SELECT comment_answers.post_date = MAX(comment_answers.post_date)) AND comments.id = :commentId
-                ORDER BY `post_date`";
+                ORDER BY `post_date` DESC";
                     
         $query = $this->_pdo->prepare($sql);
         
