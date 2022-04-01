@@ -60,7 +60,7 @@
                             <td data-label="Auteur"><?= htmlspecialchars(trim($comment["user_login"])) ?></td>
                             <td data-label="Titre album"><?= htmlspecialchars(trim($comment["album_title"])) ?></td>
                             <td data-label="Date commentaire"><?= htmlspecialchars(trim(strftime("%d/%m/%Y %H:%M:%S", strtotime($comment["post_date"])))) ?></td>
-                            <td data-label="Signalements"><?= htmlspecialchars(trim($comment["reports_number"])) ?></td>
+                            <td data-label="Signalements" id="reports-number"><?= htmlspecialchars(trim($comment["reports_number"])) ?></td>
                             <td data-label="Action">
                                 <button id="hide-content" value="ON">Afficher le commentaire</button>
                                 
@@ -100,7 +100,7 @@
                         <th>Auteur</th>
                         <th>Titre album</th>
                         <th>Date réponse</th>
-                        <th>Signalements</th>
+                        <th id="reportColumn">Signalements</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -113,7 +113,7 @@
                         <td data-label="Auteur"><?= htmlspecialchars(trim($answer["user_login"])) ?></td>
                         <td data-label="Titre album"><?= htmlspecialchars(trim($answer["album_title"])) ?></td>
                         <td data-label="Date réponse"><?= htmlspecialchars(trim(strftime("%d/%m/%Y %H:%M:%S", strtotime($answer["post_date"])))) ?></td>
-                        <td data-label="Signalements"><?= htmlspecialchars(trim($answer["reports_number"])) ?></td>
+                        <td data-label="Signalements" id="reports-number"><?= htmlspecialchars(trim($answer["reports_number"])) ?></td>
                         <td data-label="Action">
                             <button id="hide-content" value="ON">Afficher la réponse</button>
 

@@ -44,7 +44,7 @@ $findImages = new Album();
                             <td data-label="Auteur"><?= htmlspecialchars(trim($album["user_login"])) ?></td>
                             <td data-label="Titre"><?= htmlspecialchars(trim($album["title"])) ?></td>
                             <td data-label="Date" id="description"><?= htmlspecialchars(trim(strftime("%d/%m/%Y %H:%M:%S", strtotime($album["post_date"])))) ?></td>
-                            <td data-label="Signalements"><?= htmlspecialchars(trim($album["reports_number"])) ?></td>
+                            <td data-label="Signalements" id="reports-number"><?= htmlspecialchars(trim($album["reports_number"])) ?></td>
                             <td data-label="Action">
                                 <div class="deletion">
                                     <form action="" method="post" onsubmit="confirmDeletion(event)">
