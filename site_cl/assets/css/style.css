@@ -183,6 +183,41 @@ img {
     display: none;
 }
 
+/*****H. COOKIE WINDOW*****/
+
+.cookie-alert {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    border-radius: 1rem;
+    background: #2f2f2f;
+    color: #fff;
+    padding: 1rem 1.5rem;
+    width: 28rem;
+    z-index: 100;
+    text-align: center;
+    left: 0; right: 0;
+    margin: 0 auto;
+    max-width:700px;
+    padding:10px 30px;
+}
+
+.cookie-alert a { 
+    display: block;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    margin: 0.8rem auto 0 auto;
+    border-radius: 1rem;
+    background: transparent;
+    border: 0.2rem solid #46A2D9;
+    color: #46A2D9;
+    transition: all .3s ease;
+}
+.cookie-alert a:hover {
+    background: #46A2D9;
+    color: #2f2f2f;
+}
+
 /*****2. MOBILE (PORTRAIT)*****/
 
 /*****A. HEADER AND FOOTER*****/
@@ -385,8 +420,8 @@ table td:before {
 }
 
 .deletion form, .deletion p {
-    display: inline;
-    vertical-align: middle;
+    display: inline-block;
+    margin: 0 auto;
 }
 
 .picture-modif img {
@@ -636,18 +671,26 @@ figcaption button:hover {
         content: "";
     }
 
-    /* .table-overflow {
-        height: 100px;
-        overflow: auto;
-        word-wrap: break-word;
-    } */
-
     table tr td input[type=file], table tr td input[type=submit] {
         width: 100%;
     }
 
     .picture-modif img {
         max-width: 100%;
+    }
+
+    .tablet form, .tablet p {
+        display: block;
+        margin-top: 1rem;
+    }
+
+    .tablet .deactivate, .tablet .reactivate, .tablet .warning {
+        margin-right: 0;
+    }
+
+    .tablet .fa-solid, .tablet .fa-trash-alt, .tablet .fas {
+        padding-right: 0;
+        padding-bottom: 1rem;
     }
     
 /*****D. ALBUMS VIEW*****/
@@ -685,10 +728,24 @@ figcaption button:hover {
 }
 
 /*****5. DESKTOP*****/
-/* @media screen and (min-width: 992px) { */
+@media screen and (min-width: 992px) {
+
+    .tablet form, .tablet p {
+        display: inline-block;
+        margin: 0 auto;
+    }
+
+    .tablet .deactivate, .tablet .reactivate, .tablet .warning {
+        margin-right: 1rem;
+    }
+
+    .tablet .fa-solid, .tablet .fa-trash-alt, .tablet .fas {
+        padding-right: 0.8rem;
+        padding-bottom: 0;
+    }
+}
   
 /*****END OF THE DESKTOP FORMAT*****/ 
-/* } */
 
 /*****6. LARGE DESKTOP*****/
 @media screen and (min-width: 1200px) {
