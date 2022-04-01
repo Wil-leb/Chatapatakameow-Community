@@ -127,5 +127,16 @@ class Reports extends Connect {
         return true;
     }
 
+//*****E. Finding all the reported content of a specific user*****//
+    public function countUserReports(string $publisherId) {
+        $sql = "SELECT COUNT(report) AS totalReports FROM `reports` WHERE `publisher_id` = :publisherId GROUP BY `publisher_id`";
+
+        $query = $this->_pdo->prepare($sql);
+        
+        $query->execute([":publisherId" => $publisherId]);
+
+        return $query->fetch(\PDO::FETCH_ASSOC);
+    }
+
 //*****END OF THE Votes MODEL*****//
 }
