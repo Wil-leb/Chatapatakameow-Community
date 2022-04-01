@@ -1,3 +1,11 @@
+<?php
+	if(isset($_COOKIE['accept_cookie'])) {
+	   $showcookie = false;
+	} else {
+	   $showcookie = true;
+	}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -77,6 +85,12 @@
                 </ul>
             </nav>
         </div>
+
+    <?php if($showcookie) : ?>
+        <div class="cookie-alert">
+        En poursuivant ta navigation sur ce site, tu acceptes l’utilisation de cookies pour te proposer des contenus et services adaptés à tes centres d’intérêts.<br/><a href="./assets/php/AcceptCookies.php">OK</a>
+        </div>
+	<?php endif; ?>
 	</footer>
 
 	<script src="./assets/js/function.js"></script>
