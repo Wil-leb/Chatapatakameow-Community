@@ -233,7 +233,7 @@ public function accountConfForm() {
                                     // $update = $this->_user->updateEmail($id, $newEmail);
                                     $emailMsg["success"] = ["Ton adresse électronique a été modifiée avec succès."];
 
-                                    $message = "Bonjour, suite à ta demande, ton adresse électronique a été modifiée. Si tu n'es pas à l'origine de cette opération, contacte-moi.";
+                                    $message = "Bonjour, ton adresse électronique a été modifiée. Si tu n'es pas à l'origine de cette opération, contacte-moi.";
                                     $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
                                     if(mail($exist["email"], "Modification d'adresse électronique", $message, $headers)) {
@@ -291,7 +291,7 @@ public function accountConfForm() {
                                     // $update = $this->_user->updateEmail($id, $newEmail);
                                     $emailMsg["success"] = ["L'adresse électronique a été modifiée avec succès."];
 
-                                    $message = "Bonjour, suite à ta demande, ton adresse électronique a été modifiée. Si tu n'es pas à l'origine de cette demande auprès de moi, contacte-moi.";
+                                    $message = "Bonjour, suite à ta demande auprès de moi, ton adresse électronique a été modifiée. Si tu n'es pas à l'origine de cette demande, contacte-moi.";
                                     $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
                                     if(mail($trueEmail, "Modification d'adresse électronique", $message, $headers)) {
@@ -355,7 +355,7 @@ public function accountConfForm() {
                                     // $update = $this->_user->updateLogin($id, $newLogin);
                                     $loginMesg["success"] = ["Ton pseudo a été modifié avec succès."];
 
-                                    $message = "Bonjour, suite à ta demande, ton pseudo a été modifié. Si tu n'es pas à l'origine de cette opération, contacte-moi.";
+                                    $message = "Bonjour, ton pseudo a été modifié. Si tu n'es pas à l'origine de cette opération, contacte-moi.";
                                     $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
                                     if(mail($exist["email"], "Modification de pseudo", $message, $headers)) {
@@ -418,7 +418,7 @@ public function accountConfForm() {
                                     // $update = $this->_user->updateLogin($id, $newLogin);
                                     $loginMesg["success"] = ["Le pseudo a été modifié avec succès."];
 
-                                    $message = "Bonjour, suite à ta demande, ton pseudo a été modifié. Si tu n'es pas à l'origine de cette demande auprès de moi, contacte-moi.";
+                                    $message = "Bonjour, suite à ta demande auprès de moi, ton pseudo a été modifié. Si tu n'es pas à l'origine de cette demande, contacte-moi.";
                                     $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
                                     if(mail($email, "Modification de pseudo", $message, $headers)) {
@@ -471,7 +471,7 @@ public function accountConfForm() {
                             // $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                             $passwordMsg["success"] = ["Ton mot de passe a été modifié avec succès."];
 
-                            $message = "Bonjour, suite à ta demande, ton mot de passe a été modifié. Si tu n'es pas à l'origine de cette opération, contacte-moi.";
+                            $message = "Bonjour, ton mot de passe a été modifié. Si tu n'es pas à l'origine de cette opération, contacte-moi.";
                                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
                             if(mail($exist["email"], "Modification de mot de passe", $message, $headers)) {
@@ -517,7 +517,7 @@ public function accountConfForm() {
                                 // $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                                 $passwordMsg["success"] = ["Le mot de passe a été modifié avec succès."];
 
-                                $message = "Bonjour, suite à ta demande, ton mot de passe a été modifié. Si tu n'es pas à l'origine de cette demande auprès de moi, contacte-moi.";
+                                $message = "Bonjour, suite à ta demande auprès de moi, ton mot de passe a été modifié. Si tu n'es pas à l'origine de cette demande, contacte-moi.";
                                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
                                 if(mail($mail, "Modification de mot de passe", $message, $headers)) {
@@ -563,7 +563,7 @@ public function forgotLoginForm(array $data) {
             else {
                 $login = $exist["login"];
 
-                $message = "Bonjour, suite à ta demande, voici ton pseudo : $login. Pense à conserver cette information dans un endroit sûr.";
+                $message = "Bonjour, suite à ta demande, voici ton pseudo : $login. Pense à conserver cette information dans un endroit sûr. Si tu n'es pas à l'origine de cette demande, signale cet email à l'administrateur.";
                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
                 if(mail($_POST["mail"], "Pseudo oublié", $message, $headers)) {
@@ -599,7 +599,7 @@ public function forgotPasswordForm(array $data) {
             else {
                 $password = uniqid();
 
-                $message = "Bonjour, suite à ta demande, voici ton nouveau mot de passe : $password. Pense à le modifier dans ton espace.";
+                $message = "Bonjour, suite à ta demande, voici ton nouveau mot de passe : $password. Pense à le modifier dans ton espace. Si tu n'es pas à l'origine de cette demande, signale cet email à l'administrateur.";
                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
                 if(mail($_POST["mail"], "Mot de passe oublié", $message, $headers)) {
@@ -694,7 +694,7 @@ public function accountSuspensionForm($id) {
 
         else {
             $findUser = $this->_user->findUserById($id);
-            // $suspendAccount = $this->_user->suspendAccount($id, 1);
+            $suspendAccount = $this->_user->suspendAccount($id, 1);
 
             $suspensionMsg["success"][] = "Le compte de l'utilisateur ".$findUser["login"]." a été suspendu avec succès.";
 
@@ -737,7 +737,7 @@ public function accountReactivationForm($id) {
 
         else {
             $findUser = $this->_user->findUserById($id);
-            // $reactivateAccount = $this->_user->reactivateAccount($id, 0);
+            $reactivateAccount = $this->_user->reactivateAccount($id, 0);
 
             $reactivationMsg["success"][] = "Le compte de l'utilisateur ".$findUser["login"]." a été réactivé avec succès.";
 
@@ -780,8 +780,20 @@ public function accountReactivationForm($id) {
 
             else {
                 $findUser = $this->_user->findUserById($id);
-                $deleteUser = $this->_user->deleteUser($id);
-                $userDelMsg["success"] = ["L'utilisateur ".$findUser["login"]." a été supprimé avec succès."];
+                // $deleteUser = $this->_user->deleteUser($id);
+
+                $userDelMsg["success"][] = "Le compte de l'utilisateur ".$findUser["login"]." a été supprimé avec succès.";
+
+                $message = "Bonjour, ton compte a été supprimé suite à ta demande ou suite à un litige avec toi. Si tu n'es pas à l'origine de cette demande, ou en cas de contestation par rapport au litige, contacte-moi.";
+                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                // if(mail($findUser["email"], "Compte supprimé", $message, $headers)) {
+                    $userDelMsg["success"][] = "Mail de suppression de compte envoyé.";
+                // }
+                    
+                // else {
+                //     $userDelMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, réeesaie ultérieurement.";
+                // }
             }
 
             return $userDelMsg;
