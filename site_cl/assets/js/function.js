@@ -122,10 +122,11 @@ function confirmReactivation(event) {
     }
 }
 
-//*****I. Table label modification for mobile (portrait format)*****//
+//*****I. Table label and header modifications*****//
 function changeDataLabel() {
     const userEmailrows = document.querySelectorAll("#userEmail")
     const commentIdrows = document.querySelectorAll("#commentId")
+    const reportColumn = document.getElementById("reportColumn")
     
     for(let userEmailrow of userEmailrows) {
         if(screen.width < 500) {
@@ -136,6 +137,33 @@ function changeDataLabel() {
     for(let commentIdrow of commentIdrows) {
         if(screen.width < 450) {
             commentIdrow.dataset.label = "Réf. commentaire"
+        }
+    }
+
+    if(reportColumn) {
+        if(screen.width > 767 && screen.width < 801) {
+            reportColumn.textContent = "Signal."
+        }
+    }
+}
+
+//*****J. Color change for reports number*****//
+function changeDataLabel() {
+    const reportCounts = document.querySelectorAll("#reports-number")
+
+    for(let reportCount of reportCounts) {
+        if(reportCount) {
+            if(reportCount.textContent <= 3) {
+                reportCount.style.color = "green"
+            }
+
+            else if(reportCount.textContent > 3 && reportCount.textContent <= 9) {
+                reportCount.style.color = "orange"
+            }
+
+            else if(reportCount.textContent >= 10) {
+                reportCount.style.color = "red"
+            }
         }
     }
 }
