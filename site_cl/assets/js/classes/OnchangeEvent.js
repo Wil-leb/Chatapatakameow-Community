@@ -6,16 +6,9 @@ export default class OnchangeEvent {
     }
 
     pictureMessages() {
+//*****A. Album cover upload or replacement*****//
         const cover = document.getElementById("album-cover")
-        const pictures = document.getElementById("album-pictures")
-        const newPicture = document.querySelectorAll("#new-picture")
-        const pictureNames = document.querySelectorAll("#current-name")
-        const extraPictures = document.getElementById("extra-pictures")
-        
         const allowedCovsize = 3145728
-        const allowedPicsize = 31457280
-        let picSize = 0
-        let extraPicSize = 0
 
         if(cover) {
             cover.addEventListener("change", () => {
@@ -77,6 +70,10 @@ export default class OnchangeEvent {
                 }
             });
         }
+
+//*****B. Album picture upload*****//
+        const pictures = document.getElementById("album-pictures")
+        let picSize = 0
 
         if(pictures) {
             pictures.addEventListener("change", () => {
@@ -145,6 +142,11 @@ export default class OnchangeEvent {
                 }
             });
         }
+
+//*****C. Album picture replacement*****//
+        const newPicture = document.querySelectorAll("#new-picture")
+        const pictureNames = document.querySelectorAll("#current-name")
+        const allowedPicsize = 31457280
 
         for(let i = 0; i < newPicture.length; i ++) {
             if(newPicture[i]) {
@@ -236,6 +238,10 @@ export default class OnchangeEvent {
                 });
             }
         }
+
+//*****D. Album extra picture upload*****//        
+        const extraPictures = document.getElementById("extra-pictures")
+        let extraPicSize = 0
 
         if(extraPictures) {
             extraPictures.addEventListener("change", () => {

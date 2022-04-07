@@ -1,5 +1,6 @@
 export default class OnclickEvent {
 
+//*****A. Comment answer display*****//
     displayAnswers() {
         const parentDiv = document.querySelectorAll(".comment-content")
         
@@ -32,6 +33,7 @@ export default class OnclickEvent {
         }
     }
 
+//*****B. Dialog closure*****//
     closeDialog() {
         const dialog = document.getElementsByTagName("dialog")
                         
@@ -55,6 +57,7 @@ export default class OnclickEvent {
         }
     }
 
+//*****C. Dialog opening*****//
     openDialog() {
         const hideContent = document.querySelectorAll("#hide-content")
 

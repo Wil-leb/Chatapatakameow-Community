@@ -1,6 +1,6 @@
 export default class FontAwesome {
 
-//*****Browsing arrows*****//
+//*****Browsing arrow creation*****//
     createArrows() {
         const firstSection = document.querySelector("section:first-of-type")
         const lastSection = document.querySelector("section:last-of-type")
