@@ -171,11 +171,11 @@ img {
     color: rgba(255, 0, 0, 1);
 }
 
-.warning, .deactivate, #hide-content {
+.warning, .deactivate, #hide-content:not(.notif) {
     margin-right: 1rem;
 }
 
-#hide-content {
+#hide-content:not(.notif), #delete-notifications {
     color: rgba(20, 140, 90, 1);
 }
 
@@ -227,6 +227,19 @@ img {
 header, footer {
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
+}
+
+.notif {
+    text-transform: uppercase;
+    padding: 1rem 0;
+    color: rgba(65, 5, 60, 0.8);
+    text-decoration: none;
+    font-family: "Roboto", sans-serif;
+    word-wrap: break-word;
+    border: none;
+    background: none;
+    cursor: pointer;
+    line-height: 1.8;
 }
 
 header nav a, footer nav a {
@@ -360,7 +373,7 @@ input[type=submit]:hover, input[type=submit]:focus {
     cursor: pointer;
 }
 
-.warning, .deactivate, .reactivate, #see-album, #hide-content, #hide-answers, #hide-content, #close {
+.warning, .deactivate, .reactivate, #see-album, #hide-content:not(.notif), #delete-notifications, #hide-answers, #close {
     border: none;
     background: none;
     font-family: "Roboto", sans-serif;
@@ -368,7 +381,7 @@ input[type=submit]:hover, input[type=submit]:focus {
     padding: 0;
 }
 
-form button:hover, form button:focus, .warning:hover, .warning:focus, #see-album:hover, #hide-content:hover, #hide-answers:hover, #see-album:focus, #hide-content:focus, #hide-answers:focus, #hide-content:hover, #hide-content:focus, #close:hover, #close:focus {
+form button:hover, form button:focus, .warning:hover, .warning:focus, #see-album:hover, #hide-content:not(.notif):hover, #hide-content:not(.notif):focus, #delete-notifications:hover, #delete-notifications:focus, #hide-answers:hover, #hide-answers:focus, #see-album:focus, #close:hover, #close:focus {
     cursor: pointer;
     color: rgba(50, 30, 255, 1);
 }
