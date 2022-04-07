@@ -55,14 +55,20 @@ class CommentFormController {
                                         $id = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = $id") > 0);
 
-                                // $commentAddition = $this->_comments->addComment($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $albumId, $title, $data["comment"]);
+                                $query = $pdo->prepare("SELECT user.id FROM `user` LEFT OUTER JOIN `album`
+                                                        ON user.id = album.user_id WHERE album.id = :albumId");
+                                $query->execute([":albumId" => $albumId]);
+                                $publisherId = $query->fetchColumn();
+
+                                $commentAddition = $this->_comments->addComment($id, $publisherId, $data["email"],
+                                $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $albumId, $title, $data["comment"]);
 
                                 $commentMsg["success"][] = "Le commentaire a été publié avec succès.";
 
-                                $query = $pdo->prepare("SELECT `email` FROM `user` LEFT OUTER JOIN `album`
+                                $req = $pdo->prepare("SELECT `email` FROM `user` LEFT OUTER JOIN `album`
                                                         ON user.login = album.user_login WHERE album.id = :albumId");                  
-                                $query->execute([":albumId" => $albumId]);
-                                $email = $query->fetchColumn();
+                                $req->execute([":albumId" => $albumId]);
+                                $email = $req->fetchColumn();
 
                                 $message = "Bonjour, ton album ".$title." vient d'être commenté. Voici le commentaire :\n".$data["comment"]."";
                                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
@@ -121,13 +127,19 @@ class CommentFormController {
                                         $id = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `comment_answers` WHERE `id` = $id") > 0);
 
-                                // $answerAddition = $this->_comments->addAnswer($id, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $commentId, $albumId, $title, $data["answer"]);
+                                $query = $pdo->prepare("SELECT user.id FROM `user` LEFT OUTER JOIN `album`
+                                                        ON user.id = album.user_id WHERE album.id = :albumId");
+                                $query->execute([":albumId" => $albumId]);
+                                $publisherId = $query->fetchColumn();
+
+                                // $answerAddition = $this->_comments->addAnswer($id, $publisherId, $data["email"],
+                                // $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $commentId, $albumId, $title, $data["answer"]);
                                 
                                 $answerMsg["success"][] = "La réponse a été publiée avec succès.";
 
-                                $query = $pdo->prepare("SELECT `user_email`, `comment` FROM `comments` WHERE comments.id = :commentId");
-                                $query->execute([":commentId" => $commentId]);
-                                $result = $query->fetch();
+                                $req = $pdo->prepare("SELECT `user_email`, `comment` FROM `comments` WHERE comments.id = :commentId");
+                                $req->execute([":commentId" => $commentId]);
+                                $result = $req->fetch();
                                 $email = $result["user_email"];
                                 $comment = $result["comment"];
 
