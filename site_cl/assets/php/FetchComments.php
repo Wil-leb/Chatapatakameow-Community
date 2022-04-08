@@ -14,11 +14,10 @@ if(isset($_POST['view'])) {
         $update_query->execute([1, 0]);
     }
 
-    $query = $pdo->prepare("SELECT comments.publisher_id, `album_title`, `comment` FROM `comments`
-                            WHERE comments.publisher_id = :userId
-                            GROUP BY comments.publisher_id
-                            ORDER BY comments.id DESC LIMIT 5");
-    $query->execute([":userId" => $_SESSION["user"]["id"]]);
+    $query = $pdo->prepare("SELECT `publisher_id`, `album_title`, `comment` FROM `comments`
+                            WHERE `publisher_id` = :publisherId
+                            ORDER BY `id` DESC LIMIT 5");
+    $query->execute([":publisherId" => $_SESSION["user"]["id"]]);
     $output = "";
 
     if($query->RowCount() > 0) {
@@ -38,7 +37,7 @@ if(isset($_POST['view'])) {
     //     $output = '<p class="no-content">Aucune notification pour le moment</p>';
     // }
 
-    $status_query = $pdo->prepare("SELECT * FROM `comments` WHERE `comment_notification` = ?");
+    $status_query = $pdo->prepare("SELECT * FROM `comments` WHERE `comment_notification` = ? GROUP BY `publisher_id`");
     $status_query->execute([0]);
     $count = $status_query->RowCount();
     $data = ["notification" => $output, "unseen_notification" => $count];
