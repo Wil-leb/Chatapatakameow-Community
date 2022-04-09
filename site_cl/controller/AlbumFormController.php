@@ -1,7 +1,7 @@
 <?php
 
 namespace App\controller;
-use App\model\{Album, Reports, User};
+use App\model\{Albums, Reports, Users};
 use \PDO;
 
 require_once("./assets/php/Guid.php");
@@ -11,9 +11,9 @@ class AlbumFormController {
         public const COV_SECURE_PATH = "C:/xampp/secure/albums_cl/covers/";
         public const PIC_SECURE_PATH = "C:/xampp/secure/albums_cl/pictures/";
 
-        protected Album $_album;
+        protected Albums $_album;
         
-        public function __construct(Album $album) {
+        public function __construct(Albums $album) {
                 $this->_album = $album;
         }
 
@@ -145,9 +145,10 @@ class AlbumFormController {
 
                                                 do {
                                                         $id = uniqid();
-                                                } while($pdo->prepare("SELECT `id` FROM `album` WHERE `id` = $id") > 0);
+                                                } while($pdo->prepare("SELECT `id` FROM `albums` WHERE `id` = $id") > 0);
 
-                                                $albumAddition = $this->_album->addAlbum($id, $_SESSION["user"]["id"], $_SESSION["user"]["login"], $data["title"], $data["description"]);
+                                                $albumAddition = $this->_album->addAlbum($id, $_SESSION["user"]["id"],
+                                                $_SESSION["user"]["login"], $data["title"], $data["description"]);
 
                                                 do {
                                                         $coverId = uniqid();
@@ -228,7 +229,7 @@ class AlbumFormController {
                 if(isset($_POST["deleteAlbum"])) {
                         $albumId = $_POST["albumId"];
 
-                        $query = $pdo->prepare("SELECT `id` FROM `album` WHERE `id` = :albumId");
+                        $query = $pdo->prepare("SELECT `id` FROM `albums` WHERE `id` = :albumId");
                         $query->execute([":albumId" => $albumId]);
                         $trueAlbId = $query->fetchColumn();
 
@@ -305,9 +306,9 @@ class AlbumFormController {
                                 }
                                 
                                 $findAlbum = $this->_album->findAlbumById($albumId);
-                                // $deleteAlbum = $this->_album->deleteAlbum($albumId);
-                                // deleteCover($covFolder, $trueCovName, $minAge);
-                                // deletePictures($picFolder, $truePicNames, $minAge);
+                                $deleteAlbum = $this->_album->deleteAlbum($albumId);
+                                deleteCover($covFolder, $trueCovName, $minAge);
+                                deletePictures($picFolder, $truePicNames, $minAge);
 
                                 $deleteMessages["success"] = ["L'album ".$findAlbum["title"]." a été supprimé avec succès."];
 
@@ -327,7 +328,7 @@ class AlbumFormController {
                 if(isset($_POST["reportAlb"])) {
                         $albumId = $_POST["albumId"];
                         $trueId = $_GET["albumId"];
-                        $category = "album";
+                        $category = "albums";
 
                         if($albumId != $trueId || $albumId == null) {
                                 die("Hacking attempt!");
@@ -340,9 +341,9 @@ class AlbumFormController {
                                         } while($pdo->prepare("SELECT `id` FROM `reports` WHERE `id` = $reportId
                                                                 AND `category` = $category") > 0);
 
-                                        $req = $pdo->prepare("SELECT user.id FROM `user` LEFT OUTER JOIN `album`
-                                        ON user.login = album.user_login
-                                        WHERE album.id = :albumId");                  
+                                        $req = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `albums`
+                                        ON users.login = albums.user_login
+                                        WHERE albums.id = :albumId");                  
                                         $req->execute([":albumId" => $albumId]);
                                         $publisherId = $req->fetchColumn();
 

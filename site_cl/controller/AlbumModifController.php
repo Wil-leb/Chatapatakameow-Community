@@ -1,7 +1,7 @@
 <?php
 
 namespace App\controller;
-use App\model\{Album, User};
+use App\model\{Albums, Users};
 use \PDO;
 
 require_once("./assets/php/Guid.php");
@@ -11,9 +11,9 @@ class AlbumModifController {
         public const COV_SECURE_PATH = "C:/xampp/secure/albums_cl/covers/";
         public const PIC_SECURE_PATH = "C:/xampp/secure/albums_cl/pictures/";
 
-        protected Album $_album;
+        protected Albums $_album;
         
-        public function __construct(Album $album) {
+        public function __construct(Albums $album) {
                 $this->_album = $album;
         }
   
@@ -28,7 +28,7 @@ class AlbumModifController {
                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         $pdo->exec("SET NAMES UTF8");
             
-                        $query = $pdo->prepare("SELECT `id` FROM `album` WHERE `id` = :albumId");
+                        $query = $pdo->prepare("SELECT `id` FROM `albums` WHERE `id` = :albumId");
                         $query->execute([":albumId" => $albumId]);
                         $trueAlbId = $query->fetchColumn();
             
@@ -174,7 +174,7 @@ class AlbumModifController {
                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         $pdo->exec("SET NAMES UTF8");
             
-                        $query = $pdo->prepare("SELECT `id` FROM `album` WHERE `id` = :albumId");
+                        $query = $pdo->prepare("SELECT `id` FROM `albums` WHERE `id` = :albumId");
                         $query->execute([":albumId" => $albumId]);
                         $trueAlbId = $query->fetchColumn();
 
@@ -238,7 +238,7 @@ class AlbumModifController {
                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                         $pdo->exec("SET NAMES UTF8");
             
-                        $query = $pdo->prepare("SELECT `id` FROM `album` WHERE `id` = :albumId");
+                        $query = $pdo->prepare("SELECT `id` FROM `albums` WHERE `id` = :albumId");
                         $query->execute([":albumId" => $albumId]);
                         $trueAlbId = $query->fetchColumn();
 

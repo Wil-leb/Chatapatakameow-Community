@@ -19,7 +19,7 @@ class PaginationController {
                 $currentPage = 1;
             }
 
-            $countUSer = $pdo->prepare("SELECT COUNT(*) AS `user_nb` FROM `user`");
+            $countUSer = $pdo->prepare("SELECT COUNT(*) AS `user_nb` FROM `users`");
 
             $countUSer->execute();
 
@@ -33,7 +33,7 @@ class PaginationController {
 
             $firstUser = ($currentPage * $perPage) - $perPage;
 
-            $offset = $pdo->prepare("SELECT * FROM `user` LIMIT :firstUser, :perPage");
+            $offset = $pdo->prepare("SELECT * FROM `users` LIMIT :firstUser, :perPage");
 
             $offset->bindValue(":firstUser", $firstUser, \PDO::PARAM_INT);
             $offset->bindValue(":perPage", $perPage, \PDO::PARAM_INT);

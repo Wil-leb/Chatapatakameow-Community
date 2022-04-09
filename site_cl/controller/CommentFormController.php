@@ -1,7 +1,7 @@
 <?php
 
 namespace App\controller;
-use App\model\{Album, Comments, Reports, User, Votes};
+use App\model\{Albums, Comments, Reports, Users, Votes};
 use App\core\{Session};
 use \PDO;
 
@@ -22,7 +22,7 @@ class CommentFormController {
                 if($_POST["postComment"]) {
                         $albumId = $_GET["albumId"];
 
-                        $album = new Album();
+                        $album = new Albums();
                         $exist = $album->findAlbumById($albumId);
                         $title = $exist["title"];
 
@@ -55,25 +55,25 @@ class CommentFormController {
                                         $id = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = $id") > 0);
 
-                                $query = $pdo->prepare("SELECT user.id FROM `user` LEFT OUTER JOIN `album`
-                                                        ON user.id = album.user_id WHERE album.id = :albumId");
+                                $query = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `albums`
+                                                        ON users.id = albums.user_id WHERE albums.id = :albumId");
                                 $query->execute([":albumId" => $albumId]);
-                                $publisherId = $query->fetchColumn();
+                                $refAuthorId = $query->fetchColumn();
 
-                                $commentAddition = $this->_comments->addComment($id, $publisherId, $data["email"],
-                                $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $albumId, $title, $data["comment"]);
+                                $commentAddition = $this->_comments->addComment($id, $refAuthorId, $albumId, $title, $data["email"],
+                                $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $data["comment"]);
 
                                 $commentMsg["success"][] = "Le commentaire a été publié avec succès.";
 
-                                $req = $pdo->prepare("SELECT `email` FROM `user` LEFT OUTER JOIN `album`
-                                                        ON user.login = album.user_login WHERE album.id = :albumId");                  
+                                $req = $pdo->prepare("SELECT `email` FROM `users` LEFT OUTER JOIN `comments`
+                                                        ON users.id = comments.album_author_id WHERE comments.album_id = :albumId");
                                 $req->execute([":albumId" => $albumId]);
-                                $email = $req->fetchColumn();
+                                $refAuthorEmail = $req->fetchColumn();
 
                                 $message = "Bonjour, ton album ".$title." vient d'être commenté. Voici le commentaire :\n".$data["comment"]."";
                                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                                // if(mail($email, "Nouveau commentaire", $message, $headers)) {
+                                // if(mail($refAuthorEmail, "Nouveau commentaire", $message, $headers)) {
                                         $commentMsg["success"][] = "Mail de confirmation envoyé.";
                                 // }
                                 
@@ -94,7 +94,7 @@ class CommentFormController {
                         $albumId = $_GET["albumId"];
                         $commentId = $data["commentId"];
 
-                        $album = new Album();
+                        $album = new Albums();
                         $exist = $album->findAlbumById($albumId);
                         $title = $exist["title"];
 
@@ -127,26 +127,31 @@ class CommentFormController {
                                         $id = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `comment_answers` WHERE `id` = $id") > 0);
 
-                                $query = $pdo->prepare("SELECT user.id FROM `user` LEFT OUTER JOIN `album`
-                                                        ON user.id = album.user_id WHERE album.id = :albumId");
-                                $query->execute([":albumId" => $albumId]);
-                                $publisherId = $query->fetchColumn();
+                                // $query = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `albums`
+                                //                         ON users.id = albums.user_id WHERE albums.id = :albumId");
+                                // $query->execute([":albumId" => $albumId]);
+                                // $refAuthorId = $query->fetchColumn();
 
-                                // $answerAddition = $this->_comments->addAnswer($id, $publisherId, $data["email"],
-                                // $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $commentId, $albumId, $title, $data["answer"]);
+                                // $answerAddition = $this->_comments->addAnswer($id, $refAuthorId, $commentId, $albumId, $title,
+                                // $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $data["answer"]);
                                 
-                                $answerMsg["success"][] = "La réponse a été publiée avec succès.";
+                                // $answerMsg["success"][] = "La réponse a été publiée avec succès.";
 
-                                $req = $pdo->prepare("SELECT `user_email`, `comment` FROM `comments` WHERE comments.id = :commentId");
+                                $req = $pdo->prepare("SELECT `comment_email`, `comment` FROM `comments` WHERE comments.id = :commentId");
                                 $req->execute([":commentId" => $commentId]);
                                 $result = $req->fetch();
-                                $email = $result["user_email"];
+                                $refAuthorEmail = $result["comment_email"];
                                 $comment = $result["comment"];
+
+                                $answerAddition = $this->_comments->addAnswer($id, $commentId, $refAuthorEmail, $albumId, $title,
+                                $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $data["answer"]);
+                                
+                                $answerMsg["success"][] = "La réponse a été publiée avec succès.";
 
                                 $message = "Bonjour, tu viens de recevoir une réponse à ton commentaire ".$comment." pour l'album ".$title.". Voici la réponse :\n".$data["answer"]."";
                                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                                // if(mail($email, "Nouvelle réponse", $message, $headers)) {
+                                // if(mail($refAuthorEmail, "Nouvelle réponse", $message, $headers)) {
                                         $answerMsg["success"][] = "Mail de confirmation envoyé.";
                                 // }
                                 
@@ -170,7 +175,7 @@ class CommentFormController {
                 if(isset($_POST["likeAlb"]) || isset($_POST["dislikeAlb"])) {
                         $albumId = $_POST["albumId"];
                         $trueId = $_GET["albumId"];
-                        $category = "album";
+                        $category = "albums";
 
                         if($albumId != $trueId || $albumId == null) {
                                 die("Hacking attempt!");
@@ -183,12 +188,49 @@ class CommentFormController {
                                         } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId
                                                                 AND `category` = $category") > 0);
 
+                                        $req = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `albums`
+                                                                ON users.login = albums.user_login
+                                                                WHERE albums.id = :albumId");
+                                        $req->execute([":albumId" => $albumId]);
+                                        $publisherId = $req->fetchColumn();
+
+                                        $album = new Albums();
+                                        $exist = $album->findAlbumById($albumId);
+                                        $title = $exist["title"];
+
+                                        $que = $pdo->prepare("SELECT `email` FROM `users` LEFT OUTER JOIN `albums`
+                                                                ON users.id = albums.user_id WHERE albums.id = :albumId");
+                                        $que->execute([":albumId" => $albumId]);
+                                        $refAuthorEmail = $que->fetchColumn();
+
                                         if(isset($_POST["likeAlb"])) {
-                                                $vote->like($voteId, $albumId, $category, $_SERVER["REMOTE_ADDR"], 1);
+                                                $vote->like($voteId, $publisherId, $albumId, $category, $_SERVER["REMOTE_ADDR"], 1);
+                                                
+                                                $message = "Bonjour, ton album ".$title." vient de recevoir un like.";
+                                                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                                // if(mail($refAuthorEmail, "Nouveau vote", $message, $headers)) {
+                                                        echo $message;
+                                                // }
+                                                
+                                                // else {
+                                                        
+                                                // }
                                         }
 
                                         elseif(isset($_POST["dislikeAlb"])) {
-                                                $vote->dislike($voteId, $albumId, $category, $_SERVER["REMOTE_ADDR"], -1);
+                                                $vote->dislike($voteId, $publisherId, $albumId, $category, $_SERVER["REMOTE_ADDR"], -1);
+
+                                                $message = "Bonjour, ton album ".$title." vient de recevoir un dislike.";
+                                                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                                // if(mail($refAuthorEmail, "Nouveau vote", $message, $headers)) {
+                                                        echo $message;
+                                                // }
+                                                
+                                                // else {
+                                                        
+                                                // }
                                         }
 
                                         $vote->updateVoteCount($albumId, $category);
@@ -216,12 +258,46 @@ class CommentFormController {
                                         } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId
                                                                 AND `category` = $category") > 0);
 
+                                        $req = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `comments`
+                                                                ON users.login = comments.comment_login
+                                                                WHERE comments.id = :commentId");
+                                        $req->execute([":commentId" => $commentId]);
+                                        $publisherId = $req->fetchColumn();
+
+                                        $findComment = new Comments();
+                                        $exist = $findComment->findCommentById($commentId);
+                                        $comment = $exist["comment"];
+                                        $refAuthorEmail = $exist["comment_email"];
+
                                         if(isset($_POST["likeComm"])) {
-                                                $vote->like($voteId, $commentId, $category, $_SERVER["REMOTE_ADDR"], 1);
+                                                $vote->like($voteId, $publisherId, $commentId, $category, $_SERVER["REMOTE_ADDR"], 1);
+
+                                                $message = "Bonjour, ton commentaire ".$comment." vient de recevoir un like.";
+                                                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                                // if(mail($refAuthorEmail, "Nouveau vote", $message, $headers)) {
+                                                        echo $message;
+                                                // }
+                                                
+                                                // else {
+                                                        
+                                                // }
                                         }
 
                                         elseif(isset($_POST["dislikeComm"])) {
-                                                $vote->dislike($voteId, $commentId, $category, $_SERVER["REMOTE_ADDR"], -1);
+                                                $vote->dislike($voteId, $publisherId, $commentId, $category, $_SERVER["REMOTE_ADDR"],
+                                                -1);
+
+                                                $message = "Bonjour, ton commentaire ".$comment." vient de recevoir un dislike.";
+                                                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                                // if(mail($refAuthorEmail, "Nouveau vote", $message, $headers)) {
+                                                        echo $message;
+                                                // }
+                                                
+                                                // else {
+                                                        
+                                                // }
                                         }
 
                                         $vote->updateVoteCount($commentId, $category);
@@ -246,14 +322,50 @@ class CommentFormController {
                                 if(isset($_SERVER["REMOTE_ADDR"])) {
                                         do {
                                                 $voteId = uniqid();
-                                        } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId AND `category` = $category") > 0);
+                                        } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId
+                                                                AND `category` = $category") > 0);
+
+                                        $req = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `comment_answers`
+                                                        ON users.login = comment_answers.answer_login
+                                                        WHERE comment_answers.id = :answerId");
+                                        $req->execute([":answerId" => $answerId]);
+                                        $publisherId = $req->fetchColumn();
+
+                                        $findComment = new Comments();
+                                        $exist = $findComment->findAnswerById($answerId);
+                                        $answer = $exist["answer"];
+                                        $comment = $exist["comment"];
+                                        $refAuthorEmail = $exist["answer_email"];
 
                                         if(isset($_POST["likeAnsw"])) {
-                                                $vote->like($voteId, $answerId, $category, $_SERVER["REMOTE_ADDR"], 1);
+                                                $vote->like($voteId, $publisherId, $answerId, $category, $_SERVER["REMOTE_ADDR"], 1);
+
+                                                $message = "Bonjour, ta réponse ".$answer." au commentaire ".$comment." vient de recevoir un like.";
+                                                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                                // if(mail($refAuthorEmail, "Nouveau vote", $message, $headers)) {
+                                                        echo $message;
+                                                // }
+                                                
+                                                // else {
+                                                        
+                                                // }
                                         }
 
                                         elseif(isset($_POST["dislikeAnsw"])) {
-                                                $vote->dislike($voteId, $answerId, $category, $_SERVER["REMOTE_ADDR"], -1);
+                                                $vote->dislike($voteId, $publisherId, $answerId, $category, $_SERVER["REMOTE_ADDR"],
+                                                -1);
+
+                                                $message = "Bonjour, ta réponse ".$answer." au commentaire ".$comment." vient de recevoir un dislike.";
+                                                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                                // if(mail($refAuthorEmail, "Nouveau vote", $message, $headers)) {
+                                                        echo $message;
+                                                // }
+                                                
+                                                // else {
+                                                        
+                                                // }
                                         }
 
                                         $vote->updateVoteCount($answerId, $category);
@@ -507,8 +619,8 @@ public function reportForm() {
                                         $reportId = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `reports` WHERE `id` = $reportId AND `category` = $category") > 0);
 
-                                $req = $pdo->prepare("SELECT user.id FROM `user` LEFT OUTER JOIN `comments`
-                                                        ON user.login = comments.user_login
+                                $req = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `comments`
+                                                        ON users.login = comments.comment_login
                                                         WHERE comments.id = :commentId");
                                 $req->execute([":commentId" => $commentId]);
                                 $publisherId = $req->fetchColumn();
@@ -539,8 +651,8 @@ public function reportForm() {
                                         $reportId = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `reports` WHERE `id` = $reportId AND `category` = $category") > 0);
 
-                                $req = $pdo->prepare("SELECT user.id FROM `user` LEFT OUTER JOIN `comment_answers`
-                                                        ON user.login = comment_answers.user_login
+                                $req = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `comment_answers`
+                                                        ON users.login = comment_answers.answer_login
                                                         WHERE comment_answers.id = :answerId");
                                 $req->execute([":answerId" => $answerId]);
                                 $publisherId = $req->fetchColumn();

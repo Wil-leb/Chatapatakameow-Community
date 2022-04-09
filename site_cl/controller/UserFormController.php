@@ -2,7 +2,7 @@
 
 namespace App\controller;
 
-use App\model\{User};
+use App\model\{Users};
 use App\core\{Cookie, Session};
 use \PDO;
 
@@ -10,9 +10,9 @@ class UserFormController {
 
     public const LOGIN_REGEX = "/^[\p{L}0-9\-_]+$/ui";
     
-    protected User $_user;
+    protected Users $_user;
 
-    public function __construct(User $user) {
+    public function __construct(Users $user) {
         $this->_user = $user;
     }
 
@@ -71,11 +71,11 @@ class UserFormController {
 
                 do {
                     $id = uniqid();
-                } while($pdo->prepare("SELECT `id` FROM `user` WHERE `id` = $id") > 0);
+                } while($pdo->prepare("SELECT `id` FROM `users` WHERE `id` = $id") > 0);
 
                 $this->_user->addUser($id, $data["email"], $data["login"], $data["password"], $key);
                 
-                $registrationMsg["success"] = ["Tu as été enregistré avec succès !"];
+                $registrationMsg["success"][] = "Tu as été enregistré avec succès !";
 
                 $headers = "MIME-Version: 1.0\r\n";
                 $headers .= 'From:"[VOUS]"<votremail@mail.com>'."\n";
@@ -92,7 +92,13 @@ class UserFormController {
                 </html>
                 ';
 
-                mail($data["email"], "Confirmation de compte", $message, $headers);
+                // if(mail($data["email"], "Confirmation de compte", $message, $headers)) {
+                    $registrationMsg["success"][] = "Un email de confirmation a été envoyé à ton adresse. Pour activer ton compte, clique sur le lien dans l'email. Pense à vérifier ton dossier de courrier indésirable.";
+                // }
+
+                // else {
+                //     $registrationMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, réeesaie ultérieurement.";
+                // }
             }
 
             return $registrationMsg;
@@ -111,7 +117,7 @@ public function accountConfForm() {
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->exec("SET NAMES UTF8");
 
-            $query = $pdo->prepare("SELECT `login`, `confirm_key`, `account_confirmed` FROM `user`
+            $query = $pdo->prepare("SELECT `login`, `confirm_key`, `account_confirmed` FROM `users`
                                     WHERE `login` = :login AND `confirm_key` = :key");
 
             $query->execute([":login" => $login, ":key" => $key]);
@@ -122,13 +128,13 @@ public function accountConfForm() {
                 $confirmInfo = $query->fetch();
 
                 if($confirmInfo["account_confirmed"] == 0) {
-                    $sql = $pdo->prepare("UPDATE `user` SET `account_confirmed` = 1 WHERE `login` = :login AND `confirm_key` = :key");
+                    $sql = $pdo->prepare("UPDATE `users` SET `account_confirmed` = 1 WHERE `login` = :login AND `confirm_key` = :key");
                     
                     $sql->execute([":login" => $login, ":key" => $key]);
                     
                     $accountConfMsg["success"] = ["Ta confirmation a été prise en compte !"];
 
-                    $que = $pdo->prepare("SELECT `email` from `user` WHERE `login` = :login AND `confirm_key` = :key");
+                    $que = $pdo->prepare("SELECT `email` from `users` WHERE `login` = :login AND `confirm_key` = :key");
 
                     $que->execute([":login" => $login, ":key" => $key]);
 
@@ -236,13 +242,13 @@ public function accountConfForm() {
                                     $message = "Bonjour, ton adresse électronique a été modifiée. Si tu n'es pas à l'origine de cette opération, contacte-moi.";
                                     $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                                    if(mail($exist["email"], "Modification d'adresse électronique", $message, $headers)) {
+                                    // if(mail($exist["email"], "Modification d'adresse électronique", $message, $headers)) {
                                         $emailMsg["success"] = ["Mail de confirmation envoyé."]; 
-                                    }
+                                    // }
                                     
-                                    else {
-                                        $emailMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
-                                    }
+                                    // else {
+                                    //     $emailMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
+                                    // }
                                 }                             
                             }
                             
@@ -294,13 +300,13 @@ public function accountConfForm() {
                                     $message = "Bonjour, suite à ta demande auprès de moi, ton adresse électronique a été modifiée. Si tu n'es pas à l'origine de cette demande, contacte-moi.";
                                     $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                                    if(mail($trueEmail, "Modification d'adresse électronique", $message, $headers)) {
+                                    // if(mail($trueEmail, "Modification d'adresse électronique", $message, $headers)) {
                                         $emailMsg["success"] = ["Mail de confirmation envoyé."]; 
-                                    }
+                                    // }
                                     
-                                    else {
-                                        $emailMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
-                                    }
+                                    // else {
+                                    //     $emailMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
+                                    // }
                                 }                           
                             }
 
@@ -358,13 +364,13 @@ public function accountConfForm() {
                                     $message = "Bonjour, ton pseudo a été modifié. Si tu n'es pas à l'origine de cette opération, contacte-moi.";
                                     $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                                    if(mail($exist["email"], "Modification de pseudo", $message, $headers)) {
+                                    // if(mail($exist["email"], "Modification de pseudo", $message, $headers)) {
                                         $loginMesg["success"] = ["Mail de confirmation envoyé."]; 
-                                    }
+                                    // }
                                     
-                                    else {
-                                        $loginMesg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
-                                    }
+                                    // else {
+                                    //     $loginMesg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
+                                    // }
                                 }                             
                             }
                             
@@ -421,13 +427,13 @@ public function accountConfForm() {
                                     $message = "Bonjour, suite à ta demande auprès de moi, ton pseudo a été modifié. Si tu n'es pas à l'origine de cette demande, contacte-moi.";
                                     $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                                    if(mail($email, "Modification de pseudo", $message, $headers)) {
+                                    // if(mail($email, "Modification de pseudo", $message, $headers)) {
                                         $loginMesg["success"] = ["Mail de confirmation envoyé."]; 
-                                    }
+                                    // }
                                     
-                                    else {
-                                        $loginMesg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
-                                    }
+                                    // else {
+                                    //     $loginMesg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
+                                    // }
                                 }                            
                             }
 
@@ -474,13 +480,13 @@ public function accountConfForm() {
                             $message = "Bonjour, ton mot de passe a été modifié. Si tu n'es pas à l'origine de cette opération, contacte-moi.";
                                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                            if(mail($exist["email"], "Modification de mot de passe", $message, $headers)) {
+                            // if(mail($exist["email"], "Modification de mot de passe", $message, $headers)) {
                                 $passwordMsg["success"] = ["Mail de confirmation envoyé."]; 
-                            }
+                            // }
                             
-                            else {
-                                $passwordMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
-                            }
+                            // else {
+                            //     $passwordMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
+                            // }
                         }
                         
                         else {
@@ -520,13 +526,13 @@ public function accountConfForm() {
                                 $message = "Bonjour, suite à ta demande auprès de moi, ton mot de passe a été modifié. Si tu n'es pas à l'origine de cette demande, contacte-moi.";
                                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                                if(mail($mail, "Modification de mot de passe", $message, $headers)) {
+                                // if(mail($mail, "Modification de mot de passe", $message, $headers)) {
                                     $passwordMsg["success"] = ["Mail de confirmation envoyé."]; 
-                                }
+                                // }
                                 
-                                else {
-                                    $passwordMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
-                                }
+                                // else {
+                                //     $passwordMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
+                                // }
                             }
                             
                             else {
@@ -566,13 +572,13 @@ public function forgotLoginForm(array $data) {
                 $message = "Bonjour, suite à ta demande, voici ton pseudo : $login. Pense à conserver cette information dans un endroit sûr. Si tu n'es pas à l'origine de cette demande, signale cet email à l'administrateur.";
                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                if(mail($_POST["mail"], "Pseudo oublié", $message, $headers)) {
+                // if(mail($_POST["mail"], "Pseudo oublié", $message, $headers)) {
                     $forgotLogMsg["success"] = ["Pseudo envoyé."]; 
-                }
+                // }
                 
-                else {
-                    $forgotLogMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
-                }
+                // else {
+                //     $forgotLogMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
+                // }
             }
         }
 
@@ -602,16 +608,16 @@ public function forgotPasswordForm(array $data) {
                 $message = "Bonjour, suite à ta demande, voici ton nouveau mot de passe : $password. Pense à le modifier dans ton espace. Si tu n'es pas à l'origine de cette demande, signale cet email à l'administrateur.";
                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                if(mail($_POST["mail"], "Mot de passe oublié", $message, $headers)) {
-                    // $this->_user->updatePassword($exist["id"], $password);
-                    // $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                // if(mail($_POST["mail"], "Mot de passe oublié", $message, $headers)) {
+                //     $this->_user->updatePassword($exist["id"], $password);
+                //     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
                     $forgotPassMsg["success"] = ["Nouveau mot de passe envoyé."]; 
-                }
+                // }
                 
-                else {
-                    $forgotPassMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
-                }
+                // else {
+                //     $forgotPassMsg["errors"][] = "Une erreur s'est produite. Si cela se réitère, contacte-moi.";
+                // }
             }
         }
 
@@ -630,7 +636,7 @@ public function forgotPasswordForm(array $data) {
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->exec("SET NAMES UTF8");
 
-            $query = $pdo->prepare("SELECT `id` FROM `user` WHERE `id` = :id");
+            $query = $pdo->prepare("SELECT `id` FROM `users` WHERE `id` = :id");
 
             $query->execute([":id" => $id]);
 
@@ -682,7 +688,7 @@ public function accountSuspensionForm($id) {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->exec("SET NAMES UTF8");
 
-        $query = $pdo->prepare("SELECT `id` FROM `user` WHERE `id` = :id");
+        $query = $pdo->prepare("SELECT `id` FROM `users` WHERE `id` = :id");
 
         $query->execute([":id" => $id]);
 
@@ -694,7 +700,7 @@ public function accountSuspensionForm($id) {
 
         else {
             $findUser = $this->_user->findUserById($id);
-            $suspendAccount = $this->_user->suspendAccount($id, 1);
+            // $suspendAccount = $this->_user->suspendAccount($id, 1);
 
             $suspensionMsg["success"][] = "Le compte de l'utilisateur ".$findUser["login"]." a été suspendu avec succès.";
 
@@ -725,7 +731,7 @@ public function accountReactivationForm($id) {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->exec("SET NAMES UTF8");
 
-        $query = $pdo->prepare("SELECT `id` FROM `user` WHERE `id` = :id");
+        $query = $pdo->prepare("SELECT `id` FROM `users` WHERE `id` = :id");
 
         $query->execute([":id" => $id]);
 
@@ -737,7 +743,7 @@ public function accountReactivationForm($id) {
 
         else {
             $findUser = $this->_user->findUserById($id);
-            $reactivateAccount = $this->_user->reactivateAccount($id, 0);
+            // $reactivateAccount = $this->_user->reactivateAccount($id, 0);
 
             $reactivationMsg["success"][] = "Le compte de l'utilisateur ".$findUser["login"]." a été réactivé avec succès.";
 
@@ -768,7 +774,7 @@ public function accountReactivationForm($id) {
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->exec("SET NAMES UTF8");
 
-            $query = $pdo->prepare("SELECT `id` FROM `user` WHERE `id` = :id");
+            $query = $pdo->prepare("SELECT `id` FROM `users` WHERE `id` = :id");
 
             $query->execute([":id" => $id]);
 

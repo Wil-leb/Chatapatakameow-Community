@@ -5,7 +5,7 @@ namespace App\controller;
 use App\controller\{AlbumFormController, AlbumModifController, CommentFormController, ContactMessageController, ImageDisplayController,
                     UserFormController};
 use App\core\{Cookie, Https, Session};
-use App\model\{Album, Comments, ContactMessage, Reports, User, Votes};
+use App\model\{Albums, Comments, ContactMessage, Reports, Users, Votes};
 use \PDO;
 
 class FrontController {
@@ -14,7 +14,7 @@ class FrontController {
     public function home() {
         $title = "xxx - Accueil";
         
-        $user = new User();
+        $user = new Users();
         $users = $user->findAllUsers();
         
         $this->render("home/home", ["title" => $title, "users" => $users]);                                    
@@ -39,7 +39,7 @@ class FrontController {
     public function albumDashboard() {
         $title = "xxx - Tableau de bord des albums";
         
-        $album = new Album();
+        $album = new Albums();
         $albums = $album->findAllAlbums();
         
         if(!Session::admin()) {
@@ -49,7 +49,7 @@ class FrontController {
         else {
 
             if(isset($_POST["deleteAlbum"])) {
-                $form = new AlbumFormController(new Album());
+                $form = new AlbumFormController(new Albums());
                 $deleteMessages = $form->albumDeletionForm($_POST);
                 // header("Refresh: 2");
             }
@@ -113,7 +113,7 @@ class FrontController {
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->exec("SET NAMES UTF8");
 
-            $query = $pdo->prepare("SELECT `id` FROM `user` WHERE `id` = :id");
+            $query = $pdo->prepare("SELECT `id` FROM `users` WHERE `id` = :id");
 
             $query->execute([":id" => $id]);
 
@@ -124,11 +124,11 @@ class FrontController {
             }
 
             else {
-                $user = new User();
+                $user = new Users();
                 $findUser = $user->findUserById($id);
                 
                 if(isset($_POST["emailChange"]) && $_POST["emailChange"] == "Confirmer le changement d'email") {
-                    $form = new UserFormController(new User());
+                    $form = new UserFormController(new Users());
                     $emailMsg = $form->emailForm($_POST);
 
                     // if(!empty($emailMessages["success"])) {
@@ -137,7 +137,7 @@ class FrontController {
                 }
                 
                 if(isset($_POST["loginChange"]) && $_POST["loginChange"] == "Confirmer le changement de pseudo") {
-                    $form = new UserFormController(new User());
+                    $form = new UserFormController(new Users());
                     $loginMsg = $form->loginForm($_POST);
                     
                     // if(!empty($loginMessages["success"])) {
@@ -146,7 +146,7 @@ class FrontController {
                 }
                 
                 if(isset($_POST["passwordChange"]) && $_POST["passwordChange"] == "Confirmer le changement de mot de passe") {
-                    $form = new UserFormController(new User());
+                    $form = new UserFormController(new Users());
                     $passwordMsg = $form->passwordForm($_POST);
                     
                     // if(!empty($passwordMessages["success"])) {
@@ -155,7 +155,7 @@ class FrontController {
                 }
                 
                 if(isset($_POST["roleChange"]) && $_POST["roleChange"] == "Confirmer le changement de rôle") {
-                    $form = new UserFormController(new User());
+                    $form = new UserFormController(new Users());
                     $roleMsg = $form->roleForm($_POST);
 
                     // if(!empty($roleMessages["success"])) {
@@ -183,7 +183,7 @@ class FrontController {
         // $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         // $pdo->exec("SET NAMES UTF8");
         
-        $user = new User();
+        $user = new Users();
         $users = $user->findAllUsers();
 
         // $countUser = new PaginationController();
@@ -203,7 +203,7 @@ class FrontController {
             //     $currentPage = 1;
             // }
             
-            // $countUSer = $pdo->prepare("SELECT COUNT(*) AS `user_nb` FROM `user`");
+            // $countUSer = $pdo->prepare("SELECT COUNT(*) AS `user_nb` FROM `users`");
             
             // $countUSer->execute();
             
@@ -217,7 +217,7 @@ class FrontController {
             
             // $firstUser = ($currentPage * $perPage) - $perPage;
             
-            // $offset = $pdo->prepare("SELECT * FROM `user` LIMIT :firstUser, :perPage");
+            // $offset = $pdo->prepare("SELECT * FROM `users` LIMIT :firstUser, :perPage");
 
             // $offset->bindValue(":firstUser", $firstUser, PDO::PARAM_INT);
             // $offset->bindValue(":perPage", $perPage, PDO::PARAM_INT);
@@ -227,19 +227,19 @@ class FrontController {
             // $allUsers = $offset->fetchAll(\PDO::FETCH_ASSOC);
 
             if(isset($_POST["suspendAccount"])) {
-                $form = new UserFormController(new User());
+                $form = new UserFormController(new Users());
                 $suspensionMsg = $form->accountSuspensionForm($_POST);
                 // header("Refresh: 2");
             }
 
             if(isset($_POST["reactivateAccount"])) {
-                $form = new UserFormController(new User());
+                $form = new UserFormController(new Users());
                 $reactivationMsg = $form->accountReactivationForm($_POST);
                 // header("Refresh: 2");
             }
             
             if(isset($_POST["deleteUser"])) {
-                $form = new UserFormController(new User());
+                $form = new UserFormController(new Users());
                 $userDelMsg = $form->userDeletionForm($_POST);
                 // header("Refresh: 2");
             }
@@ -272,7 +272,7 @@ class FrontController {
         
         else {
             if(isset($_POST["emailChange"]) && $_POST["emailChange"] == "Confirmer le changement d'email") {
-                $form = new UserFormController(new User());
+                $form = new UserFormController(new Users());
                 $emailMsg = $form->emailForm($_POST);
 
                 // if(!empty($emailMessages["success"])) {
@@ -281,7 +281,7 @@ class FrontController {
             }
             
             if(isset($_POST["loginChange"]) && $_POST["loginChange"] == "Confirmer le changement de pseudo") {
-                $form = new UserFormController(new User());
+                $form = new UserFormController(new Users());
                 $loginMsg = $form->loginForm($_POST);
                 
                 // if(!empty($loginMessages["success"])) {
@@ -290,7 +290,7 @@ class FrontController {
             }
             
             if(isset($_POST["passwordChange"]) && $_POST["passwordChange"] == "Confirmer le changement de mot de passe") {
-                $form = new UserFormController(new User());
+                $form = new UserFormController(new Users());
                 $passwordMsg = $form->passwordForm($_POST);
                 
                 // if(!empty($passwordMessages["success"])) {
@@ -299,7 +299,7 @@ class FrontController {
             }
 
             if(isset($_POST["deleteAlbum"])) {
-                $form = new AlbumFormController(new Album());
+                $form = new AlbumFormController(new Albums());
                 $deleteMessages = $form->albumDeletionForm($_POST);
                 
                 // if(!empty($deleteMessages["success"])) {
@@ -307,7 +307,7 @@ class FrontController {
                 // }   
             }
             
-            $album = new Album();
+            $album = new Albums();
             $albums = $album->findUserAlbums($_SESSION["user"]["id"]);
             
             $this->render("connection/account", [
@@ -329,7 +329,7 @@ class FrontController {
         $key = $_GET["key"];
 
         if(isset($_POST["confirmRegistration"])) {
-            $form = new UserFormController(new User());
+            $form = new UserFormController(new Users());
             $accountConfMsg = $form->accountConfForm($_POST);
         }
 
@@ -350,7 +350,7 @@ class FrontController {
         $title = "xxx - Récupération de pseudo";
 
         if($_POST) {
-            $form = new UserFormController(new User()); 
+            $form = new UserFormController(new Users()); 
             $forgotLogMsg = $form->forgotLoginForm($_POST);
         }
 
@@ -363,7 +363,7 @@ class FrontController {
         $title = "xxx - Récupération de mot de passe";
 
         if($_POST) {
-            $form = new UserFormController(new User()); 
+            $form = new UserFormController(new Users()); 
             $forgotPassMsg = $form->forgotPasswordForm($_POST);
         }
 
@@ -377,7 +377,7 @@ class FrontController {
         (Session::online()) ? Https::redirect("index.php") : "" ;
         
         if($_POST) {
-            $form = new UserFormController(new User());
+            $form = new UserFormController(new Users());
             $connectionMsg = $form->connectionForm($_POST);
         }
         
@@ -398,7 +398,7 @@ class FrontController {
         (Session::online()) ? Https::redirect("index.php") : "" ; 
         
         if($_POST) {
-            $form = new UserFormController(new User());
+            $form = new UserFormController(new Users());
             $registrationMsg = $form->registrationForm($_POST);
             // header("Location: index.php?p=register");
         }
@@ -433,7 +433,7 @@ class FrontController {
 public function albumPublishers() {
     $title = "xxx - Nos auteurs";
 
-    $user = new User();
+    $user = new Users();
     $users = $user->findAllUsers();
     
     $this->render("albums/albumPublishers", ["title" => $title, "users" => $users]);
@@ -455,7 +455,7 @@ public function albumPublishers() {
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->exec("SET NAMES UTF8");
 
-            $query = $pdo->prepare("SELECT `id` FROM `album` WHERE `id` = :id");
+            $query = $pdo->prepare("SELECT `id` FROM `albums` WHERE `id` = :id");
 
             $query->execute([":id" => $id]);
 
@@ -466,7 +466,7 @@ public function albumPublishers() {
             }
 
             else {
-                $album = new Album();
+                $album = new Albums();
                 $albums = $album->findAlbumById($_GET["albumId"]);
 
                 $vote = new Votes();
@@ -515,7 +515,7 @@ public function albumPublishers() {
                 }
 
                 if(isset($_POST["reportAlb"])) {
-                    $form = new AlbumFormController(new Album());
+                    $form = new AlbumFormController(new Albums());
                     $form->reportForm($_POST);
                 }
 
@@ -543,7 +543,7 @@ public function albumPublishers() {
         $title = "xxx - Publication d'album";
         
         if(isset($_POST["postAlbum"])) {
-            $form = new AlbumFormController(new Album());
+            $form = new AlbumFormController(new Albums());
             $addMessages = $form->albumAdditionForm($_POST);
             // header("Refresh: 2");
         }
@@ -572,7 +572,7 @@ public function albumPublishers() {
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->exec("SET NAMES UTF8");
 
-            $query = $pdo->prepare("SELECT `id` FROM `album` WHERE `id` = :id");
+            $query = $pdo->prepare("SELECT `id` FROM `albums` WHERE `id` = :id");
 
             $query->execute([":id" => $id]);
 
@@ -583,31 +583,31 @@ public function albumPublishers() {
             }
 
             else {
-                $album = new Album();
+                $album = new Albums();
                 $findAlbum = $album->findAlbumById($_GET["albumId"]);
                 $currentCover = $album->findAlbumCover($_GET["albumId"]);
                 $currentPictures = $album->findAlbumPictures($_GET["albumId"]);
                 
                 if(isset($_POST["albumChanges"]) && $_POST["albumChanges"] == "Confirmer la/les modification(s)") {
-                    $form = new AlbumModifController(new Album());
+                    $form = new AlbumModifController(new Albums());
                     $modifMessages = $form->descriptionModifForm($_POST);
                     // header("Refresh: 2");
                 }
 
                 if(isset($_POST["deletePicture"])) {
-                    $form = new AlbumModifController(new Album());
+                    $form = new AlbumModifController(new Albums());
                     $deleteMessages = $form->pictureDeletionForm($_POST);
                     // header("Refresh: 3");
                 }
                 
                 if(isset($_POST["pictureChange"]) && $_POST["pictureChange"] == "Confirmer le remplacement d'image") {
-                    $form = new AlbumModifController(new Album());
+                    $form = new AlbumModifController(new Albums());
                     $replaceMessages = $form->pictureReplacementForm($_POST);
                     // header("Refresh: 2.5");
                 }
                 
                 if(isset($_POST["pictureAddition"]) && $_POST["pictureAddition"] == "Confirmer l'ajout d'image(s)") {
-                    $form = new AlbumModifController(new Album());
+                    $form = new AlbumModifController(new Albums());
                     $extraPicMessages = $form->extraPicturesForm($_POST);
                     // header("Refresh: 3.5");
                 }
