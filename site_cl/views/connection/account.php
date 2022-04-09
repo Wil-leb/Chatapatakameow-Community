@@ -1,7 +1,7 @@
 <?php
-use App\model\{Album};
+use App\model\{Albums};
 
-$findImages = new Album();
+$findImages = new Albums();
 ?>
 
 <section class="container">
@@ -133,7 +133,7 @@ $findImages = new Album();
                                 <div class="deletion"></div>
                                     <form action="" method="post" onsubmit="confirmDeletion(event)">
                                         <input type="text" name="albumId" value="<?= htmlspecialchars(trim($album["id"])) ?>" hidden>
-                                        <button class="delete" type="submit" name="deleteAlbum"><i class="fas fa-trash-alt"></i>Supprimer</button>
+                                        <button class="warning" type="submit" name="deleteAlbum"><i class="fas fa-trash-alt"></i>Supprimer</button>
                                     </form>
                             
                                     <p><a href="index.php?p=modifyAlbum&albumId=<?= htmlspecialchars($album["id"])?>"><i class="fas fa-pen"></i>Modifier</a></p>

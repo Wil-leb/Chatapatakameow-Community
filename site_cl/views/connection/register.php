@@ -13,8 +13,14 @@
                 <?php endforeach ?>    
             </ul>
         <?php } ?>
-    <?php else : ?>
-        <p class="success"><?= $registrationMsg["success"][0] ?></p>
+        
+        <?php else : ?>
+            <ul class="success">
+                <?php foreach($registrationMsg["success"] as $success): ?>    
+                    <li><?= $success ?></li>
+                <?php endforeach ?>    
+            </ul>
+        <!-- <p class="success"><?= $registrationMsg["success"][0] ?></p> -->
         <p class="redirect"><a href="index.php?p=login">Connexion</a></p>
     <?php endif; ?>
 
@@ -51,7 +57,7 @@
                 <input type="checkbox" value="true" name="acceptPolicy">
             </div>
 
-            <<input type="submit" name="register" value="S'inscrire">
+            <input type="submit" name="register" value="S'inscrire">
         </form>
         
         <p>Déjà membre&nbsp;? clique <a href="index.php?p=login">ici</a> pour te connecter&nbsp;!</p>
