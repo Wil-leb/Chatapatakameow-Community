@@ -26,14 +26,15 @@ class Votes extends Connect {
     }
 
 //*****B. Vote addition*****//
-    private function addVote(string $id, string $refId, string $category, string $userIp, int $vote) {
+    private function addVote(string $id, string $publisherId, string $refId, string $category, string $userIp, int $vote) {
         $this->recordExists($refId, $category);
 
-        $sql = "SELECT `id`, `vote` FROM `votes` WHERE `ref_id` = :refId AND `category` = :category AND `user_ip` = :userIp";
+        $sql = "SELECT `id`, `vote` FROM `votes` WHERE `publisher_id` = :publisherId AND `ref_id` = :refId AND `category` = :category
+                AND `vote_ip` = :userIp";
 
         $query = $this->_pdo->prepare($sql);
 
-        $query->execute([":refId" => $refId, ":category" => $category, ":userIp" => $userIp]);
+        $query->execute([":publisherId" => $publisherId, ":refId" => $refId, ":category" => $category, ":userIp" => $userIp]);
 
         $voteRow = $query->fetch();
 
@@ -57,12 +58,14 @@ class Votes extends Connect {
             return true;
         }
 
-        $req = "INSERT INTO `votes` (`id`, `ref_id`, `category`, `user_ip`, `vote`) VALUES (:id, :refId, :category, :userIp, :vote)";
+        $req = "INSERT INTO `votes` (`id`, `publisher_id`, `ref_id`, `category`, `vote_ip`, `vote`)
+                VALUES (:id, :publisherId, :refId, :category, :userIp, :vote)";
 
         $query = $this->_pdo->prepare($req);
         
         $query->execute([
                         ":id" => $id,
+                        ":publisherId" => $publisherId,
                         ":refId" => $refId,
                         ":category" => $category,
                         ":userIp" => $userIp,
@@ -73,8 +76,8 @@ class Votes extends Connect {
     }
 
 //*****C. Like update*****//
-    public function like(string $id, string $refId, string $category, string $userIp) {
-        if($this->addVote($id, $refId, $category, $userIp, 1)) {
+    public function like(string $id, string $publisherId, string $refId, string $category, string $userIp) {
+        if($this->addVote($id, $publisherId, $refId, $category, $userIp, 1)) {
             $sqlPart = "";
 
             if($this->_formerVote) {
@@ -99,8 +102,8 @@ class Votes extends Connect {
     }
 
 //*****D. Dislike update*****//
-    public function dislike(string $id, string $refId, string $category, string $userIp) {
-        if($this->addVote($id, $refId, $category, $userIp, -1)) {
+    public function dislike(string $id, string $publisherId, string $refId, string $category, string $userIp) {
+        if($this->addVote($id, $publisherId, $refId, $category, $userIp, -1)) {
             $sqlPart = "";
 
             if($this->_formerVote) {

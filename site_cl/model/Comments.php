@@ -12,22 +12,22 @@ class Comments extends Connect {
     }
     
 //*****A. Comment addition*****//
-    public function addComment(string $commentId, string $publisherId, string $userEmail, string $userLogin, string $userIp,
-                                string $albumId, string $albumTitle, string $comment) {
-        $sql = "INSERT INTO `comments` (`id`, `publisher_id`, `user_email`, `user_login`, `user_ip`, `album_id`, `album_title`,
-                                        `comment`)
-                VALUES (:commentId, :publisherId, :userEmail, :userLogin, :userIp, :albumId, :albumTitle, :comment)";
+    public function addComment(string $commentId, string $refAuthorId, string $albumId, string $albumTitle, string $userEmail,
+                                string $userLogin, string $userIp, string $comment) {
+        $sql = "INSERT INTO `comments` (`id`, `album_author_id`, `album_id`, `album_title`, `comment_email`, `comment_login`,
+                                        `comment_ip`, `comment`)
+                VALUES (:commentId, :refAuthorId, :albumId, :albumTitle, :userEmail, :userLogin, :userIp, :comment)";
                 
         $query = $this->_pdo->prepare($sql);
         
         $query->execute([
                         ":commentId" => $commentId,
-                        ":publisherId" => $publisherId,
+                        ":refAuthorId" => $refAuthorId,
+                        ":albumId" => $albumId,
+                        ":albumTitle" => $albumTitle,
                         ":userEmail" => $userEmail,
                         ":userLogin" => $userLogin,
                         ":userIp" => $userIp,
-                        ":albumId" => $albumId,
-                        ":albumTitle" => $albumTitle,
                         ":comment" => $comment
                         ]);
         
@@ -35,23 +35,25 @@ class Comments extends Connect {
     }
 
 //*****B. Answer addition*****//
-    public function addAnswer(string $answerId, string $publisherId, string $userEmail, string $userLogin, string $userIp, 
-                                string $commentId, string $albumId, string $albumTitle, string $answer) {
-        $sql = "INSERT INTO `comment_answers` (`id`, `publisher_id`, `user_email`, `user_login`, `user_ip`, `comment_id`, `album_id`,
-                                                `album_title`, `answer`)
-                VALUES (:answerId, :publisherId, :userEmail, :userLogin, :userIp, :commentId, :albumId, :albumTitle, :answer)";
+    // public function addAnswer(string $answerId, string $refAuthorId, string $commentId, string $albumId, string $albumTitle,
+    //                             string $userEmail, string $userLogin, string $userIp, string $answer) {
+    public function addAnswer(string $answerId, string $commentId, string $refAuthorEmail, string $albumId, string $albumTitle,
+                                string $userEmail, string $userLogin, string $userIp, string $answer) {
+        $sql = "INSERT INTO `comment_answers` (`id`, `comment_id`, `comment_author_email`, `album_id`, `album_title`, `answer_email`,
+                                                `answer_login`, `answer_ip`, `answer`)
+                VALUES (:answerId, :commentId, :refAuthorEmail, :albumId, :albumTitle, :userEmail, :userLogin, :userIp, :answer)";
                 
         $query = $this->_pdo->prepare($sql);
         
         $query->execute([
                         ":answerId" => $answerId,
-                        ":publisherId" => $publisherId,
+                        ":commentId" => $commentId,
+                        ":refAuthorEmail" => $refAuthorEmail,
+                        ":albumId" => $albumId,
+                        ":albumTitle" => $albumTitle,
                         ":userEmail" => $userEmail,
                         ":userLogin" => $userLogin,
                         ":userIp" => $userIp,
-                        ":commentId" => $commentId,
-                        ":albumId" => $albumId,
-                        ":albumTitle" => $albumTitle,
                         ":answer" => $answer
                         ]);
         
@@ -60,7 +62,8 @@ class Comments extends Connect {
 
 //*****C. Finding all the comments*****//    
     public function findAllComments() {
-        $sql = "SELECT `id`, `user_email`, `user_login`, `user_ip`, `album_id`, `album_title`, `comment`, `post_date`, `reports_number`
+        $sql = "SELECT `id`, `album_id`, `album_title`, `comment_email`, `comment_login`, `comment_ip`, `comment`, `post_date`,
+                        `reports_number`
                 FROM `comments` ORDER BY `album_title`, `post_date` DESC";
                     
         $query = $this->_pdo->prepare($sql);
@@ -72,7 +75,8 @@ class Comments extends Connect {
 
 //*****D. Finding all the answers*****//    
 public function findAllAnswers() {
-    $sql = "SELECT `id`, `user_email`, `user_login`, `user_ip`, `comment_id`, `album_title`, `answer`, `post_date`, `reports_number`
+    $sql = "SELECT `id`, `comment_id`, `album_id`, `album_title`, `answer_email`, `answer_login`, `answer_ip`, `answer`, `post_date`,
+                    `reports_number`
             FROM `comment_answers` ORDER BY `album_title`, `comment_id`, `post_date` DESC";
                 
     $query = $this->_pdo->prepare($sql);
@@ -84,10 +88,10 @@ public function findAllAnswers() {
 
 //*****E. Finding the comments of a specific album*****//
     public function findAlbumComments(string $albumId) {
-        $sql = "SELECT album.id, comments.id, comments.user_email, comments.user_login, comments.user_ip, `album_id`,
-                        comments.album_title, `comment`, comments.post_date, comments.likes, comments.dislikes FROM `album`
-                LEFT OUTER JOIN `comments` ON comments.album_id = album.id
-                WHERE (SELECT comments.post_date = MAX(comments.post_date)) AND album.id = :albumId ORDER BY `post_date` DESC";
+        $sql = "SELECT albums.id, comments.id, `album_id`, comments.album_title, `comment_email`, `comment_login`, `comment_ip`,
+                        `comment`, comments.post_date, comments.likes, comments.dislikes FROM `albums`
+                LEFT OUTER JOIN `comments` ON comments.album_id = albums.id
+                WHERE (SELECT comments.post_date = MAX(comments.post_date)) AND albums.id = :albumId ORDER BY `post_date` DESC";
                     
         $query = $this->_pdo->prepare($sql);
         
@@ -98,8 +102,8 @@ public function findAllAnswers() {
 
 //*****F. Finding the answers of a specific comment*****//
     public function findCommentAnswers(string $commentId) {
-        $sql = "SELECT comments.id, comment_answers.id, comment_answers.user_email, comment_answers.user_login,
-                        comment_answers.user_ip, `comment_id`, comment_answers.album_title, `answer`, comment_answers.post_date, comment_answers.likes, comment_answers.dislikes
+        $sql = "SELECT comments.id, comment_answers.id, `comment_id`, comment_answers.album_title, `answer_email`, `answer_login`,
+                        `answer_ip`, `answer`, comment_answers.post_date, comment_answers.likes, comment_answers.dislikes
                 FROM `comments`
                 LEFT OUTER JOIN `comment_answers` ON comment_answers.comment_id = comments.id
                 WHERE (SELECT comment_answers.post_date = MAX(comment_answers.post_date)) AND comments.id = :commentId
@@ -112,7 +116,31 @@ public function findAllAnswers() {
         return $query->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-//*****G. Comment modification*****//
+//*****G. Finding a comment via its identifier*****//
+public function findCommentById(string $commentId) {
+    $sql = "SELECT `id`, `comment_email`, `comment` FROM `comments` WHERE `id` = :commentId";
+            
+    $query = $this->_pdo->prepare($sql);
+    
+    $query->execute([":commentId" => $commentId]);
+            
+    return $query->fetch(\PDO::FETCH_ASSOC); 
+}
+
+//*****H. Finding a comment via its identifier*****//
+public function findAnswerById(string $answerId) {
+    $sql = "SELECT comment_answers.id, `answer_email`, `answer`, comments.comment FROM `comment_answers`
+            LEFT OUTER JOIN `comments` ON comment_answers.comment_id = comments.id
+            WHERE comment_answers.id = :answerId";
+            
+    $query = $this->_pdo->prepare($sql);
+    
+    $query->execute([":answerId" => $answerId]);
+            
+    return $query->fetch(\PDO::FETCH_ASSOC); 
+}
+
+//*****I. Comment modification*****//
     public function updateComment(string $commentId, string $comment) {
         $sql = "UPDATE `comments` SET `comment` = :comment WHERE `id` = :commentId";
         
@@ -121,7 +149,7 @@ public function findAllAnswers() {
         $query->execute([":commentId" => $commentId, ":comment" => $comment]);
     }
 
-//*****H. Answer modification*****//
+//*****J. Answer modification*****//
     public function updateAnswer(string $answerId, string $answer) {
         $sql = "UPDATE `comment_answers` SET `answer` = :answer WHERE `id` = :answerId";
         
@@ -130,7 +158,7 @@ public function findAllAnswers() {
         $query->execute([":answerId" => $answerId, ":answer" => $answer]);
     }
 
-//*****I. Comment deletion*****//
+//*****K. Comment deletion*****//
     public function deleteComment(string $commentId) {
         $sql = "DELETE FROM `comments` WHERE `id` = :commentId";
                     
@@ -139,7 +167,7 @@ public function findAllAnswers() {
         $query->execute([":commentId" => $commentId]);
     }
 
-//*****J. Answer deletion*****//
+//*****L. Answer deletion*****//
     public function deleteAnswer(string $answerId) {
         $sql = "DELETE FROM `comment_answers` WHERE `id` = :answerId";
                     

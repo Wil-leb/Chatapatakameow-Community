@@ -30,7 +30,7 @@ class Reports extends Connect {
         $this->recordExists($refId, $category);
 
         $sql = "SELECT `id`, `report` FROM `reports` WHERE `publisher_id` = :publisherId AND `ref_id` = :refId
-                AND `category` = :category AND `user_ip` = :userIp";
+                AND `category` = :category AND `report_ip` = :userIp";
 
         $query = $this->_pdo->prepare($sql);
 
@@ -58,7 +58,7 @@ class Reports extends Connect {
             return true;
         }
 
-        $req = "INSERT INTO `reports` (`id`, `publisher_id`, `ref_id`, `category`, `user_ip`, `report`)
+        $req = "INSERT INTO `reports` (`id`, `publisher_id`, `ref_id`, `category`, `report_ip`, `report`)
                 VALUES (:id, :publisherId, :refId, :category, :userIp, :report)";
 
         $query = $this->_pdo->prepare($req);
