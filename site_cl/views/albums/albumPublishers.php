@@ -1,7 +1,7 @@
 <?php
-use App\model\{Album};
+use App\model\{Albums};
 
-$albums = new Album();
+$albums = new Albums();
 ?>
 
 <head>

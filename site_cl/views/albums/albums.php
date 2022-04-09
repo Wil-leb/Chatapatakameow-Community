@@ -1,12 +1,12 @@
 <?php
-use App\model\{Album, Comments};
+use App\model\{Albums, Comments};
 
-$findImages = new Album();
+$findImages = new Albums();
 $findComments = new Comments();
 ?>
 
 <section class="container">
-    <h1>Album <?= htmlspecialchars(trim($albums["title"])) ?></h1>
+    <h1><?= htmlspecialchars(trim($albums["title"])) ?></h1>
 
     <p>Bienvenue sur la page de l'album sélectionné publié par <?= htmlspecialchars(trim($albums["user_login"])) ?>. Bon visionnage et n'hésite pas à voter et à laisser des commentaires&nbsp;! Aucun de tes identifiants ne sera divulgué à des sites tiers. N'hésite pas à consulter notre <a href="index.php?p=privacyPolicy">politique de confidentialité</a> pour plus d'informations.</p>
 
@@ -160,11 +160,11 @@ $findComments = new Comments();
             <?php foreach($comments as $comment) : ?>
                 <div class="comment-content">
                     <?php $answers = $findComments->findCommentAnswers(htmlspecialchars(trim($comment["id"]))); ?>
-                    <p><?= htmlspecialchars($comment["user_login"]) ?></p>
+                    <p><?= htmlspecialchars($comment["comment_login"]) ?></p>
                     <p><?= htmlspecialchars(trim(strftime("%d/%m/%Y", strtotime($comment["post_date"])))) ?></p>
                     <p><?= htmlspecialchars(trim($comment["comment"])) ?></p>
 
-                    <?php if($comment["user_ip"]) : ?>
+                    <?php if($comment["comment_ip"]) : ?>
                         <div class="action-buttons">
 <!-- COMMENT DELETION FORM ------------------------------------------------------------------------------------------------------------>
                             <form action="" method="post" onsubmit="confirmDeletion(event)">
@@ -266,11 +266,11 @@ $findComments = new Comments();
                             <p class="no-content">Sois le premier à répondre à ce commentaire&nbsp;!</p>
                         <?php else : ?>
                             <?php foreach($answers as $answer) : ?>
-                                <p><?= htmlspecialchars($answer["user_login"]) ?></p>
+                                <p><?= htmlspecialchars($answer["answer_login"]) ?></p>
                                 <p><?= htmlspecialchars(trim(strftime("%d/%m/%Y", strtotime($answer["post_date"])))) ?></p>
                                 <p><?= htmlspecialchars(trim($answer["answer"])) ?></p>
 
-                                <?php if($answer["user_ip"]) : ?>
+                                <?php if($answer["answer_ip"]) : ?>
                                     <div class="action-buttons">
 <!-- ANSWER DELETION FORM ------------------------------------------------------------------------------------------------------------->
                                         <form action="" method="post" onsubmit="confirmDeletion(event)">
@@ -347,7 +347,7 @@ $findComments = new Comments();
         <div></div>
 
         <label for="commentLogin">Pseudo&nbsp;:</label>
-        <input type="text" name="commentLogin" class="comment-login" placeholder="Pseudo" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["login"] ?>" <?php endif; ?>>
+            <input type="text" name="commentLogin" class="comment-login" placeholder="Pseudo" <?php if($session::online()) : ?> value="<?= $_SESSION["user"]["login"] ?>" <?php endif; ?>>
         <div></div>
 
         <textarea name="comment" id="comment" rows="8" cols="40" placeholder="Commentaire"></textarea>
