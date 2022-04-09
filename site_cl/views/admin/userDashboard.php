@@ -81,20 +81,20 @@ $findReports = new Reports();
                             <?php endif; ?>
                             </td>
                         <td data-label="État du compte">
-                            <?php if($user["account_suspended"] === "0") : ?>
+                            <?php if($user["account_suspended"] == "0") : ?>
                                 Actif
                             <?php else : ?>
                                 Suspendu
                             <?php endif; ?>
 
                             <div class="deletion tablet">
-                                <?php if($user["account_suspended"] === "0" && $reports && $reports["totalReports"] >= "10") : ?>
+                                <?php if($user["account_suspended"] == "0" && $reports && $reports["totalReports"] >= "10") : ?>
                                     <form action="" method="post" onsubmit="confirmSuspension(event)">
                                         <input type="text" name="userId" value="<?= htmlspecialchars(trim($user["id"])) ?>" hidden>
                                         <button class="deactivate" type="submit" name="suspendAccount"><i class="fa-solid fa-circle-minus"></i>Suspendre</button>
                                     </form>
 
-                                <?php elseif($user["account_suspended"] === "1") : ?>
+                                <?php elseif($user["account_suspended"] == "1") : ?>
                                     <form action="" method="post" onsubmit="confirmReactivation(event)">
                                         <input type="text" name="userId" value="<?= htmlspecialchars(trim($user["id"])) ?>" hidden>
                                         <button class="reactivate" type="submit" name="reactivateAccount"><i class="fa-solid fa-arrow-rotate-right"></i>Réactiver</button>

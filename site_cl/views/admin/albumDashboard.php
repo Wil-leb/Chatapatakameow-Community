@@ -1,7 +1,7 @@
 <?php
-use App\model\{Album};
+use App\model\{Albums};
 
-$findImages = new Album();
+$findImages = new Albums();
 ?>
 
 <section class="container">

@@ -57,7 +57,7 @@
                     <?php foreach($comments as $comment) : ?>
                         <tr>
                             <td data-label="Référence"><?= htmlspecialchars($comment["id"]) ?></td>
-                            <td data-label="Auteur"><?= htmlspecialchars(trim($comment["user_login"])) ?></td>
+                            <td data-label="Auteur"><?= htmlspecialchars(trim($comment["comment_login"])) ?></td>
                             <td data-label="Titre album"><?= htmlspecialchars(trim($comment["album_title"])) ?></td>
                             <td data-label="Date commentaire"><?= htmlspecialchars(trim(strftime("%d/%m/%Y %H:%M:%S", strtotime($comment["post_date"])))) ?></td>
                             <td data-label="Signalements" id="reports-number"><?= htmlspecialchars(trim($comment["reports_number"])) ?></td>
@@ -110,7 +110,7 @@
                     <tr>
                         <td data-label="Référence réponse" id="answerId"><?= htmlspecialchars($answer["id"]) ?></td>
                         <td data-label="Référence commentaire" id="commentId"><?= htmlspecialchars($answer["comment_id"]) ?></td>
-                        <td data-label="Auteur"><?= htmlspecialchars(trim($answer["user_login"])) ?></td>
+                        <td data-label="Auteur"><?= htmlspecialchars(trim($answer["answer_login"])) ?></td>
                         <td data-label="Titre album"><?= htmlspecialchars(trim($answer["album_title"])) ?></td>
                         <td data-label="Date réponse"><?= htmlspecialchars(trim(strftime("%d/%m/%Y %H:%M:%S", strtotime($answer["post_date"])))) ?></td>
                         <td data-label="Signalements" id="reports-number"><?= htmlspecialchars(trim($answer["reports_number"])) ?></td>
