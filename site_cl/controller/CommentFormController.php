@@ -56,7 +56,7 @@ class CommentFormController {
                                 } while($pdo->prepare("SELECT `id` FROM `comments` WHERE `id` = $id") > 0);
 
                                 $query = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `albums`
-                                                        ON users.id = albums.user_id WHERE albums.id = :albumId");
+                                                        ON albums.user_id = users.id WHERE albums.id = :albumId");
                                 $query->execute([":albumId" => $albumId]);
                                 $refAuthorId = $query->fetchColumn();
 
@@ -126,16 +126,6 @@ class CommentFormController {
                                 do {
                                         $id = uniqid();
                                 } while($pdo->prepare("SELECT `id` FROM `comment_answers` WHERE `id` = $id") > 0);
-
-                                // $query = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `albums`
-                                //                         ON users.id = albums.user_id WHERE albums.id = :albumId");
-                                // $query->execute([":albumId" => $albumId]);
-                                // $refAuthorId = $query->fetchColumn();
-
-                                // $answerAddition = $this->_comments->addAnswer($id, $refAuthorId, $commentId, $albumId, $title,
-                                // $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $data["answer"]);
-                                
-                                // $answerMsg["success"][] = "La réponse a été publiée avec succès.";
 
                                 $req = $pdo->prepare("SELECT `comment_email`, `comment` FROM `comments` WHERE comments.id = :commentId");
                                 $req->execute([":commentId" => $commentId]);
