@@ -129,8 +129,11 @@ $findComments = new Comments();
                 <button type="submit" name="dislikeAlb" value="dislike" class="vote-thumb dislike"><i class="fas fa-thumbs-down"></i><?= htmlspecialchars(trim($albums["dislikes"]))?></button>
             </form>
 
+<!-- ALBUM LINK COPY BUTTON -->
+            <button id="copy-link"><i class="fa-solid fa-link-simple"></i>Copier le lien</button>
+
 <!-- ALBUM SHARE BUTTTON -------------------------------------------------------------------------------------------------------------->
-            <button id="hide-content" value="ON"><i class="fa-solid fa-share"></i>Partager</button>
+            <button id="hide-content" class="share" value="ON"><i class="fa-solid fa-share"></i>Partager</button>
 
             <dialog class="social-media" open>
                 <p><a href="https://fr-fr.facebook.com/" target="blank"><i class="fa-brands fa-facebook"></i></a></p>
@@ -146,7 +149,7 @@ $findComments = new Comments();
 <!-- ALBUM REPORT FORM ---------------------------------------------------------------------------------------------------------------->
             <form action="" method="post">
                 <input type="text" name="albumId" value="<?= htmlspecialchars(trim($albums["id"])) ?>" hidden>
-                <button type="submit" name="reportAlb" class="warning"><i class="fa-solid fa-circle-minus"></i>Signaler</button>
+                <button type="submit" name="reportAlb" class="warning report"><i class="fa-solid fa-circle-minus"></i>Signaler</button>
             </form>
         </div>
     </article>
@@ -169,11 +172,11 @@ $findComments = new Comments();
 <!-- COMMENT DELETION FORM ------------------------------------------------------------------------------------------------------------>
                             <form action="" method="post" onsubmit="confirmDeletion(event)">
                                 <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
-                                <button class="warning" name="deleteComment"><i class="fas fa-trash-alt"></i>Supprimer</button>
+                                <button class="warning delete" name="deleteComment"><i class="fas fa-trash-alt"></i>Supprimer</button>
                             </form>
 
 <!-- BUTTON TO DISPLAY THE COMMENT MODIFICATION FORM ---------------------------------------------------------------------------------->
-                            <button id="hide-content" value="ON"><i class="fas fa-pen"></i>Modifier</button>
+                            <button id="hide-content" class="edit" value="ON"><i class="fas fa-pen"></i>Modifier</button>
 
 <!-- COMMENT MODIFICATION FORM -------------------------------------------------------------------------------------------------------->
                             <dialog open>
@@ -217,7 +220,7 @@ $findComments = new Comments();
                         </form>
 
 <!-- BUTTON TO DISPLAY THE ANSWER ADDITION FORM --------------------------------------------------------------------------------------->
-                        <button id="hide-content" value="ON"><i class="fas fa-reply"></i>Répondre</button>
+                        <button id="hide-content" class="reply" value="ON"><i class="fas fa-reply"></i>Répondre</button>
 
 <!-- ANSWER ADDITION FORM ------------------------------------------------------------------------------------------------------------->
                         <dialog open>
@@ -253,11 +256,11 @@ $findComments = new Comments();
 <!-- COMMENT REPORT FORM -------------------------------------------------------------------------------------------------------------->
                         <form action="" method="post">
                             <input type="text" name="commentId" value="<?= htmlspecialchars(trim($comment["id"])) ?>" hidden>
-                            <button type="submit" name="reportComm" class="warning"><i class="fa-solid fa-circle-minus"></i>Signaler</button>
+                            <button type="submit" name="reportComm" class="warning report"><i class="fa-solid fa-circle-minus"></i>Signaler</button>
                         </form>
 
 <!-- BUTTON TO DISPLAY THE ANSWERS ---------------------------------------------------------------------------------------------------->
-                        <button id="hide-answers" value="ON"><i class="fas fa-caret-right"></i>Réponses</button>
+                        <button id="hide-answers" class="answers" value="ON"><i class="fas fa-caret-right"></i>Réponses</button>
                     </div>
 
                     <div class="answer-content">
@@ -276,11 +279,11 @@ $findComments = new Comments();
                                         <form action="" method="post" onsubmit="confirmDeletion(event)">
                                             <input type="text" name="answerId" value="<?= htmlspecialchars($answer["id"]) ?>" hidden>
                                             <input type="text" name="commentId" value="<?= htmlspecialchars($answer["comment_id"]) ?>" hidden>
-                                            <button class="warning" name="deleteAnswer"><i class="fas fa-trash-alt"></i>Supprimer</button>
+                                            <button class="warning delete" name="deleteAnswer"><i class="fas fa-trash-alt"></i>Supprimer</button>
                                         </form>
 
 <!-- BUTTON TO DISPLAY THE ANSWER MODIFICATION FORM ----------------------------------------------------------------------------------->
-                                        <button id="hide-content" value="ON"><i class="fas fa-pen"></i>Modifier</button>
+                                        <button id="hide-content" class="edit" value="ON"><i class="fas fa-pen"></i>Modifier</button>
 
 <!-- ANSWER MODIFICATION FORM --------------------------------------------------------------------------------------------------------->
                                         <dialog open>
@@ -327,7 +330,7 @@ $findComments = new Comments();
 <!-- ANSWER REPORT FORM --------------------------------------------------------------------------------------------------------------->
                                     <form action="" method="post">
                                         <input type="text" name="answerId" value="<?= htmlspecialchars(trim($answer["id"])) ?>" hidden>
-                                        <button type="submit" name="reportAnsw" class="warning"><i class="fa-solid fa-circle-minus"></i>Signaler</button>
+                                        <button type="submit" name="reportAnsw" class="warning report"><i class="fa-solid fa-circle-minus"></i>Signaler</button>
                                     </form>
                                 </div>
                             <?php endforeach; ?>
