@@ -95,6 +95,30 @@ export default class OnclickEvent {
             }
         }
     }
+
+//*****D. Link copy *****/
+    copyLink() {
+        const copyLink = document.getElementById("copy-link")
+        
+        if(copyLink) {
+            copyLink.addEventListener("click", () => {
+                const tempElement = document.createElement("p")
+                tempElement.textContent = navigator.clipboard.writeText(window.location.href)
+                document.body.appendChild(tempElement)
+
+                const range = document.createRange()
+                range.setStartBefore(tempElement)
+                range.setEndAfter(tempElement)
+
+                const selection = window.getSelection()
+                selection.removeAllRanges()
+                selection.addRange(range)
+
+                document.execCommand("copy")
+                document.body.removeChild(tempElement)
+            });
+        }
+    }
     
 //*****END OF THE CLASS*****//
 }
