@@ -59,7 +59,7 @@
                             <td data-label="Référence"><?= htmlspecialchars($comment["id"]) ?></td>
                             <td data-label="Auteur"><?= htmlspecialchars(trim($comment["comment_login"])) ?></td>
                             <td data-label="Titre album"><?= htmlspecialchars(trim($comment["album_title"])) ?></td>
-                            <td data-label="Date commentaire"><?= htmlspecialchars(trim(strftime("%d/%m/%Y %H:%M:%S", strtotime($comment["post_date"])))) ?></td>
+                            <td data-label="Date commentaire" id="commentDate"><?= htmlspecialchars(trim(strftime("%d/%m/%Y %H:%M:%S", strtotime($comment["post_date"])))) ?></td>
                             <td data-label="Signalements" id="reports-number"><?= htmlspecialchars(trim($comment["reports_number"])) ?></td>
                             <td data-label="Action">
                                 <button id="hide-content" value="ON">Afficher le commentaire</button>
