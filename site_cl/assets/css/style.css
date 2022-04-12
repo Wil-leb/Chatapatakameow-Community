@@ -4,7 +4,6 @@
 /*****1. ALL SCREEN FORMATS*****/
 
 /*****A. ROOT AND MAIN*****/
-
 *{
     box-sizing: border-box;
 }
@@ -26,7 +25,6 @@ main {
 }
 
 /*****B. SECTIONS*****/
-
 section {
     margin: 0 2.5rem;
 }
@@ -40,7 +38,6 @@ section:last-of-type {
 }
 
 /*****C. TITLES*****/
-
 h1, h2, h3, h4, .logo p {
     font-family: "Carter One", sans-serif;
 }
@@ -70,14 +67,12 @@ h4 {
 }
 
 /*****D. BULLETED LISTS*****/
-
 ul {
     list-style: none;
     padding-left: 0;
 }
 
 /*****E. LINKS*****/
-
 a {
     color: rgba(65, 5, 60, 0.8);
     text-decoration: none;
@@ -105,14 +100,12 @@ a:not(.forgot-account):hover, a:not(.forgot-account):focus, .logo:focus {
 }
 
 /*****F. IMAGES AND FONT AWESOME*****/
-
 img {
     max-width: 100%;
     margin: 0;
 }
 
 /*****G. ALBUMS VIEW*****/
-
 .vote {
     margin: 2rem 0;
     text-align: right;
@@ -171,7 +164,7 @@ img {
     color: rgba(255, 0, 0, 1);
 }
 
-.warning, .deactivate, #hide-content:not(.notif) {
+.warning, .deactivate, #hide-content:not(.notif), #copy-link {
     margin-right: 1rem;
 }
 
@@ -184,7 +177,6 @@ img {
 }
 
 /*****H. COOKIE WINDOW*****/
-
 .cookie-alert {
     position: fixed;
     bottom: 2rem;
@@ -223,7 +215,6 @@ img {
 /*****A. HEADER AND FOOTER*****/
 
 /*****i. Common properties*****/
-
 header, footer {
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
@@ -260,7 +251,6 @@ header nav ul li:hover, footer nav ul li:hover, header nav ul li a:focus, footer
 }
 
 /*****ii. Header specificities*****/
-
 /* header {
     background: center / cover no-repeat url("../img/header-footer/Mount_Fuji.jpg");
 } */
@@ -287,7 +277,6 @@ header nav ul li:hover, footer nav ul li:hover, header nav ul li a:focus, footer
 }
 
 /*****iii. Footer specificities*****/
-
 /* footer {
     background: center / cover no-repeat url("../img/header-footer/Rising_sun.jpg");
 } */
@@ -299,7 +288,6 @@ header nav ul li:hover, footer nav ul li:hover, header nav ul li a:focus, footer
 /*****B. FORMS*****/
 
 /*****i. Labels, stars, messages and checkbox*****/
-
 label, .mandatory, .error, .success {
     font-weight: 600;
     display: block;
@@ -339,7 +327,6 @@ label, .mandatory, .error, .success {
 }
 
 /*****ii. Inputs, textareas, selects and buttons*****/
-
 input, textarea {
     width: 100%;
     padding: 0.5rem;
@@ -373,7 +360,7 @@ input[type=submit]:hover, input[type=submit]:focus {
     cursor: pointer;
 }
 
-.warning, .deactivate, .reactivate, #see-album, #hide-content:not(.notif), #delete-notifications, #hide-answers, #close {
+.warning, .deactivate, .reactivate, #see-album, #hide-content:not(.notif), #delete-notifications, #hide-answers, #close, #copy-link {
     border: none;
     background: none;
     font-family: "Roboto", sans-serif;
@@ -381,13 +368,12 @@ input[type=submit]:hover, input[type=submit]:focus {
     padding: 0;
 }
 
-form button:hover, form button:focus, .warning:hover, .warning:focus, #see-album:hover, #hide-content:not(.notif):hover, #hide-content:not(.notif):focus, #delete-notifications:hover, #delete-notifications:focus, #hide-answers:hover, #hide-answers:focus, #see-album:focus, #close:hover, #close:focus {
+form button:hover, form button:focus, .warning:hover, .warning:focus, #see-album:hover, #hide-content:not(.notif):hover, #hide-content:not(.notif):focus, #delete-notifications:hover, #delete-notifications:focus, #hide-answers:hover, #hide-answers:focus, #see-album:focus, #close:hover, #close:focus, #copy-link:hover, #copy-link:focus {
     cursor: pointer;
     color: rgba(50, 30, 255, 1);
 }
 
 /*****iii. Cover preview*****/
-
 .cover-modif p {
     font-style: italic;
 }
@@ -397,14 +383,12 @@ form button:hover, form button:focus, .warning:hover, .warning:focus, #see-album
 }
 
 /*****iv. JavaScript divs*****/
-
 input ~ div, textarea ~ div {
     margin: 1rem;
     font-style: italic;
 }
 
 /*****C. TABLES*****/
-
 table {
     margin: auto;
     width: 100%;
@@ -452,7 +436,6 @@ table td:before {
 /*****D. ADMIN DASHBOARDS*****/
 
 /*****i. Links*****/
-
 .admin-links a {
     display:flex;
     justify-content: center;
@@ -463,13 +446,11 @@ table td:before {
 }
 
 /*****ii. Account suspension buttons *****/
-
 .deactivate {
     color: rgb(245, 75, 10);
 }
 
 /*****iii. Dialog*****/
-
 dialog {
     visibility: hidden;
     width: 80%;
@@ -488,18 +469,11 @@ dialog > form, dialog > button {
     vertical-align: middle;
 }
 
-.social-media {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-}
-
 .fa-window-close {
     font-size: 2rem;
 }
 
 /*****E. ALBUMS VIEW*****/
-
 article > img {
     display: grid;
     grid-gap: 1.5px;
@@ -553,12 +527,16 @@ figcaption button:hover {
     animation-play-state: paused;
 }
 
+.social-media p {
+    display: inline;
+    margin-right: 1rem;
+}
+
 #hide-content + p {
     display: none;
 }
 
 /*****F. FIGURE ANIMATION*****/
-
 @keyframes button-effect {
 
     33% {
@@ -581,7 +559,6 @@ figcaption button:hover {
 } */
 
 /*****3. MOBILE (LANDSCAPE)*****/
-
 @media screen and (min-width: 576px) {
     
 /*****A. HEADER AND FOOTER*****/
@@ -625,12 +602,18 @@ figcaption button:hover {
         margin: 0 auto 20px;
         width: 80%;
     }
+
+/*****E. ALBUMS VIEW *****/
+.social-media {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
     
 /*****END OF THE MOBILE FORMATS*****/
 }
 
 /*****4. TABLET*****/
-
 @media screen and (min-width: 768px) {
     
 /*****A. HEADER*****/
@@ -643,7 +626,6 @@ figcaption button:hover {
     }
     
 /*****B. FORMS*****/
-
     input, textarea {
         width: 60%;
     }
@@ -707,7 +689,6 @@ figcaption button:hover {
     }
     
 /*****D. ALBUMS VIEW*****/
-
     .albums {
         display: flex;
         flex-wrap: wrap;
