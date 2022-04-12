@@ -125,30 +125,95 @@ function confirmReactivation(event) {
 //*****I. Table label and header modifications*****//
 function changeDataLabel() {
     const userEmailrows = document.querySelectorAll("#userEmail")
+    const commentDaterows = document.querySelectorAll("#commentDate")
+    const answerIdrows = document.querySelectorAll("#answerId")
     const commentIdrows = document.querySelectorAll("#commentId")
+    const copyButton = document.getElementById("copy-link")
+    const shareButton = document.querySelector(".share")
+    const reportButtons = document.getElementsByClassName("report")
+    const deleteButtons = document.getElementsByClassName("delete")
+    const editButtons = document.getElementsByClassName("edit")
+    const replyButtons = document.getElementsByClassName("reply")
+    const answerButtons = document.getElementsByClassName("answers")
     const reportColumn = document.getElementById("reportColumn")
     
-    for(let userEmailrow of userEmailrows) {
-        if(screen.width < 500) {
-            userEmailrow.dataset.label = "Adr. élec."
+    if(screen.width < 500) {
+        if(userEmailrows) {
+            for(let userEmailrow of userEmailrows) {
+                userEmailrow.dataset.label = "Adr. élec."
+            }
         }
     }
 
-    for(let commentIdrow of commentIdrows) {
-        if(screen.width < 450) {
-            commentIdrow.dataset.label = "Réf. commentaire"
+    if(screen.width < 450) {
+        if(commentDaterows) {
+            for(let commentDaterow of commentDaterows) {
+                commentDaterow.dataset.label = "Date comm."
+            }
+        }
+
+        if(answerIdrows) {
+            for(let answerIdrow of answerIdrows) {
+                answerIdrow.dataset.label = "Réf. réponse"
+            }
+        }
+
+        if(commentIdrows) {
+            for(let commentIdrow of commentIdrows) {
+                commentIdrow.dataset.label = "Réf. commentaire"
+            }
         }
     }
 
-    if(reportColumn) {
-        if(screen.width > 767 && screen.width < 801) {
+    if(screen.width < 560) {
+        // if(copyButton) {
+        //     copyButton.innerHTML = "<i class='fa-solid fa-link-simple'></i>"
+        // }
+
+        if(shareButton) {
+            shareButton.innerHTML = "<i class='fa-solid fa-share'></i>"
+        }
+
+        if(reportButtons) {
+            for(let reportButton of reportButtons) {
+                reportButton.innerHTML = "<i class='fa-solid fa-circle-minus'></i>"
+            }
+        }
+
+        if(deleteButtons) {
+            for(let deleteButton of deleteButtons) {
+                deleteButton.innerHTML = "<i class='fas fa-trash-alt'></i>"
+            }
+        }
+
+        if(editButtons) {
+            for(let editButton of editButtons) {
+                editButton.innerHTML = "<i class='fas fa-pen'></i>"
+            }
+        }
+
+        if(replyButtons) {
+            for(let replyButton of replyButtons) {
+                replyButton.innerHTML = "<i class='fas fa-reply'></i>"
+            }
+        }
+
+        if(answerButtons) {
+            for(let answerButton of answerButtons) {
+                answerButton.innerHTML = "<i class='fas fa-caret-right'></i>"
+            }
+        }
+    }
+
+    if(screen.width > 767 && screen.width < 801) {
+        if(reportColumn) {
             reportColumn.textContent = "Signal."
         }
     }
 }
 
 //*****J. Color change for reports number*****//
-function changeDataLabel() {
+function changeReportColour() {
     const reportCounts = document.querySelectorAll("#reports-number")
 
     for(let reportCount of reportCounts) {

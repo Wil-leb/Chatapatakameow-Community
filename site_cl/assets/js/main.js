@@ -27,18 +27,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     OnclickEventClass.displayAnswers()
     OnclickEventClass.openDialog()
+    OnclickEventClass.copyLink()
 
-    const likeButton = document.getElementsByClassName("like")
-    for(let i = 0; i < likeButton.length; i ++) {
-        likeButton.item(i).addEventListener("click", AjaxClass.like())
-        return
-    }
+    // const likeButton = document.querySelectorAll("#like-form")
+    // for(let i = 0; i < likeButton.length; i ++) {
+    //     likeButton.item(i).addEventListener("submit", AjaxClass.like)
+    //     // return
+    // }
 
-    const dislikeButton = document.getElementsByClassName("dislike")
-    for(let i = 0; i < dislikeButton.length; i ++) {
-        dislikeButton.item(i).addEventListener("click", AjaxClass.dislike())
-        return
-    }
+    // const dislikeButton = document.querySelectorAll("#dislike-form")
+    // for(let i = 0; i < dislikeButton.length; i ++) {
+    //     dislikeButton.item(i).addEventListener("submit", AjaxClass.dislike)
+    //     // return
+    // }
 });
 
 changeDataLabel()
+changeReportColour()
