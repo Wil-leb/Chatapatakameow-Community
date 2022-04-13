@@ -87,7 +87,20 @@ class Albums extends Connect {
         return $query->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-//*****G. Album modification*****//
+//*****G. Finding the thumbnail of a specific picture*****//
+    public function findPictureThumbnail(string $pictureId) {
+        $sql = "SELECT album_thumbnails.id, `picture_id`, `thumbnail_name` FROM `album_thumbnails`
+                LEFT OUTER JOIN `album_pictures` ON album_pictures.id = album_thumbnails.picture_id
+                WHERE album_pictures.id = :pictureId";
+                    
+        $query = $this->_pdo->prepare($sql);
+        
+        $query->execute([":pictureId" => $pictureId]);
+        
+        return $query->fetch(\PDO::FETCH_ASSOC);
+    }
+
+//*****H. Album modification*****//
     public function updateAlbum(string $albumId, string $userId, string $userLogin, $title, string $description) {
         $sql = "UPDATE `albums`
                 SET `user_id` = :userId, `user_login` = :userLogin, `title` = :title, `description` = :description
@@ -104,7 +117,7 @@ class Albums extends Connect {
                         ]);
     }
 
-//*****H. Cover replacement*****//
+//*****I. Cover replacement*****//
     public function replaceCover(string $coverId, string $albumId, string $coverName) {
                         
         $sql = "UPDATE `album_covers` SET `cover_name` = :coverName WHERE album_covers.id = :coverId AND `album_id` = :albumId";
@@ -114,17 +127,30 @@ class Albums extends Connect {
         $query->execute([":coverId" => $coverId, ":albumId" => $albumId, ":coverName" => $coverName]);
     }
 
-//*****I. Picture replacement*****//
+//*****J. Picture replacement*****//
     public function replacePicture(string $pictureId, string $albumId, string $pictureName) {
                     
-        $sql = "UPDATE `album_pictures` SET `picture_name` = :pictureName WHERE album_pictures.id = :pictureId AND `album_id` = :albumId";
+        $sql = "UPDATE `album_pictures` SET `picture_name` = :pictureName WHERE album_pictures.id = :pictureId
+                AND `album_id` = :albumId";
         
         $query = $this->_pdo->prepare($sql);
         
         $query->execute([":pictureId" => $pictureId, ":albumId" => $albumId, ":pictureName" => $pictureName]);
     }
 
-//*****J. Picture addition*****//
+
+//*****K. Thumbnail replacement*****//
+public function replaceThumbnail(string $thumbnailId, string $albumId, string $thumbName) {
+                    
+    $sql = "UPDATE `album_thumbnails` SET `thumbnail_name` = :thumbName WHERE album_thumbnails.id = :thumbnailId
+            AND `album_id` = :albumId";
+    
+    $query = $this->_pdo->prepare($sql);
+    
+    $query->execute([":thumbnailId" => $thumbnailId, ":albumId" => $albumId, ":thumbName" => $thumbName]);
+}
+
+//*****L. Picture addition*****//
     public function addExtraPictures(string $albumId, string $pictureName) {
             
         $sql = "INSERT INTO `album_pictures` (`album_id`, `picture_name`) VALUES (:albumId, :pictureName)";
@@ -134,7 +160,7 @@ class Albums extends Connect {
         $query->execute([":albumId" => $albumId, ":pictureName" => $pictureName]);
     }
 
-//*****K. Album deletion*****//
+//*****M. Album deletion*****//
     public function deleteAlbum(string $albumId) {
             
         $sql = "DELETE FROM `albums` WHERE `id` = :albumId";
@@ -144,7 +170,7 @@ class Albums extends Connect {
         $query->execute([":albumId" => $albumId]);
     }
 
-//*****L. Picture deletion*****//
+//*****N. Picture deletion*****//
     public function deletePicture(string $pictureId) {
                 
         $sql = "DELETE FROM `album_pictures` WHERE `id` = :pictureId";
@@ -153,6 +179,16 @@ class Albums extends Connect {
         
         $query->execute([":pictureId" => $pictureId]);
     }
+
+//*****O. Thumbnail deletion*****//
+public function deleteThumbnail(string $thumbnailId) {
+                
+    $sql = "DELETE FROM `album_thumbnails` WHERE `id` = :thumbnailId";
+                
+    $query = $this->_pdo->prepare($sql);
+    
+    $query->execute([":thumbnailId" => $thumbnailId]);
+}
 
 //*****END OF THE CLASS*****//
 }
