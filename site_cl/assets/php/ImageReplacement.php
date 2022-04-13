@@ -1,6 +1,6 @@
 <?php
 
-$picFolder = "C:/xampp/secure/albums_cl/pictures/";
+$picFolder = "C:/xampp/secure/albums_cl/pictures/original/";
 
 $truePicName = basename(htmlspecialchars(trim($currentPicture["picture_name"])));
 

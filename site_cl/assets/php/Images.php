@@ -13,7 +13,7 @@ $query->execute([":albumId" => $_GET["albumId"]]);
 $pictures = $query->fetchAll();
 
 foreach($pictures as $picture) {
-    $picFolder = "C:/xampp/secure/albums_cl/pictures/";
+    $picFolder = "C:/xampp/secure/albums_cl/pictures/original/";
 
     $truePicName = basename($picture["picture_name"]);
     
@@ -25,5 +25,5 @@ foreach($pictures as $picture) {
 
     $base64 ='data:image/'.$picExtension.';base64,'.base64_encode($data);
 
-    echo '<img src="'.$base64.'">';
+    echo '<img src="'.$base64.'" id="slide">';
 }
