@@ -166,41 +166,41 @@ function changeDataLabel() {
     }
 
     if(screen.width < 560) {
-        // if(copyButton) {
-        //     copyButton.innerHTML = "<i class='fa-solid fa-link-simple'></i>"
-        // }
+        if(copyButton) {
+            copyButton.innerHTML = "Lien"
+        }
 
         if(shareButton) {
-            shareButton.innerHTML = "<i class='fa-solid fa-share'></i>"
+            shareButton.innerHTML = "Partager"
         }
 
         if(reportButtons) {
             for(let reportButton of reportButtons) {
-                reportButton.innerHTML = "<i class='fa-solid fa-circle-minus'></i>"
+                reportButton.innerHTML = "Signaler"
             }
         }
 
         if(deleteButtons) {
             for(let deleteButton of deleteButtons) {
-                deleteButton.innerHTML = "<i class='fas fa-trash-alt'></i>"
+                deleteButton.innerHTML = "Supprimer"
             }
         }
 
         if(editButtons) {
             for(let editButton of editButtons) {
-                editButton.innerHTML = "<i class='fas fa-pen'></i>"
+                editButton.innerHTML = "Modifier"
             }
         }
 
         if(replyButtons) {
             for(let replyButton of replyButtons) {
-                replyButton.innerHTML = "<i class='fas fa-reply'></i>"
+                replyButton.innerHTML = "Répondre"
             }
         }
 
         if(answerButtons) {
             for(let answerButton of answerButtons) {
-                answerButton.innerHTML = "<i class='fas fa-caret-right'></i>"
+                answerButton.innerHTML = "Réponses"
             }
         }
     }
