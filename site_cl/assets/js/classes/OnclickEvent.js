@@ -17,15 +17,21 @@ export default class OnclickEvent {
                         if(hideAnswer.value == "OFF") {
                             hideAnswer.value = "ON"
                             answerContent.style.display = "none"
-                            answerIcon.classList.remove("fa-caret-down")
-                            answerIcon.classList.add("fa-caret-right")
+
+                            if(answerIcon) {
+                                answerIcon.classList.remove("fa-caret-down")
+                                answerIcon.classList.add("fa-caret-right")
+                            }
                         }
 
                         else {
                             hideAnswer.value = "OFF"
                             answerContent.style.display = "initial"
-                            answerIcon.classList.remove("fa-caret-right")
-                            answerIcon.classList.add("fa-caret-down")
+
+                            if(answerIcon) {
+                                answerIcon.classList.remove("fa-caret-right")
+                                answerIcon.classList.add("fa-caret-down")
+                            }
                         }
                     }
                 });
