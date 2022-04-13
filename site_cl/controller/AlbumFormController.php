@@ -9,7 +9,8 @@ require_once("./assets/php/Guid.php");
 class AlbumFormController {
     
         public const COV_SECURE_PATH = "C:/xampp/secure/albums_cl/covers/";
-        public const PIC_SECURE_PATH = "C:/xampp/secure/albums_cl/pictures/";
+        public const PIC_SECURE_PATH = "C:/xampp/secure/albums_cl/pictures/original/";
+        public const THUMB_SECURE_PATH = "C:/xampp/secure/albums_cl/pictures/min/";
 
         protected Albums $_album;
         
@@ -23,6 +24,7 @@ class AlbumFormController {
 
                 if(isset($_POST["postAlbum"])) {
                         $pictures = $_FILES["pictures"];
+                        $thumbnails;
                         $picsName = count($_FILES["pictures"]["name"]);
                 
                         if(!$data["title"] || !$data["description"] || !$_FILES["cover"]["name"]) {
@@ -101,6 +103,9 @@ class AlbumFormController {
 
                                         $picType;
                                         $createPic;
+                                        $createThumbnail;
+                                        $newWidth = 200;
+                                        $newHeight = 200;
                                         
                                         $picInfo = finfo_open(FILEINFO_MIME_TYPE);
                                         $picMime = finfo_file($picInfo, $pictures["tmp_name"][$i]);
@@ -174,6 +179,26 @@ class AlbumFormController {
                                                                 $picType = "jpeg";
                                                                 $createPic = imagecreatefromjpeg($pictures["tmp_name"][$idx]);
                                                                 imagejpeg($createPic, self::PIC_SECURE_PATH.$pictures[$idx]);
+
+                                                                list($originWidth, $originHeight) = getimagesize(self::PIC_SECURE_PATH.$pictures[$idx]);
+
+                                                                $originRatio = $originWidth / $originHeight;
+
+                                                                if($newWidth / $newHeight > $originRatio) {
+                                                                        $newWidth = $newHeight * $originRatio;
+                                                                }
+
+                                                                else {
+                                                                        $newHeight = $newWidth / $originRatio;
+                                                                }
+
+                                                                $resizedPic = imagecreatetruecolor($newWidth, $newHeight);
+
+                                                                $thumbnails[$idx] = guidv4()."_min.".pathinfo($pictures["name"][$idx], PATHINFO_EXTENSION);
+
+                                                                $createThumbnail = imagecreatefromjpeg($pictures["tmp_name"][$idx]);
+                                                                imagecopyresampled($resizedPic, $createThumbnail, 0, 0, 0, 0, $newWidth, $newHeight, $originWidth, $originHeight);
+                                                                imagejpeg($resizedPic, self::THUMB_SECURE_PATH.$thumbnails[$idx], 100);
                                                         }
 
                                                         elseif(preg_match($imgRegex, $pictures["name"][$idx])
@@ -182,10 +207,29 @@ class AlbumFormController {
                                                                 $picType = "png";
                                                                 $createPic = imagecreatefrompng($pictures["tmp_name"][$idx]);
                                                                 imagepng($createPic, self::PIC_SECURE_PATH.$pictures[$idx]);
+                                                                
+                                                                list($originWidth, $originHeight) = getimagesize(self::PIC_SECURE_PATH.$pictures[$idx]);
+
+                                                                $originRatio = $originWidth / $originHeight;
+
+                                                                if($newWidth / $newHeight > $originRatio) {
+                                                                        $newWidth = $newHeight * $originRatio;
+                                                                }
+
+                                                                else {
+                                                                        $newHeight = $newWidth / $originRatio;
+                                                                }
+
+                                                                $resizedPic = imagecreatetruecolor($newWidth, $newHeight);
+
+                                                                $thumbnails[$idx] = guidv4()."_min.".pathinfo($pictures["name"][$idx], PATHINFO_EXTENSION);
+
+                                                                $createThumbnail = imagecreatefrompng($pictures["tmp_name"][$idx]);
+                                                                imagecopyresampled($resizedPic, $createThumbnail, 0, 0, 0, 0, $newWidth, $newHeight, $originWidth, $originHeight);
+                                                                imagepng($resizedPic, self::THUMB_SECURE_PATH.$thumbnails[$idx], 9);
                                                         }
 
                                                         else {
-                                                                print_r($pictures);
                                                                 $addMessages["errors"][] = "Aucune image n'a pu être uploadée.";
                                                 
                                                                 return $addMessages;
@@ -201,10 +245,29 @@ class AlbumFormController {
                                                                                         VALUES (:id, :albumId, :pictureName)");
                                                         
                                                         $newPicture->execute([
-                                                                        ":id" => $pictureId,
-                                                                        ":albumId" => $latestAlbumId,
-                                                                        ":pictureName" => $pictures[$idx]
-                                                                        ]);
+                                                                                ":id" => $pictureId,
+                                                                                ":albumId" => $latestAlbumId,
+                                                                                ":pictureName" => $pictures[$idx]
+                                                                                ]);
+
+                                                        do {
+                                                                $thumbnailId = uniqid();
+                                                        } while($pdo->prepare("SELECT `id` FROM `album_thumbnails`
+                                                                                WHERE `id` = $pictureId") > 0);
+
+                                                        $latestPicId = $pictureId;
+
+                                                        $newThumbnail = $pdo->prepare("INSERT INTO `album_thumbnails` (`id`,
+                                                                                        `picture_id`, `album_id`, `thumbnail_name`)
+                                                                                        VALUES (:id, :pictureId, :albumId,
+                                                                                        :thumbnailName)");
+                                                        
+                                                        $newThumbnail->execute([
+                                                                                ":id" => $thumbnailId,
+                                                                                ":pictureId" => $latestPicId,
+                                                                                ":albumId" => $latestAlbumId,
+                                                                                ":thumbnailName" => $thumbnails[$idx]
+                                                                                ]);
                                                 }
 
                                                 $addMessages["success"] = ["L'album a été publié avec succès."];
@@ -304,11 +367,53 @@ class AlbumFormController {
                                 
                                         closedir($directory);
                                 }
+
+                                $req = $pdo->prepare("SELECT `thumbnail_name` FROM `album_thumbnails` WHERE `album_id` = :albumId");
+                                $req->execute([":albumId" => $albumId]);
+                                $trueThumbNames = $req->fetchAll(\PDO::FETCH_COLUMN, 0);
+
+                                $thumbnailFolder = self::THUMB_SECURE_PATH;
+
+                                function deleteThumbnails($thumbnailFolder, $trueThumbNames, $minAge) {
+                                        $directory = opendir($thumbnailFolder);
+
+                                        $trueNames = implode(" ", $trueThumbNames);
+
+                                        $thumbNames = "";
+                                        $thumbName = "";
+
+                                        foreach(explode(" ", $trueNames) as $trueName) {
+                                                $thumbName = $trueName;
+                                                $thumbNames .= $thumbName." ";
+                                        }
+
+                                        if(str_ends_with($thumbNames, " ")) {
+                                                $thumbNames = substr_replace($thumbNames, "", -1);
+                                        }
+
+                                        foreach(explode(" ", $thumbNames) as $thumbName) {
+                                                while(false !== ($trueThumbName = readdir($directory))) {
+                                                        if($trueThumbName != "." && $trueThumbName != ".." && !is_dir($trueThumbName) && $trueThumbName = $thumbName) {
+                                                                $path = $thumbnailFolder.$trueThumbName;
+                                                                $info = pathinfo($path);
+                                                                $fileAge = time() - filemtime($path);
+
+                                                                if($fileAge > $minAge) {
+                                                                        unlink($path);
+                                                                        break;
+                                                                }
+                                                        }
+                                                }
+                                        }
+                                
+                                        closedir($directory);
+                                }
                                 
                                 $findAlbum = $this->_album->findAlbumById($albumId);
                                 $deleteAlbum = $this->_album->deleteAlbum($albumId);
                                 deleteCover($covFolder, $trueCovName, $minAge);
                                 deletePictures($picFolder, $truePicNames, $minAge);
+                                deleteThumbnails($thumbnailFolder, $trueThumbNames, $minAge);
 
                                 $deleteMessages["success"] = ["L'album ".$findAlbum["title"]." a été supprimé avec succès."];
 

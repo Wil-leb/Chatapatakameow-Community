@@ -9,7 +9,8 @@ require_once("./assets/php/Guid.php");
 class AlbumModifController {
     
         public const COV_SECURE_PATH = "C:/xampp/secure/albums_cl/covers/";
-        public const PIC_SECURE_PATH = "C:/xampp/secure/albums_cl/pictures/";
+        public const PIC_SECURE_PATH = "C:/xampp/secure/albums_cl/pictures/original/";
+        public const THUMB_SECURE_PATH = "C:/xampp/secure/albums_cl/pictures/min/";
 
         protected Albums $_album;
         
@@ -124,31 +125,31 @@ class AlbumModifController {
                                         }
 
                                         if(empty($modifMessages["errors"])) {
-                                                // if(preg_match($imgRegex, $newCovName) && $_FILES["cover"]["type"] == "image/jpeg"
-                                                // && strpos($covMime, "image/") === 0) {
-                                                //         deleteCover($folder, $trueCovName, $minAge);
-                                                //         $covType = "jpeg";
-                                                //         $createCover = imagecreatefromjpeg($_FILES["cover"]["tmp_name"]);
-                                                //         imagejpeg($createCover, $folder.$newCovName);
-                                                // }
+                                                if(preg_match($imgRegex, $newCovName) && $_FILES["cover"]["type"] == "image/jpeg"
+                                                && strpos($covMime, "image/") === 0) {
+                                                        deleteCover($folder, $trueCovName, $minAge);
+                                                        $covType = "jpeg";
+                                                        $createCover = imagecreatefromjpeg($_FILES["cover"]["tmp_name"]);
+                                                        imagejpeg($createCover, $folder.$newCovName);
+                                                }
 
-                                                // elseif(preg_match($imgRegex, $newCovName) && $_FILES["cover"]["type"] == "image/png"
-                                                // && strpos($covMime, "image/") === 0) {
-                                                //         deleteCover($folder, $trueCovName, $minAge);
-                                                //         $covType = "png";
-                                                //         $createCover = imagecreatefrompng($_FILES["cover"]["tmp_name"]);
-                                                //         imagepng($createCover, $folder.$newCovName);
-                                                // }
+                                                elseif(preg_match($imgRegex, $newCovName) && $_FILES["cover"]["type"] == "image/png"
+                                                && strpos($covMime, "image/") === 0) {
+                                                        deleteCover($folder, $trueCovName, $minAge);
+                                                        $covType = "png";
+                                                        $createCover = imagecreatefrompng($_FILES["cover"]["tmp_name"]);
+                                                        imagepng($createCover, $folder.$newCovName);
+                                                }
 
-                                                // else {
-                                                //         $modifMessages["errors"][] = "La couverture n'a pas pu être uploadée.";
+                                                else {
+                                                        $modifMessages["errors"][] = "La couverture n'a pas pu être uploadée.";
 
-                                                //         return $modifMessages;
-                                                // }
+                                                        return $modifMessages;
+                                                }
 
-                                                // $descriptionModification = $this->_album->updateAlbum($albumId, $_SESSION["user"]["id"], $_SESSION["user"]["login"], $_POST["title"], $_POST["description"]);
+                                                $descriptionModification = $this->_album->updateAlbum($albumId, $_SESSION["user"]["id"], $_SESSION["user"]["login"], $_POST["title"], $_POST["description"]);
 
-                                                // $coverModification = $this->_album->replaceCover($findCover["id"], $albumId, $newCovName);
+                                                $coverModification = $this->_album->replaceCover($findCover["id"], $albumId, $newCovName);
 
                                                 $modifMessages["success"] = ["La description de l'album ".$findAlbum["title"]." a été modifiée avec succès."];
 
@@ -169,6 +170,8 @@ class AlbumModifController {
                         $albumId = $_GET["albumId"];
                         $pictureId = $_POST["pictureId"];
                         $picName = $_POST["pictureName"];
+                        $thumbnailId = $_POST["thumbnailId"];
+                        $thumbName = $_POST["thumbName"];
 
                         $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -178,29 +181,34 @@ class AlbumModifController {
                         $query->execute([":albumId" => $albumId]);
                         $trueAlbId = $query->fetchColumn();
 
-                        $req = $pdo->prepare("SELECT `id` FROM `album_pictures` WHERE `id` = :pictureId");
+                        $req = $pdo->prepare("SELECT `id`, `picture_name` FROM `album_pictures` WHERE `id` = :pictureId");
                         $req->execute([":pictureId" => $pictureId]);
-                        $truePicId = $req->fetchColumn();
+                        $result = $req->fetch();
+                        $truePicId = $result["id"];
+                        $truePicName = $result["picture_name"];
 
-                        $que = $pdo->prepare("SELECT `picture_name` FROM `album_pictures` WHERE `picture_name` = :pictureName");
-                        $que->execute([":pictureName" => $picName]);
-                        $truePicName = $que->fetchColumn();
+                        $que = $pdo->prepare("SELECT `id`, `thumbnail_name` FROM `album_thumbnails` WHERE `id` = :thumbnailId");
+                        $que->execute([":thumbnailId" => $thumbnailId]);
+                        $line = $que->fetch();
+                        $trueThumbId = $line["id"];
+                        $trueThumbName = $line["thumbnail_name"];
             
-                        if($albumId != $trueAlbId || $albumId == null || $pictureId != $truePicId || $pictureId == null || $truePicName != $picName || $picName == null) {
+                        if($albumId != $trueAlbId || $albumId == null || $pictureId != $truePicId || $pictureId == null || $thumbnailId != $trueThumbId || $thumbnailId == null ||$truePicName != $picName || $picName == null || $trueThumbName != $thumbName || $thumbName == null) {
                                 die("Hacking attempt!");
                         }
             
                         else {
                                 $findAlbum = $this->_album->findAlbumById($albumId);
 
-                                $folder = self::PIC_SECURE_PATH;
+                                $picFolder = self::PIC_SECURE_PATH;
+                                $thumbFolder = self::THUMB_SECURE_PATH;
                                 $minAge = 10;
 
-                                function deletePicture($folder, $truePicName, $minAge) {
-                                        $directory = opendir($folder);
+                                function deletePicture($picFolder, $truePicName, $minAge) {
+                                        $directory = opendir($picFolder);
                                         
                                                 while(false !== ($truePicName = readdir($directory))) {
-                                                        $path = $folder.$truePicName;
+                                                        $path = $picFolder.$truePicName;
                                                         $info = pathinfo($path);
                                                         $picName = $_POST["pictureName"];
                                                         $fileAge = time() - filemtime($path);
@@ -214,8 +222,28 @@ class AlbumModifController {
                                         closedir($directory);
                                 }
 
-                                // deletePicture($folder, $truePicName, $minAge);
-                                // $deletePicture = $this->_album->deletePicture($pictureId);
+                                function deleteThumbnail($thumbFolder, $trueThumbName, $minAge) {
+                                        $directory = opendir($thumbFolder);
+                                        
+                                                while(false !== ($trueThumbName = readdir($directory))) {
+                                                        $path = $thumbFolder.$trueThumbName;
+                                                        $info = pathinfo($path);
+                                                        $thumbName = $_POST["thumbName"];
+                                                        $fileAge = time() - filemtime($path);
+
+                                                        if($trueThumbName != "." && $trueThumbName != ".." && !is_dir($trueThumbName)
+                                                        && $trueThumbName == $thumbName && $fileAge > $minAge) {
+                                                                unlink($path);
+                                                        }
+                                                }
+                                                
+                                        closedir($directory);
+                                }
+
+                                deletePicture($picFolder, $truePicName, $minAge);
+                                $deletePicture = $this->_album->deletePicture($pictureId);
+                                deleteThumbnail($thumbFolder, $trueThumbName, $minAge);
+                                $deleteThumbnail = $this->_album->deleteThumbnail($thumbnailId);
 
                                 $deleteMessages["success"] = ["L'image sélectionnée de l'album ".$findAlbum["title"]." a été supprimée avec succès."];
                         }
@@ -232,7 +260,10 @@ class AlbumModifController {
                 if($_POST["pictureChange"]) {
                         $albumId = $_GET["albumId"];
                         $pictureId = $_POST["pictureId"];
-                        $picName = $_POST["currentName"];
+                        $picName = $_POST["currentPic"];
+                        $thumbnailId = $_POST["thumbnailId"];
+                        $thumbName = $_POST["currentThumb"];
+                        $newThumbnail;
 
                         $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -242,35 +273,58 @@ class AlbumModifController {
                         $query->execute([":albumId" => $albumId]);
                         $trueAlbId = $query->fetchColumn();
 
-                        $req = $pdo->prepare("SELECT `id` FROM `album_pictures` WHERE `id` = :pictureId");
+                        $req = $pdo->prepare("SELECT `id`, `picture_name` FROM `album_pictures` WHERE `id` = :pictureId");
                         $req->execute([":pictureId" => $pictureId]);
-                        $truePicId = $req->fetchColumn();
-                        
-                        $que = $pdo->prepare("SELECT `picture_name` FROM `album_pictures` WHERE `picture_name` = :pictureName");
-                        $que->execute([":pictureName" => $picName]);
-                        $truePicName = $que->fetchColumn();
+                        $result = $req->fetch();
+                        $truePicId = $result["id"];
+                        $truePicName = $result["picture_name"];
 
-                        if($albumId != $trueAlbId || $albumId == null || $pictureId != $truePicId || $pictureId == null || $truePicName != $picName || $picName == null) {
+                        $que = $pdo->prepare("SELECT `id`, `thumbnail_name` FROM `album_thumbnails` WHERE `id` = :thumbnailId");
+                        $que->execute([":thumbnailId" => $thumbnailId]);
+                        $line = $que->fetch();
+                        $trueThumbId = $line["id"];
+                        $trueThumbName = $line["thumbnail_name"];
+
+                        if($albumId != $trueAlbId || $albumId == null || $pictureId != $truePicId || $pictureId == null || $thumbnailId != $trueThumbId || $thumbnailId == null ||$truePicName != $picName || $picName == null || $trueThumbName != $thumbName || $thumbName == null) {
                                 die("Hacking attempt!");
                         }
 
                         else {
                                 $findAlbum = $this->_album->findAlbumById($albumId);
 
-                                $folder = self::PIC_SECURE_PATH;
+                                $picFolder = self::PIC_SECURE_PATH;
+                                $thumbFolder = self::THUMB_SECURE_PATH;
                                 $minAge = 10;
 
-                                function deletePicture($folder, $truePicName, $minAge) {
-                                        $directory = opendir($folder);
+                                function deletePicture($picFolder, $truePicName, $minAge) {
+                                        $directory = opendir($picFolder);
                                 
                                         while(false !== ($truePicName = readdir($directory))) {
-                                                $path = $folder.$truePicName;
+                                                $path = $picFolder.$truePicName;
                                                 $info = pathinfo($path);
-                                                $picName = $_POST["currentName"];
+                                                $picName = $_POST["currentPic"];
                                                 $fileAge = time() - filemtime($path);
 
                                                 if($truePicName != "." && $truePicName != ".." && !is_dir($truePicName)
                                                 && $truePicName == $picName && $fileAge > $minAge) {
+                                                        unlink($path);
+                                                }
+                                        }
+                                        
+                                        closedir($directory);
+                                }
+
+                                function deleteThumbnail($thumbFolder, $trueThumbName, $minAge) {
+                                        $directory = opendir($thumbFolder);
+                                
+                                        while(false !== ($trueThumbName = readdir($directory))) {
+                                                $path = $thumbFolder.$trueThumbName;
+                                                $info = pathinfo($path);
+                                                $thumbName = $_POST["currentThumb"];
+                                                $fileAge = time() - filemtime($path);
+
+                                                if($trueThumbName != "." && $trueThumbName != ".." && !is_dir($trueThumbName)
+                                                && $trueThumbName == $thumbName && $fileAge > $minAge) {
                                                         unlink($path);
                                                 }
                                         }
@@ -291,7 +345,7 @@ class AlbumModifController {
                                 $currentPicSize = 0;
 
                                 foreach($findPictures as $findPicture) {
-                                        $picSize = filesize(self::PIC_SECURE_PATH.$findPicture["picture_name"]);
+                                        $picSize = filesize($picFolder.$findPicture["picture_name"]);
                                         $currentPicSize += $picSize;
                                 }
 
@@ -310,6 +364,9 @@ class AlbumModifController {
                                 if($_FILES["newPicture"]["error"] === 0) {
                                         $picType;
                                         $createPicture;
+                                        $createThumbnail;
+                                        $newWidth = 200;
+                                        $newHeight = 200;
 
                                         $newPicName = guidv4().".".pathinfo($_FILES["newPicture"]["name"], PATHINFO_EXTENSION);
 
@@ -329,28 +386,72 @@ class AlbumModifController {
                                         }
 
                                         if(empty($replaceMessages["errors"])) {
-                                                // if(preg_match($imgRegex, $newPicName) && $_FILES["newPicture"]["type"] == "image/jpeg"
-                                                // && strpos($picMime, "image/") === 0) {
-                                                //         deletePicture($folder, $truePicName, $minAge);
-                                                //         $picType = "jpeg";
-                                                //         $createPicture = imagecreatefromjpeg($_FILES["newPicture"]["tmp_name"]);
-                                                //         imagejpeg($createPicture, $folder.$newPicName);
-                                                // }
+                                                if(preg_match($imgRegex, $newPicName) && $_FILES["newPicture"]["type"] == "image/jpeg"
+                                                && strpos($picMime, "image/") === 0) {
+                                                        deletePicture($picFolder, $truePicName, $minAge);
+                                                        deleteThumbnail($thumbFolder, $trueThumbName, $minAge);
 
-                                                // elseif(preg_match($imgRegex, $newPicName) && $_FILES["newPicture"]["type"] == "image/png"
-                                                // && strpos($picMime, "image/") === 0) {
-                                                //         deletePicture($folder, $truePicName, $minAge);
-                                                //         $picType = "png";
-                                                //         $createPicture = imagecreatefrompng($_FILES["newPicture"]["tmp_name"]);
-                                                //         imagepng($createPicture, $folder.$newPicName);
-                                                // }
+                                                        $picType = "jpeg";
+                                                        $createPicture = imagecreatefromjpeg($_FILES["newPicture"]["tmp_name"]);
+                                                        imagejpeg($createPicture, $picFolder.$newPicName);
 
-                                                // else {
-                                                //         $modifMessages["errors"][] = "L'image n'a pas pu être uploadée.";
-                                                //         return $replaceMessages;
-                                                // }
+                                                        list($originWidth, $originHeight) = getimagesize($picFolder.$newPicName);
 
-                                                // $pictureModification = $this->_album->replacePicture($pictureId, $albumId, $newPicName);
+                                                        $originRatio = $originWidth / $originHeight;
+
+                                                        if($newWidth / $newHeight > $originRatio) {
+                                                                $newWidth = $newHeight * $originRatio;
+                                                        }
+
+                                                        else {
+                                                                $newHeight = $newWidth / $originRatio;
+                                                        }
+
+                                                        $resizedPic = imagecreatetruecolor($newWidth, $newHeight);
+
+                                                        $newThumbnail = guidv4()."_min.".pathinfo($_FILES["newPicture"]["name"], PATHINFO_EXTENSION);
+
+                                                        $createThumbnail = imagecreatefromjpeg($_FILES["newPicture"]["tmp_name"]);
+                                                        imagecopyresampled($resizedPic, $createThumbnail, 0, 0, 0, 0, $newWidth, $newHeight, $originWidth, $originHeight);
+                                                        imagejpeg($resizedPic, $thumbFolder.$newThumbnail, 100);
+                                                }
+
+                                                elseif(preg_match($imgRegex, $newPicName) && $_FILES["newPicture"]["type"] == "image/png" && strpos($picMime, "image/") === 0) {
+                                                        deletePicture($picFolder, $truePicName, $minAge);
+                                                        deleteThumbnail($thumbFolder, $trueThumbName, $minAge);
+
+                                                        $picType = "png";
+                                                        $createPicture = imagecreatefrompng($_FILES["newPicture"]["tmp_name"]);
+                                                        imagepng($createPicture, $picFolder.$newPicName);
+
+                                                        list($originWidth, $originHeight) = getimagesize($picFolder.$newPicName);
+
+                                                        $originRatio = $originWidth / $originHeight;
+
+                                                        if($newWidth / $newHeight > $originRatio) {
+                                                                $newWidth = $newHeight * $originRatio;
+                                                        }
+
+                                                        else {
+                                                                $newHeight = $newWidth / $originRatio;
+                                                        }
+
+                                                        $resizedPic = imagecreatetruecolor($newWidth, $newHeight);
+
+                                                        $newThumbnail = guidv4()."_min.".pathinfo($_FILES["newPicture"]["name"], PATHINFO_EXTENSION);
+
+                                                        $createThumbnail = imagecreatefrompng($_FILES["newPicture"]["tmp_name"]);
+                                                        imagecopyresampled($resizedPic, $createThumbnail, 0, 0, 0, 0, $newWidth, $newHeight, $originWidth, $originHeight);
+                                                        imagepng($resizedPic, $thumbFolder.$newThumbnail, 9);
+                                                }
+
+                                                else {
+                                                        $modifMessages["errors"][] = "L'image n'a pas pu être uploadée.";
+                                                        return $replaceMessages;
+                                                }
+
+                                                $pictureModification = $this->_album->replacePicture($pictureId, $albumId, $newPicName);
+                                                $thumbnailModification = $this->_album->replaceThumbnail($thumbnailId, $albumId, $newThumbnail);
 
                                                 $replaceMessages["success"] = ["L'image sélectionnée de l'album ".$findAlbum["title"]." a été modifiée avec succès."];
 
@@ -370,6 +471,7 @@ class AlbumModifController {
                 if($_POST["pictureAddition"]) {
                         $findAlbum = $this->_album->findAlbumById($_GET["albumId"]);
                         $extraPics = $_FILES["extraPictures"];
+                        $thumbnails;
                         $extraPicsName = count($_FILES["extraPictures"]["name"]);
                 
                         for($i = 0; $i < $extraPicsName; $i ++) {
@@ -414,6 +516,9 @@ class AlbumModifController {
                                 if($_FILES["extraPictures"]["error"][0] === 0) {
                                         $picType;
                                         $createPic;
+                                        $createThumbnail;
+                                        $newWidth = 200;
+                                        $newHeight = 200;
                                         
                                         $picInfo = finfo_open(FILEINFO_MIME_TYPE);
                                         $picMime = finfo_file($picInfo, $extraPics["tmp_name"][$i]);
@@ -429,47 +534,106 @@ class AlbumModifController {
                                         }
 
                                         if(empty($extraPicMessages["errors"])) {
-                                                // for($idx = 0; $idx < $extraPicsName; $idx ++) {
-                                                //         $extraPics[$idx] = guidv4().".".pathinfo($extraPics["name"][$idx], PATHINFO_EXTENSION);
+                                                for($idx = 0; $idx < $extraPicsName; $idx ++) {
+                                                        $extraPics[$idx] = guidv4().".".pathinfo($extraPics["name"][$idx], PATHINFO_EXTENSION);
 
-                                                //         if(preg_match($imgRegex, $extraPics["name"][$idx])
-                                                //         && $extraPics["type"][$idx] == "image/jpeg"
-                                                //         && strpos($picMime, "image/") === 0) {
-                                                //                 $picType = "jpeg";
-                                                //                 $createPic = imagecreatefromjpeg($extraPics["tmp_name"][$idx]);
-                                                //                 imagejpeg($createPic, self::PIC_SECURE_PATH.$extraPics[$idx]);
-                                                //         }
+                                                        if(preg_match($imgRegex, $extraPics["name"][$idx])
+                                                        && $extraPics["type"][$idx] == "image/jpeg"
+                                                        && strpos($picMime, "image/") === 0) {
+                                                                $picType = "jpeg";
+                                                                $createPic = imagecreatefromjpeg($extraPics["tmp_name"][$idx]);
+                                                                imagejpeg($createPic, self::PIC_SECURE_PATH.$extraPics[$idx]);
 
-                                                //         elseif(preg_match($imgRegex, $extraPics["name"][$idx])
-                                                //         && $extraPics["type"][$idx] == "image/png"
-                                                //         && strpos($picMime, "image/") === 0) {
-                                                //                 $picType = "png";
-                                                //                 $createPic = imagecreatefrompng($extraPics["tmp_name"][$idx]);
-                                                //                 imagepng($createPic, self::PIC_SECURE_PATH.$extraPics[$idx]);
-                                                //         }
+                                                                list($originWidth, $originHeight) = getimagesize(self::PIC_SECURE_PATH.$extraPics[$idx]);
 
-                                                //         else {
-                                                //                 print_r($extraPics);
-                                                //                 $extraPicMessages["errors"][] = "Aucune image n'a pu être uploadée.";
+                                                                $originRatio = $originWidth / $originHeight;
+
+                                                                if($newWidth / $newHeight > $originRatio) {
+                                                                        $newWidth = $newHeight * $originRatio;
+                                                                }
+
+                                                                else {
+                                                                        $newHeight = $newWidth / $originRatio;
+                                                                }
+
+                                                                $resizedPic = imagecreatetruecolor($newWidth, $newHeight);
+
+                                                                $thumbnails[$idx] = guidv4()."_min.".pathinfo($extraPics["name"][$idx], PATHINFO_EXTENSION);
+
+                                                                $createThumbnail = imagecreatefromjpeg($extraPics["tmp_name"][$idx]);
+                                                                imagecopyresampled($resizedPic, $createThumbnail, 0, 0, 0, 0, $newWidth, $newHeight, $originWidth, $originHeight);
+                                                                imagejpeg($resizedPic, self::THUMB_SECURE_PATH.$thumbnails[$idx], 100);
+                                                        }
+
+                                                        elseif(preg_match($imgRegex, $extraPics["name"][$idx])
+                                                        && $extraPics["type"][$idx] == "image/png"
+                                                        && strpos($picMime, "image/") === 0) {
+                                                                $picType = "png";
+                                                                $createPic = imagecreatefrompng($extraPics["tmp_name"][$idx]);
+                                                                imagepng($createPic, self::PIC_SECURE_PATH.$extraPics[$idx]);
+
+                                                                list($originWidth, $originHeight) = getimagesize(self::PIC_SECURE_PATH.$extraPics[$idx]);
+
+                                                                $originRatio = $originWidth / $originHeight;
+
+                                                                if($newWidth / $newHeight > $originRatio) {
+                                                                        $newWidth = $newHeight * $originRatio;
+                                                                }
+
+                                                                else {
+                                                                        $newHeight = $newWidth / $originRatio;
+                                                                }
+
+                                                                $resizedPic = imagecreatetruecolor($newWidth, $newHeight);
+
+                                                                $thumbnails[$idx] = guidv4()."_min.".pathinfo($extraPics["name"][$idx], PATHINFO_EXTENSION);
+
+                                                                $createThumbnail = imagecreatefrompng($extraPics["tmp_name"][$idx]);
+                                                                imagecopyresampled($resizedPic, $createThumbnail, 0, 0, 0, 0, $newWidth, $newHeight, $originWidth, $originHeight);
+                                                                imagepng($resizedPic, self::THUMB_SECURE_PATH.$thumbnails[$idx], 9);
+                                                        }
+
+                                                        else {
+                                                                print_r($extraPics);
+                                                                $extraPicMessages["errors"][] = "Aucune image n'a pu être uploadée.";
                                                                 
-                                                //                 return $extraPicMessages;
-                                                //         }
+                                                                return $extraPicMessages;
+                                                        }
 
-                                                //         do {
-                                                //                 $pictureId = uniqid();
-                                                //         } while($pdo->prepare("SELECT `id` FROM `album_pictures`
-                                                //                                 WHERE `id` = $pictureId") > 0);
+                                                        do {
+                                                                $pictureId = uniqid();
+                                                        } while($pdo->prepare("SELECT `id` FROM `album_pictures`
+                                                                                WHERE `id` = $pictureId") > 0);
 
-                                                //         $newPicture = $pdo->prepare("INSERT INTO `album_pictures` (`id`, `album_id`,
-                                                //                                         `picture_name`)
-                                                //                                         VALUES (:id, :albumId, :pictureName)");
+                                                        $newPicture = $pdo->prepare("INSERT INTO `album_pictures` (`id`, `album_id`,
+                                                                                        `picture_name`)
+                                                                                        VALUES (:id, :albumId, :pictureName)");
                                                         
-                                                //         $newPicture->execute([
-                                                //                         ":id" => $pictureId,
-                                                //                         ":albumId" => $_GET["albumId"],
-                                                //                         ":pictureName" => $extraPics[$idx]
-                                                //                         ]);
-                                                // }
+                                                        $newPicture->execute([
+                                                                                ":id" => $pictureId,
+                                                                                ":albumId" => $_GET["albumId"],
+                                                                                ":pictureName" => $extraPics[$idx]
+                                                                                ]);
+
+                                                        do {
+                                                                $thumbnailId = uniqid();
+                                                        } while($pdo->prepare("SELECT `id` FROM `album_thumbnails`
+                                                                                WHERE `id` = $pictureId") > 0);
+
+                                                        $latestPicId = $pictureId;
+
+                                                        $newThumbnail = $pdo->prepare("INSERT INTO `album_thumbnails` (`id`,
+                                                                                        `picture_id`, `album_id`, `thumbnail_name`)
+                                                                                        VALUES (:id, :pictureId, :albumId,
+                                                                                        :thumbnailName)");
+                                                        
+                                                        $newThumbnail->execute([
+                                                                                ":id" => $thumbnailId,
+                                                                                ":pictureId" => $latestPicId,
+                                                                                ":albumId" => $_GET["albumId"],
+                                                                                ":thumbnailName" => $thumbnails[$idx]
+                                                                                ]);
+                                                }
 
                                                 $extraPicMessages["success"] = ["Chaque nouvelle image a été ajoutée à l'album ".$findAlbum["title"]." avec succès."];
 
