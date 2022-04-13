@@ -1,4 +1,8 @@
-<?php require "./controller/AlbumFormController.php"; ?>
+<?php
+use App\model\Albums;
+$album = new Albums();
+require "./controller/AlbumFormController.php";
+?>
 
 <section class="container">
     <h1>Modification d'album</h1>
@@ -82,12 +86,12 @@
             <div>Taille nouvelle couverture</div>
 
             <div class="rules">
-                <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
+                <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules" target="blank">règlement général</a></label>	
                 <input type="checkbox" value="true" name="acceptRules">
             </div>
 
             <div class="rules">
-                <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
+                <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy" target="blank">politique de confidentialité</a></label>	
                 <input type="checkbox" value="true" name="acceptPolicy">
             </div>
             
@@ -112,6 +116,7 @@
                 
                 <tbody>
                     <?php foreach($currentPictures as $currentPicture) : ?>
+                        <?php $currentThumbnail = $album->findPictureThumbnail(htmlspecialchars($currentPicture["id"])); ?>
                         <tr>
                             <td data-label="Image" class="picture-modif">
                                 <?php require "assets/php/ImageReplacement.php"; ?>
@@ -119,7 +124,9 @@
                                 <form action="" method="post" onsubmit="confirmDeletion(event)">
                                     <input type="text" name="pictureId" value="<?= htmlspecialchars($currentPicture["id"]) ?>" hidden>
                                     <input type="text" name="pictureName" value="<?= htmlspecialchars(trim($currentPicture["picture_name"])) ?>" hidden>
-                                    <button class="delete" type="submit" name="deletePicture"><i class="fas fa-trash-alt"></i>Supprimer</button>
+                                    <input type="text" name="thumbnailId" value="<?= htmlspecialchars($currentThumbnail["id"]) ?>" hidden>
+                                    <input type="text" name="thumbName" value="<?= htmlspecialchars(trim($currentThumbnail["thumbnail_name"])) ?>" hidden>
+                                    <button class="warning" type="submit" name="deletePicture"><i class="fas fa-trash-alt"></i>Supprimer</button>
                                 </form>
                             </td>
                             <td data-label="Remplacement d'image" class="change">
@@ -136,17 +143,19 @@
                                     <div>Taille totale images existantes et remplacées</div>
 
                                     <div class="rules">
-                                        <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
+                                        <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules" target="blank">règlement général</a></label>	
                                         <input type="checkbox" value="true" name="acceptRules">
                                     </div>
 
                                     <div class="rules">
-                                        <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
+                                        <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy" target="blank">politique de confidentialité</a></label>	
                                         <input type="checkbox" value="true" name="acceptPolicy">
                                     </div>
 
                                     <input type="text" name="pictureId" value="<?= htmlspecialchars($currentPicture["id"]) ?>" hidden>
-                                    <input type="text" name="currentName" value="<?= htmlspecialchars(trim($currentPicture["picture_name"])) ?>" hidden>
+                                    <input type="text" name="currentPic" value="<?= htmlspecialchars(trim($currentPicture["picture_name"])) ?>" hidden>
+                                    <input type="text" name="thumbnailId" value="<?= htmlspecialchars($currentThumbnail["id"]) ?>" hidden>
+                                    <input type="text" name="currentThumb" value="<?= htmlspecialchars(trim($currentThumbnail["thumbnail_name"])) ?>" hidden>
                                     <input type="submit" name="pictureChange" value="Confirmer le remplacement d'image">
                                 </form>
                             </td>
@@ -173,12 +182,12 @@
             <div>Taille totale images existantes et supplémentaire(s)</div>
 
             <div class="rules">
-                <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules">règlement général</a></label>	
+                <label for="acceptRules">J'ai lu et j'accepte le <a href="index.php?p=rules" target="blank">règlement général</a></label>	
                 <input type="checkbox" value="true" name="acceptRules">
             </div>
 
             <div class="rules">
-                <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy">politique de confidentialité</a></label>	
+                <label for="acceptPolicy">J'ai lu et j'accepte la <a href="index.php?p=privacyPolicy" target="blank">politique de confidentialité</a></label>	
                 <input type="checkbox" value="true" name="acceptPolicy">
             </div>
             

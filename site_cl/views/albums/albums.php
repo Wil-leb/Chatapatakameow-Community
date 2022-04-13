@@ -130,7 +130,7 @@ $findComments = new Comments();
             </form>
 
 <!-- ALBUM LINK COPY BUTTON -->
-            <button id="copy-link"><i class="fa-solid fa-link-simple"></i>Copier le lien</button>
+            <button id="copy-link"><i class="fa-solid fa-link"></i>Copier le lien</button>
 
 <!-- ALBUM SHARE BUTTTON -------------------------------------------------------------------------------------------------------------->
             <button id="hide-content" class="share" value="ON"><i class="fa-solid fa-share"></i>Partager</button>
