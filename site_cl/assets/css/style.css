@@ -695,14 +695,6 @@ figcaption button:hover {
         justify-content: center;
     }
 
-/*****E. HOMEPAGE*****/
-    
-/*****i. Link to the Albums view*****/
-    .mobile-more {
-        display:none;
-    }
-
-/*****ii. Slider*****/
     .scroll-slider {
         display: block;
         width: 70%;
