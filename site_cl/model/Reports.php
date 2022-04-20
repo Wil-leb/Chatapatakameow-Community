@@ -138,5 +138,5 @@ class Reports extends Connect {
         return $query->fetch(\PDO::FETCH_ASSOC);
     }
 
-//*****END OF THE Votes MODEL*****//
+//*****END OF THE Reports MODEL*****//
 }

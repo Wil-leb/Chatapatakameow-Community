@@ -87,7 +87,19 @@ class Albums extends Connect {
         return $query->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-//*****G. Finding the thumbnail of a specific picture*****//
+//*****G. Finding the thumbnails of a specific album*****//
+public function findAlbumThumbnails(string $albumId) {
+    $sql = "SELECT album_thumbnails.id, `album_id`, `thumbnail_name` FROM `album_thumbnails`
+            LEFT OUTER JOIN `albums` ON albums.id = album_thumbnails.album_id WHERE albums.id = :albumId";
+                
+    $query = $this->_pdo->prepare($sql);
+    
+    $query->execute([":albumId" => $albumId]);
+    
+    return $query->fetchAll(\PDO::FETCH_ASSOC);
+}
+
+//*****H. Finding the thumbnail of a specific picture*****//
     public function findPictureThumbnail(string $pictureId) {
         $sql = "SELECT album_thumbnails.id, `picture_id`, `thumbnail_name` FROM `album_thumbnails`
                 LEFT OUTER JOIN `album_pictures` ON album_pictures.id = album_thumbnails.picture_id
@@ -100,7 +112,7 @@ class Albums extends Connect {
         return $query->fetch(\PDO::FETCH_ASSOC);
     }
 
-//*****H. Album modification*****//
+//*****I. Album modification*****//
     public function updateAlbum(string $albumId, string $userId, string $userLogin, $title, string $description) {
         $sql = "UPDATE `albums`
                 SET `user_id` = :userId, `user_login` = :userLogin, `title` = :title, `description` = :description
@@ -117,7 +129,7 @@ class Albums extends Connect {
                         ]);
     }
 
-//*****I. Cover replacement*****//
+//*****J. Cover replacement*****//
     public function replaceCover(string $coverId, string $albumId, string $coverName) {
                         
         $sql = "UPDATE `album_covers` SET `cover_name` = :coverName WHERE album_covers.id = :coverId AND `album_id` = :albumId";
@@ -127,7 +139,7 @@ class Albums extends Connect {
         $query->execute([":coverId" => $coverId, ":albumId" => $albumId, ":coverName" => $coverName]);
     }
 
-//*****J. Picture replacement*****//
+//*****K. Picture replacement*****//
     public function replacePicture(string $pictureId, string $albumId, string $pictureName) {
                     
         $sql = "UPDATE `album_pictures` SET `picture_name` = :pictureName WHERE album_pictures.id = :pictureId
@@ -139,7 +151,7 @@ class Albums extends Connect {
     }
 
 
-//*****K. Thumbnail replacement*****//
+//*****L. Thumbnail replacement*****//
 public function replaceThumbnail(string $thumbnailId, string $albumId, string $thumbName) {
                     
     $sql = "UPDATE `album_thumbnails` SET `thumbnail_name` = :thumbName WHERE album_thumbnails.id = :thumbnailId
@@ -150,7 +162,7 @@ public function replaceThumbnail(string $thumbnailId, string $albumId, string $t
     $query->execute([":thumbnailId" => $thumbnailId, ":albumId" => $albumId, ":thumbName" => $thumbName]);
 }
 
-//*****L. Picture addition*****//
+//*****M. Picture addition*****//
     public function addExtraPictures(string $albumId, string $pictureName) {
             
         $sql = "INSERT INTO `album_pictures` (`album_id`, `picture_name`) VALUES (:albumId, :pictureName)";
@@ -160,7 +172,7 @@ public function replaceThumbnail(string $thumbnailId, string $albumId, string $t
         $query->execute([":albumId" => $albumId, ":pictureName" => $pictureName]);
     }
 
-//*****M. Album deletion*****//
+//*****N. Album deletion*****//
     public function deleteAlbum(string $albumId) {
             
         $sql = "DELETE FROM `albums` WHERE `id` = :albumId";
@@ -170,7 +182,7 @@ public function replaceThumbnail(string $thumbnailId, string $albumId, string $t
         $query->execute([":albumId" => $albumId]);
     }
 
-//*****N. Picture deletion*****//
+//*****O. Picture deletion*****//
     public function deletePicture(string $pictureId) {
                 
         $sql = "DELETE FROM `album_pictures` WHERE `id` = :pictureId";
@@ -180,7 +192,7 @@ public function replaceThumbnail(string $thumbnailId, string $albumId, string $t
         $query->execute([":pictureId" => $pictureId]);
     }
 
-//*****O. Thumbnail deletion*****//
+//*****P. Thumbnail deletion*****//
 public function deleteThumbnail(string $thumbnailId) {
                 
     $sql = "DELETE FROM `album_thumbnails` WHERE `id` = :thumbnailId";
