@@ -1,7 +1,7 @@
 <?php
 use App\model\{Albums, Comments};
 
-$findImages = new Albums();
+$findThumbs = new Albums();
 $findComments = new Comments();
 ?>
 
@@ -103,7 +103,7 @@ $findComments = new Comments();
     
 <section class="container">    
     <?php $comments = $findComments->findAlbumComments($albums["id"]); ?>
-    <?php $pictures = $findImages->findAlbumPictures($albums["id"]); ?>
+    <?php $thumbnails = $findThumbs->findAlbumThumbnails($albums["id"]); ?>
 
 <!-- ALBUM SLIDER --------------------------------------------------------------------------------------------------------------------->
     <article>
