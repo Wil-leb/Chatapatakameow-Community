@@ -1,7 +1,7 @@
 <?php
 
 namespace App\controller;
-use App\model\{Albums, Comments, Reports, Users, Votes};
+use App\model\{Albums, Comments, Notifications, Reports, Users, Votes};
 use App\core\{Session};
 use \PDO;
 
@@ -21,8 +21,10 @@ class CommentFormController {
 
                 if($_POST["postComment"]) {
                         $albumId = $_GET["albumId"];
+                        $refType = "comment";
 
                         $album = new Albums();
+                        $notifications = new Notifications();
                         $exist = $album->findAlbumById($albumId);
                         $title = $exist["title"];
 
@@ -60,20 +62,30 @@ class CommentFormController {
                                 $query->execute([":albumId" => $albumId]);
                                 $refAuthorId = $query->fetchColumn();
 
-                                $commentAddition = $this->_comments->addComment($id, $refAuthorId, $albumId, $title, $data["email"],
-                                $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $data["comment"]);
+                                $commentAddition = $this->_comments->addComment($id, $refAuthorId, $albumId, $title, $data["email"], $data["commentLogin"], $_SERVER["REMOTE_ADDR"], $data["comment"]);
 
                                 $commentMsg["success"][] = "Le commentaire a été publié avec succès.";
 
-                                $req = $pdo->prepare("SELECT `email` FROM `users` LEFT OUTER JOIN `comments`
-                                                        ON users.id = comments.album_author_id WHERE comments.album_id = :albumId");
+                                $req = $pdo->prepare("SELECT users.id, `email`, comments.id, comments.album_author_id, comments.album_id
+                                                        FROM `users` LEFT OUTER JOIN `comments` ON users.id = comments.album_author_id
+                                                        WHERE comments.album_id = :albumId");
                                 $req->execute([":albumId" => $albumId]);
-                                $refAuthorEmail = $req->fetchColumn();
+                                $result = $req->fetch();
+                                $publisherId = $result["album_author_id"];
+
+                                $latestId = $id;
+                                $refId = $latestId;
+
+                                do {
+                                        $notifId = uniqid();
+                                } while($pdo->prepare("SELECT `id` FROM `notifications` WHERE `id` = $notifId") > 0);
+
+                                $notifications->addNotification($notifId, $publisherId, $refId, $refType);
 
                                 $message = "Bonjour, ton album ".$title." vient d'être commenté. Voici le commentaire :\n".$data["comment"]."";
                                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                                // if(mail($refAuthorEmail, "Nouveau commentaire", $message, $headers)) {
+                                // if(mail($result["email"], "Nouveau commentaire", $message, $headers)) {
                                         $commentMsg["success"][] = "Mail de confirmation envoyé.";
                                 // }
                                 
@@ -93,8 +105,10 @@ class CommentFormController {
                 if($_POST["postAnswer"]) {
                         $albumId = $_GET["albumId"];
                         $commentId = $data["commentId"];
+                        $refType = "answer";
 
                         $album = new Albums();
+                        $notifications = new Notifications();
                         $exist = $album->findAlbumById($albumId);
                         $title = $exist["title"];
 
@@ -138,6 +152,21 @@ class CommentFormController {
                                 
                                 $answerMsg["success"][] = "La réponse a été publiée avec succès.";
 
+                                $que = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `comments`
+                                                                ON users.login = comments.comment_login
+                                                                WHERE comments.id = :commentId");
+                                $que->execute([":commentId" => $commentId]);
+                                $publisherId = $que->fetchColumn();
+
+                                $latestId = $id;
+                                $refId = $latestId;
+
+                                do {
+                                        $notifId = uniqid();
+                                } while($pdo->prepare("SELECT `id` FROM `notifications` WHERE `id` = $notifId") > 0);
+
+                                $notifications->addNotification($notifId, $publisherId, $refId, $refType);
+
                                 $message = "Bonjour, tu viens de recevoir une réponse à ton commentaire ".$comment." pour l'album ".$title.". Voici la réponse :\n".$data["answer"]."";
                                 $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
@@ -157,6 +186,7 @@ class CommentFormController {
 //*****C. Vote addition*****//
         public function voteForm() {
                 $vote = new Votes();
+                $notifications = new Notifications();
 
                 $pdo = new PDO("mysql:host=127.0.0.1;dbname=willeb_cl","root","");
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -178,49 +208,85 @@ class CommentFormController {
                                         } while($pdo->prepare("SELECT `id` FROM `votes` WHERE `id` = $voteId
                                                                 AND `category` = $category") > 0);
 
-                                        $req = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `albums`
+                                        $query = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `albums`
                                                                 ON users.login = albums.user_login
                                                                 WHERE albums.id = :albumId");
-                                        $req->execute([":albumId" => $albumId]);
-                                        $publisherId = $req->fetchColumn();
+                                        $query->execute([":albumId" => $albumId]);
+                                        $publisherId = $query->fetchColumn();
 
                                         $album = new Albums();
                                         $exist = $album->findAlbumById($albumId);
                                         $title = $exist["title"];
 
-                                        $que = $pdo->prepare("SELECT `email` FROM `users` LEFT OUTER JOIN `albums`
+                                        $req = $pdo->prepare("SELECT `email` FROM `users` LEFT OUTER JOIN `albums`
                                                                 ON users.id = albums.user_id WHERE albums.id = :albumId");
-                                        $que->execute([":albumId" => $albumId]);
-                                        $refAuthorEmail = $que->fetchColumn();
+                                        $req->execute([":albumId" => $albumId]);
+                                        $refAuthorEmail = $req->fetchColumn();
+
+                                        $refId = $albumId;
+
+                                        do {
+                                                $notifId = uniqid();
+                                        } while($pdo->prepare("SELECT `id` FROM `notifications` WHERE `id` = $notifId") > 0);
 
                                         if(isset($_POST["likeAlb"])) {
                                                 $vote->like($voteId, $publisherId, $albumId, $category, $_SERVER["REMOTE_ADDR"], 1);
-                                                
-                                                $message = "Bonjour, ton album ".$title." vient de recevoir un like.";
-                                                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
 
-                                                // if(mail($refAuthorEmail, "Nouveau vote", $message, $headers)) {
-                                                        echo $message;
-                                                // }
+                                                $que = $pdo->prepare("SELECT `likes` FROM `albums` WHERE albums.id = :albumId");
+                                                $que->execute([":albumId" => $albumId]);
+                                                $count = $que->fetchColumn();
+
+                                                $refType = "album_like";
                                                 
-                                                // else {
+                                                if($count > 0) {
+                                                        $message = "Bonjour, ton album ".$title." vient de recevoir un like.";
+                                                        $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                                        // if(mail($refAuthorEmail, "Nouveau vote", $message, $headers)) {
+                                                                echo $message;
+                                                        // }
                                                         
-                                                // }
+                                                        // else {
+                                                                
+                                                        // }
+
+                                                        $notifications->addNotification($notifId, $publisherId, $refId, $refType);
+                                                }
+
+                                                if($count === 0) {
+                                                        $notifications->deleteNotification($notifId);
+                                                        echo "Compteur de likes à zéro...";
+                                                }
                                         }
 
                                         elseif(isset($_POST["dislikeAlb"])) {
                                                 $vote->dislike($voteId, $publisherId, $albumId, $category, $_SERVER["REMOTE_ADDR"], -1);
 
-                                                $message = "Bonjour, ton album ".$title." vient de recevoir un dislike.";
-                                                $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+                                                $que = $pdo->prepare("SELECT `dislikes` FROM `albums` WHERE albums.id = :albumId");
+                                                $que->execute([":albumId" => $albumId]);
+                                                $count = $que->fetchColumn();
 
-                                                // if(mail($refAuthorEmail, "Nouveau vote", $message, $headers)) {
-                                                        echo $message;
-                                                // }
-                                                
-                                                // else {
+                                                $refType = "album_dislike";
+
+                                                if($count > 0) {
+                                                        $message = "Bonjour, ton album ".$title." vient de recevoir un dislike.";
+                                                        $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
+
+                                                        // if(mail($refAuthorEmail, "Nouveau vote", $message, $headers)) {
+                                                                echo $message;
+                                                        // }
                                                         
-                                                // }
+                                                        // else {
+                                                                
+                                                        // }
+
+                                                        $notifications->addNotification($notifId, $publisherId, $refId, $refType);
+                                                }
+
+                                                if($count === 0) {
+                                                        $notifications->deleteNotification($notifId);
+                                                        echo "Compteur de dislikes à zéro...";
+                                                }
                                         }
 
                                         $vote->updateVoteCount($albumId, $category);
@@ -316,8 +382,8 @@ class CommentFormController {
                                                                 AND `category` = $category") > 0);
 
                                         $req = $pdo->prepare("SELECT users.id FROM `users` LEFT OUTER JOIN `comment_answers`
-                                                        ON users.login = comment_answers.answer_login
-                                                        WHERE comment_answers.id = :answerId");
+                                                                ON users.login = comment_answers.answer_login
+                                                                WHERE comment_answers.id = :answerId");
                                         $req->execute([":answerId" => $answerId]);
                                         $publisherId = $req->fetchColumn();
 
