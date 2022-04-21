@@ -223,21 +223,27 @@ class CommentFormController {
                                         $req->execute([":albumId" => $albumId]);
                                         $refAuthorEmail = $req->fetchColumn();
 
-                                        $refId = $albumId;
+                                        $fetch = $pdo->prepare("SELECT * FROM `notifications`");
+                                        $fetch->execute();
+                                        $result = $fetch->fetch();
 
                                         do {
                                                 $notifId = uniqid();
                                         } while($pdo->prepare("SELECT `id` FROM `notifications` WHERE `id` = $notifId") > 0);
 
+                                        $refId = $albumId;
+
                                         if(isset($_POST["likeAlb"])) {
                                                 $vote->like($voteId, $publisherId, $albumId, $category, $_SERVER["REMOTE_ADDR"], 1);
+
+                                                $refType = "album_like";
+
+                                                $notifications->addNotification($notifId, $publisherId, $refId, $refType);
 
                                                 $que = $pdo->prepare("SELECT `likes` FROM `albums` WHERE albums.id = :albumId");
                                                 $que->execute([":albumId" => $albumId]);
                                                 $count = $que->fetchColumn();
 
-                                                $refType = "album_like";
-                                                
                                                 if($count > 0) {
                                                         $message = "Bonjour, ton album ".$title." vient de recevoir un like.";
                                                         $headers = 'Content-Type: text/plain; charset="utf-8"'." ";
@@ -247,14 +253,11 @@ class CommentFormController {
                                                         // }
                                                         
                                                         // else {
-                                                                
+                                                        //         echo "Problème survenu lors de l'envoi de mail";
                                                         // }
-
-                                                        $notifications->addNotification($notifId, $publisherId, $refId, $refType);
                                                 }
 
-                                                if($count === 0) {
-                                                        $notifications->deleteNotification($notifId);
+                                                else {
                                                         echo "Compteur de likes à zéro...";
                                                 }
                                         }
@@ -262,11 +265,13 @@ class CommentFormController {
                                         elseif(isset($_POST["dislikeAlb"])) {
                                                 $vote->dislike($voteId, $publisherId, $albumId, $category, $_SERVER["REMOTE_ADDR"], -1);
 
+                                                $refType = "album_dislike";
+
+                                                $notifications->addNotification($notifId, $publisherId, $refId, $refType);
+                                                
                                                 $que = $pdo->prepare("SELECT `dislikes` FROM `albums` WHERE albums.id = :albumId");
                                                 $que->execute([":albumId" => $albumId]);
                                                 $count = $que->fetchColumn();
-
-                                                $refType = "album_dislike";
 
                                                 if($count > 0) {
                                                         $message = "Bonjour, ton album ".$title." vient de recevoir un dislike.";
@@ -277,14 +282,11 @@ class CommentFormController {
                                                         // }
                                                         
                                                         // else {
-                                                                
+                                                        //         echo "Problème survenu lors de l'envoi de mail";
                                                         // }
-
-                                                        $notifications->addNotification($notifId, $publisherId, $refId, $refType);
                                                 }
 
-                                                if($count === 0) {
-                                                        $notifications->deleteNotification($notifId);
+                                                else {
                                                         echo "Compteur de dislikes à zéro...";
                                                 }
                                         }
