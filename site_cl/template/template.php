@@ -17,7 +17,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Carter+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Carter+One&family=Roboto:wght@500&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link rel="stylesheet" href="assets/css/normalize.css">
 	<link rel="stylesheet" href="assets/css/style.css">
 
@@ -110,9 +110,9 @@
         $(document).ready(function() {
             function load_unseen_notification(view = "") {
 
-// // Mettre à jour la vue avec les notifications en utilisant ajaxfunction load_unseen_notification(view = ''){
+// Mettre à jour la vue avec les notifications en utilisant ajaxfunction load_unseen_notification(view = ''){
                 $.ajax({
-                    url: "./assets/php/FetchComments.php",
+                    url: "./assets/php/FetchNotifications.php",
                     method: "POST",
                     data: {view: view},
                     dataType: "json",
@@ -120,7 +120,7 @@
                         $("#notif-content").html(data.notification);
 
                         if(data.unseen_notification > 0) {
-                            $(".count").html("(" + data.unseen_notification + ")");
+                            $(".count").html(`(${data.unseen_notification})`);
                         }
 
                         else {
@@ -132,30 +132,7 @@
  
             load_unseen_notification();
 
-// Soumettre le formulaire et obtenir de nouveaux enregistrements
-//             // $(".comment-form").on("submit", function(event) {
-//             //     event.preventDefault();
-
-//             //     if($(".email").val() != "" && $(".commentLogin").val() != "" && $("#comment").val() != "") {
-//             //         let form_data = $(this).serialize();
-
-//             //         $.ajax({
-//             //             url: "./controller/CommentFormController.php",
-//             //             method: "POST",
-//             //             data: form_data,
-//             //             success: function(data){
-//             //                 $("#comment_form")[0].reset();
-//             //                 load_unseen_notification();
-//             //             }
-//             //         });
-//             //     }
-                
-//             //     else {
-//             //         alert("Veuilles remplir tous les champs");
-//             //     }
-//             // });
-
-// // Chargement des nouvelles notifications
+// Chargement des nouvelles notifications
             $(document).on("click", "#delete-notifications", function() {
                 $(".count").html("");
                 load_unseen_notification("yes");
