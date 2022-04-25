@@ -26,7 +26,8 @@ class Votes extends Connect {
     }
 
 //*****B. Vote addition*****//
-    private function addVote(string $id, string $publisherId, string $refId, string $category, string $userIp, int $vote) {
+    private function addVote(string $id, string $publisherId, string $refId, string $refContent, string $category, string $userIp,
+    int $vote) {
         $this->recordExists($refId, $category);
 
         $sql = "SELECT `id`, `vote` FROM `votes` WHERE `publisher_id` = :publisherId AND `ref_id` = :refId AND `category` = :category
@@ -58,8 +59,8 @@ class Votes extends Connect {
             return true;
         }
 
-        $req = "INSERT INTO `votes` (`id`, `publisher_id`, `ref_id`, `category`, `vote_ip`, `vote`)
-                VALUES (:id, :publisherId, :refId, :category, :userIp, :vote)";
+        $req = "INSERT INTO `votes` (`id`, `publisher_id`, `ref_id`, `ref_content`, `category`, `vote_ip`, `vote`)
+                VALUES (:id, :publisherId, :refId, :refContent, :category, :userIp, :vote)";
 
         $query = $this->_pdo->prepare($req);
         
@@ -67,6 +68,7 @@ class Votes extends Connect {
                         ":id" => $id,
                         ":publisherId" => $publisherId,
                         ":refId" => $refId,
+                        ":refContent" => $refContent,
                         ":category" => $category,
                         ":userIp" => $userIp,
                         ":vote" => $vote
@@ -76,8 +78,8 @@ class Votes extends Connect {
     }
 
 //*****C. Like update*****//
-    public function like(string $id, string $publisherId, string $refId, string $category, string $userIp) {
-        if($this->addVote($id, $publisherId, $refId, $category, $userIp, 1)) {
+    public function like(string $id, string $publisherId, string $refId, string $refContent, string $category, string $userIp) {
+        if($this->addVote($id, $publisherId, $refId, $refContent, $category, $userIp, 1)) {
             $sqlPart = "";
 
             if($this->_formerVote) {
@@ -102,8 +104,8 @@ class Votes extends Connect {
     }
 
 //*****D. Dislike update*****//
-    public function dislike(string $id, string $publisherId, string $refId, string $category, string $userIp) {
-        if($this->addVote($id, $publisherId, $refId, $category, $userIp, -1)) {
+    public function dislike(string $id, string $publisherId, string $refId, string $refContent, string $category, string $userIp) {
+        if($this->addVote($id, $publisherId, $refId, $refContent, $category, $userIp, -1)) {
             $sqlPart = "";
 
             if($this->_formerVote) {

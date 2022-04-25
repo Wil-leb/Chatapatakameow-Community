@@ -35,19 +35,19 @@ class Comments extends Connect {
     }
 
 //*****B. Answer addition*****//
-    // public function addAnswer(string $answerId, string $refAuthorId, string $commentId, string $albumId, string $albumTitle,
-    //                             string $userEmail, string $userLogin, string $userIp, string $answer) {
-    public function addAnswer(string $answerId, string $commentId, string $refAuthorEmail, string $albumId, string $albumTitle,
-                                string $userEmail, string $userLogin, string $userIp, string $answer) {
-        $sql = "INSERT INTO `comment_answers` (`id`, `comment_id`, `comment_author_email`, `album_id`, `album_title`, `answer_email`,
-                                                `answer_login`, `answer_ip`, `answer`)
-                VALUES (:answerId, :commentId, :refAuthorEmail, :albumId, :albumTitle, :userEmail, :userLogin, :userIp, :answer)";
+    public function addAnswer(string $answerId, string $commentId, string $refAuthorId, string $refAuthorEmail, string $albumId,
+                                string $albumTitle, string $userEmail, string $userLogin, string $userIp, string $answer) {
+        $sql = "INSERT INTO `comment_answers` (`id`, `comment_id`, `comment_author_id`, `comment_author_email`, `album_id`,
+                            `album_title`, `answer_email`, `answer_login`, `answer_ip`, `answer`)
+                VALUES (:answerId, :commentId, :refAuthorId, :refAuthorEmail, :albumId, :albumTitle, :userEmail, :userLogin, :userIp,
+                        :answer)";
                 
         $query = $this->_pdo->prepare($sql);
         
         $query->execute([
                         ":answerId" => $answerId,
                         ":commentId" => $commentId,
+                        ":refAuthorId" => $refAuthorId,
                         ":refAuthorEmail" => $refAuthorEmail,
                         ":albumId" => $albumId,
                         ":albumTitle" => $albumTitle,
